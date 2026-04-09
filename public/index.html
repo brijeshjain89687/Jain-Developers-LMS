@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jain Developers — Learn</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f5f0;--bg2:#fff;--surface:#fff;--accent:#e8381a;--accent2:#ff6b35;--dark:#1a1108;--text:#2d2410;--muted:#8a7f6e;--border:#e8e2d6;--gold:#d4900a;--green:#1a7a45;--radius:16px;--shadow:0 2px 16px rgba(26,17,8,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+/* NAV */
+.topnav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.logo-mark{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff}
+.logo-name{font-size:14px;font-weight:700}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.nav-links{display:flex;gap:4px;margin-left:12px}
+.nav-btn{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;border:none;background:none;font-family:inherit}
+.nav-btn:hover{color:var(--text);background:var(--bg)}
+.nav-btn.active{color:var(--accent);background:#fef2ee}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.search-wrap{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 14px;width:210px}
+.search-wrap input{background:none;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--text);width:100%}
+.search-wrap input::placeholder{color:var(--muted)}
+.xp-chip{display:flex;align-items:center;gap:6px;background:#fffbf0;border:1px solid #f0e0a0;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--gold)}
+.avatar-chip{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 12px 4px 4px;border-radius:24px;border:1px solid var(--border);background:var(--surface)}
+.avatar-sm{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff}
+.avatar-name{font-size:13px;font-weight:600}
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+/* AUTH */
+.auth-wrap{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:32px}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:40px;width:420px;max-width:100%;box-shadow:var(--shadow)}
+.auth-logo{text-align:center;margin-bottom:28px}
+.auth-logo .logo-mark{width:52px;height:52px;font-size:16px;margin:0 auto 10px}
+.auth-title{font-size:22px;font-weight:700;text-align:center;margin-bottom:6px}
+.auth-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:28px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.5px}
+.form-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--accent);background:#fff}
+.btn-primary{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.auth-toggle{text-align:center;margin-top:16px;font-size:13px;color:var(--muted)}
+.auth-toggle span{color:var(--accent);cursor:pointer;font-weight:600}
+.form-error{color:var(--accent);font-size:12px;margin-top:6px;display:none}
+.form-error.show{display:block}
+.demo-box{margin-top:16px;padding:12px;background:var(--bg);border-radius:8px;font-size:11px;color:var(--muted);text-align:center;line-height:1.8}
+/* HERO */
+.hero{background:linear-gradient(135deg,#1a1108 0%,#2d1e0a 60%,#1a1108 100%);padding:48px 32px;overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-100px;top:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(232,56,26,.12) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:48px}
+.hero-text{flex:1}
+.hero-greeting{font-size:13px;color:var(--accent2);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.hero-title{font-family:'Fraunces',serif;font-size:38px;line-height:1.15;color:#fff;margin-bottom:14px}
+.hero-title em{color:var(--accent2);font-style:italic}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:24px;max-width:420px}
+.hero-btns{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.hero-cta{padding:12px 26px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.hero-cta:hover{background:var(--accent2)}
+.hero-cta.ghost{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2)}
+.hero-stats{display:flex;gap:32px}
+.hero-stat-val{font-size:22px;font-weight:800;color:#fff}
+.hero-stat-label{font-size:11px;color:rgba(255,255,255,.45)}
+.streak-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:24px;min-width:200px;text-align:center;flex-shrink:0}
+.streak-num{font-size:52px;font-weight:800;color:var(--accent2);line-height:1}
+.streak-label{font-size:13px;color:rgba(255,255,255,.55);margin-top:6px}
+.streak-dots{display:flex;gap:5px;justify-content:center;margin-top:14px}
+.sdot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.15)}
+.sdot.done{background:var(--accent2)}
+/* SECTIONS */
+.section{padding:32px;max-width:1200px;margin:0 auto}
+.sec-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px}
+.sec-title{font-size:18px;font-weight:700}
+.sec-link{font-size:13px;color:var(--accent);cursor:pointer;font-weight:500}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+/* COURSE CARDS */
+.course-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.course-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(26,17,8,.13);border-color:rgba(232,56,26,.3)}
+.cc-cover{height:90px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative}
+.cc-body{padding:14px}
+.cc-title{font-size:13px;font-weight:600;margin-bottom:3px;line-height:1.4}
+.cc-instructor{font-size:11px;color:var(--muted);margin-bottom:8px}
+.cc-meta{display:flex;gap:10px;font-size:11px;color:var(--muted);margin-bottom:10px}
+.cc-footer{display:flex;align-items:center;justify-content:space-between}
+.diff-chip{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px}
+.chip-b{background:#fef2ee;color:var(--accent)}
+.chip-i{background:#fffbf0;color:var(--gold)}
+.chip-a{background:#f0faf5;color:var(--green)}
+.enroll-btn{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:none;font-family:inherit;font-weight:500;cursor:pointer;transition:all .2s;color:var(--text)}
+.enroll-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.enroll-btn.enrolled{background:#f0faf5;color:var(--green);border-color:#b8e8ce}
+/* CONTINUE CARDS */
+.continue-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.continue-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(26,17,8,.12)}
+.prog-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin:10px 0 4px}
+.prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .5s}
+.prog-pct{font-size:11px;font-weight:600;color:var(--accent)}
+.resume-btn{width:100%;padding:8px;margin-top:12px;border-radius:8px;border:1px solid var(--accent);background:none;color:var(--accent);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.resume-btn:hover{background:var(--accent);color:#fff}
+/* PLAYER */
+.player-wrap{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 64px)}
+.player-left{display:flex;flex-direction:column}
+.video-box{background:#000;position:relative}
+.video-box video{width:100%;display:block;max-height:60vh;object-fit:contain}
+.video-fallback{width:100%;aspect-ratio:16/9;background:#0d0d0d;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,.5);gap:12px;padding:24px;text-align:center}
+.play-btn-big{width:68px;height:68px;border-radius:50%;background:rgba(232,56,26,.85);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.play-btn-big:hover{background:var(--accent);transform:scale(1.08)}
+.player-info-bar{padding:20px 24px;background:#fff;border-top:1px solid var(--border);flex:1}
+.player-lesson-title{font-size:17px;font-weight:700;margin-bottom:6px}
+.player-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.player-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.action-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:none;font-family:inherit;font-size:12px;cursor:pointer;transition:all .2s;color:var(--muted)}
+.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+.curr-panel{background:#fff;border-left:1px solid var(--border);overflow-y:auto;max-height:calc(100vh - 64px);position:sticky;top:64px}
+.curr-top{padding:14px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.curr-prog{font-size:11px;color:var(--accent);font-weight:600}
+.curr-section-hdr{padding:10px 16px;background:var(--bg);font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+.curr-lesson{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)}
+.curr-lesson:hover{background:var(--bg)}
+.curr-lesson.active{background:#fef2ee;border-left:3px solid var(--accent)}
+.lesson-status{font-size:13px;width:18px;flex-shrink:0}
+.lesson-dur{font-size:10px;color:var(--muted);margin-left:auto;white-space:nowrap}
+/* MY LEARNING */
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content}
+.tab{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit;transition:all .2s}
+.tab.active{background:var(--accent);color:#fff}
+.learn-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.learn-hdr{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.learn-emoji{font-size:28px}
+.learn-title{font-size:14px;font-weight:600}
+.learn-meta-s{font-size:12px;color:var(--muted);margin-top:2px}
+.prog-bar-lg{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:6px 0 14px}
+.prog-fill-lg{height:100%;background:linear-gradient(to right,var(--accent),var(--accent2));border-radius:4px}
+.btn-cont{flex:1;padding:8px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.btn-ghost{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:none;font-family:inherit;font-size:12px;cursor:pointer;color:var(--muted)}
+/* PROFILE */
+.profile-banner{background:linear-gradient(135deg,#1a1108,#2d1e0a);border-radius:var(--radius);padding:32px;display:flex;align-items:center;gap:24px;margin-bottom:24px}
+.profile-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;flex-shrink:0}
+.profile-name{font-size:22px;font-weight:700;color:#fff}
+.profile-email{font-size:13px;color:rgba(255,255,255,.45);margin-top:3px}
+.profile-badges{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pbadge{font-size:10px;padding:4px 10px;border-radius:6px;font-weight:600;background:rgba(232,56,26,.2);color:var(--accent2)}
+.stats-row4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-box{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;box-shadow:var(--shadow)}
+.stat-val{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.stat-lbl{font-size:12px;color:var(--muted)}
+.ach-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.ach-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;box-shadow:var(--shadow)}
+.ach-icon{font-size:30px;margin-bottom:8px}
+.ach-name{font-size:12px;font-weight:600;margin-bottom:4px}
+.ach-desc{font-size:11px;color:var(--muted)}
+.ach-card.locked{opacity:.38;filter:grayscale(1)}
+/* FILTER BTNS */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+/* EMPTY */
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state .e-icon{font-size:48px;margin-bottom:12px}
+/* SPINNER */
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:1100px){.grid4{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:repeat(2,1fr)}.player-wrap{grid-template-columns:1fr}.stats-row4{grid-template-columns:repeat(2,1fr)}.ach-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid4{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.topnav{padding:0 16px}.section{padding:20px 16px}}
+</style>
+</head>
+<body>
+<!-- NAV -->
+<nav class="topnav">
+  <div class="logo" onclick="gotoHome()">
+    <div class="logo-mark">JD</div>
+    <div><div class="logo-name">Jain Developers</div><div class="logo-sub">Learn</div></div>
+  </div>
+  <div class="nav-links" id="main-nav" style="display:none">
+    <button class="nav-btn active" onclick="showPage('home',this)">Home</button>
+    <button class="nav-btn" onclick="showPage('explore',this)">Explore</button>
+    <button class="nav-btn" onclick="showPage('mylearning',this)">My Learning</button>
+    <button class="nav-btn" onclick="showPage('profile',this)">Profile</button>
+  </div>
+  <div class="nav-right">
+    <div class="search-wrap" id="search-wrap" style="display:none">
+      <span style="color:var(--muted);font-size:14px">🔍</span>
+      <input type="text" placeholder="Search courses…" oninput="handleSearch(this.value)">
+    </div>
+    <div class="xp-chip" id="xp-chip" style="display:none">⚡ <span id="xp-val">0</span> XP</div>
+    <div class="avatar-chip" id="user-chip" style="display:none" onclick="showPage('profile')">
+      <div class="avatar-sm" id="nav-avatar">?</div>
+      <span class="avatar-name" id="nav-name">User</span>
+    </div>
+    <button class="btn-primary" id="login-btn" style="width:auto;padding:8px 20px;font-size:13px" onclick="showPage('auth')">Sign In</button>
+  </div>
+</nav>
+
+<!-- ═══════ PAGES ═══════ -->
+
+<!-- AUTH -->
+<div class="page active" id="page-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-mark">JD</div>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:6px">Jain Developers</div>
+      </div>
+      <div class="auth-title" id="auth-title">Welcome back</div>
+      <div class="auth-sub" id="auth-sub">Sign in to continue learning</div>
+      <div class="form-group" id="name-field" style="display:none">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="f-name" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="f-email" placeholder="you@email.com" type="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="f-pass" placeholder="••••••••" type="password" onkeydown="if(event.key==='Enter')doAuth()">
+      </div>
+      <div class="form-error" id="auth-error"></div>
+      <button class="btn-primary" id="auth-btn" onclick="doAuth()">Sign In</button>
+      <div class="auth-toggle" id="auth-toggle">New here? <span onclick="toggleMode()">Create account</span></div>
+      <div class="demo-box"><strong>Demo accounts:</strong><br>Student: aarav@email.com / aarav123<br>Admin: admin@jaindevelopers.com / admin123</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="page" id="page-home">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-greeting" id="hero-greeting">Welcome back 👋</div>
+        <h1 class="hero-title">Keep building.<br><em>Keep growing.</em></h1>
+        <p class="hero-sub">Pick up where you left off and keep your streak alive!</p>
+        <div class="hero-btns">
+          <button class="hero-cta" onclick="showPage('mylearning')">Continue Learning →</button>
+          <button class="hero-cta ghost" onclick="showPage('explore')">Browse Courses</button>
+        </div>
+        <div class="hero-stats">
+          <div><div class="hero-stat-val" id="hs-enrolled">0</div><div class="hero-stat-label">Enrolled</div></div>
+          <div><div class="hero-stat-val" id="hs-avg">0%</div><div class="hero-stat-label">Avg Progress</div></div>
+          <div><div class="hero-stat-val" id="hs-completed">0</div><div class="hero-stat-label">Completed</div></div>
+        </div>
+      </div>
+      <div class="streak-card">
+        <div style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🔥 Daily Streak</div>
+        <div class="streak-num" id="streak-num">0</div>
+        <div class="streak-label">days in a row</div>
+        <div class="streak-dots" id="streak-dots"></div>
+      </div>
+    </div>
+  </div>
+  <div class="section" id="continue-section" style="display:none">
+    <div class="sec-header"><div class="sec-title">Continue Learning</div><span class="sec-link" onclick="showPage('mylearning')">View all →</span></div>
+    <div class="grid3" id="continue-grid"></div>
+  </div>
+  <div class="section">
+    <div class="sec-header"><div class="sec-title">Browse Courses</div><span class="sec-link" onclick="showPage('explore')">See all →</span></div>
+    <div class="grid4" id="home-courses"></div>
+  </div>
+</div>
+
+<!-- EXPLORE -->
+<div class="page" id="page-explore">
+  <div class="section">
+    <div class="filter-row" id="explore-filters">
+      <button class="enroll-btn enrolled" onclick="filterExplore('',this)">All</button>
+      <button class="enroll-btn" onclick="filterExplore('web',this)">Web Dev</button>
+      <button class="enroll-btn" onclick="filterExplore('data',this)">Data Science</button>
+      <button class="enroll-btn" onclick="filterExplore('mobile',this)">Mobile</button>
+      <button class="enroll-btn" onclick="filterExplore('devops',this)">DevOps</button>
+      <button class="enroll-btn" onclick="filterExplore('design',this)">Design</button>
+    </div>
+    <div class="grid4" id="explore-courses"></div>
+  </div>
+</div>
+
+<!-- PLAYER -->
+<div class="page" id="page-player">
+  <div class="player-wrap">
+    <div class="player-left">
+      <div class="video-box" id="video-box">
+        <div class="video-fallback">
+          <div style="font-size:48px;margin-bottom:12px">🎬</div>
+          <p style="font-size:14px;color:rgba(255,255,255,.6)">Select a lesson to watch</p>
+          <p style="font-size:12px;margin-top:4px;color:rgba(255,255,255,.3)">Click a lesson in the panel →</p>
+        </div>
+      </div>
+      <div class="player-info-bar">
+        <div class="player-lesson-title" id="player-lesson-title">—</div>
+        <div class="player-meta">
+          <span id="player-course-name">—</span>
+          <span id="player-dur">—</span>
+          <span id="player-free-tag" style="color:var(--green)"></span>
+        </div>
+        <div class="player-actions">
+          <button class="action-btn" onclick="markComplete()">✓ Mark Complete</button>
+          <button class="action-btn" onclick="toast('Notes coming soon!')">📝 Notes</button>
+          <button class="action-btn" onclick="toast('Resources downloaded!')">⬇ Resources</button>
+        </div>
+      </div>
+    </div>
+    <div class="curr-panel">
+      <div class="curr-top"><span>Curriculum</span><span class="curr-prog" id="curr-prog">0%</span></div>
+      <div id="curriculum-panel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MY LEARNING -->
+<div class="page" id="page-mylearning">
+  <div class="section">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('inprogress',this)">In Progress</button>
+      <button class="tab" onclick="switchTab('completed',this)">Completed</button>
+    </div>
+    <div class="grid3" id="learning-grid"></div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="page" id="page-profile">
+  <div class="section">
+    <div style="max-width:860px;margin:0 auto">
+      <div class="profile-banner">
+        <div class="profile-av" id="prof-av">?</div>
+        <div style="flex:1">
+          <div class="profile-name" id="prof-name">—</div>
+          <div class="profile-email" id="prof-email">—</div>
+          <div class="profile-badges" id="prof-badges"></div>
+        </div>
+        <button class="action-btn" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.2)" onclick="toast('Edit profile coming soon!')">✏ Edit</button>
+      </div>
+      <div class="stats-row4">
+        <div class="stat-box"><div class="stat-val" id="ps-enrolled">0</div><div class="stat-lbl">Courses Enrolled</div></div>
+        <div class="stat-box"><div class="stat-val" id="ps-avg">0%</div><div class="stat-lbl">Avg Completion</div></div>
+        <div class="stat-box"><div class="stat-val" id="ps-xp">0</div><div class="stat-lbl">XP Earned</div></div>
+        <div class="stat-box"><div class="stat-val" id="ps-streak">0</div><div class="stat-lbl">Day Streak</div></div>
+      </div>
+      <div class="sec-header" style="margin-bottom:16px"><div class="sec-title">Achievements</div></div>
+      <div class="ach-grid">
+        <div class="ach-card" id="ach1"><div class="ach-icon">🚀</div><div class="ach-name">First Enroll</div><div class="ach-desc">Enrolled in first course</div></div>
+        <div class="ach-card" id="ach2"><div class="ach-icon">🔥</div><div class="ach-name">7-Day Streak</div><div class="ach-desc">7 days in a row</div></div>
+        <div class="ach-card locked" id="ach3"><div class="ach-icon">🏆</div><div class="ach-name">Graduate</div><div class="ach-desc">Complete 3 courses</div></div>
+        <div class="ach-card locked"><div class="ach-icon">💎</div><div class="ach-name">30-Day Streak</div><div class="ach-desc">30 days in a row</div></div>
+      </div>
+      <div style="margin-top:24px;text-align:center">
+        <button class="action-btn" style="color:var(--accent);border-color:var(--accent)" onclick="logout()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIG — auto-detect API URL
+// ═══════════════════════════════════════════════════
+const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api'
+  : window.location.origin + '/api';
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+const S = {
+  user: null,
+  token: localStorage.getItem('jd_token') || null,
+  courses: [],
+  progress: [],
+  currentCourse: null,
+  currentLesson: null,
+  demo: false,
+};
+
+// ═══════════════════════════════════════════════════
+//  API HELPER
+// ═══════════════════════════════════════════════════
+const api = async (path, opts = {}) => {
+  const headers = { 'Content-Type': 'application/json' };
+  if (S.token) headers['Authorization'] = 'Bearer ' + S.token;
+  const res = await fetch(API + path, { ...opts, headers: { ...headers, ...(opts.headers || {}) } });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+};
+
+// ═══════════════════════════════════════════════════
+//  DEMO DATA (when backend offline)
+// ═══════════════════════════════════════════════════
+const DEMO_USER = { uid:'d1', name:'Aarav Joshi', email:'aarav@email.com', role:'student', xp:2840, streakDays:7, enrolledCourses:['c1','c2'], badges:['🔥 7-Day Streak','⭐ Top Learner'] };
+const DEMO_COURSES = [
+  { id:'c1', title:'React.js Complete Guide', instructorName:'Arjun Mehta', category:'web', difficulty:'intermediate', emoji:'⚛️', totalLessons:6, durationStr:'22h 10m', enrolledCount:204,
+    sections:[
+      { title:'Section 1 — Getting Started', order:1, lessons:[
+        { id:'l1', title:'Course Introduction', durationStr:'3 min', isFree:true, githubPath:'web-development/react-complete-guide/lesson-01-introduction.mp4', videoUrl:null },
+        { id:'l2', title:'Setup & Installation', durationStr:'8 min', isFree:true, githubPath:'web-development/react-complete-guide/lesson-02-setup.mp4', videoUrl:null },
+        { id:'l3', title:'Your First React App', durationStr:'15 min', githubPath:'web-development/react-complete-guide/lesson-03-first-app.mp4', videoUrl:null },
+      ]},
+      { title:'Section 2 — React Hooks', order:2, lessons:[
+        { id:'l4', title:'useState Deep Dive', durationStr:'25 min', githubPath:'web-development/react-complete-guide/lesson-04-usestate.mp4', videoUrl:null },
+        { id:'l5', title:'useEffect & Side Effects', durationStr:'30 min', githubPath:'web-development/react-complete-guide/lesson-05-useeffect.mp4', videoUrl:null },
+      ]},
+    ]
+  },
+  { id:'c2', title:'Python for Data Science', instructorName:'Priya Sharma', category:'data', difficulty:'beginner', emoji:'🐍', totalLessons:4, durationStr:'14h 45m', enrolledCount:178,
+    sections:[{ title:'Section 1 — Python Basics', order:1, lessons:[
+      { id:'p1', title:'Python Setup & Jupyter', durationStr:'10 min', isFree:true, githubPath:'data-science/python-for-data-science/lesson-01-setup.mp4', videoUrl:null },
+      { id:'p2', title:'Variables & Data Types', durationStr:'20 min', githubPath:'data-science/python-for-data-science/lesson-02-variables.mp4', videoUrl:null },
+    ]}]
+  },
+  { id:'c3', title:'JavaScript ES6+', instructorName:'Priya Sharma', category:'web', difficulty:'beginner', emoji:'💛', totalLessons:28, durationStr:'10h', enrolledCount:287, sections:[] },
+  { id:'c4', title:'Flutter Mobile Dev', instructorName:'Arjun Mehta', category:'mobile', difficulty:'intermediate', emoji:'📱', totalLessons:42, durationStr:'18h', enrolledCount:87, sections:[] },
+  { id:'c5', title:'Machine Learning A-Z', instructorName:'Dr. Anil Kumar', category:'data', difficulty:'advanced', emoji:'🤖', totalLessons:60, durationStr:'32h', enrolledCount:98, sections:[] },
+  { id:'c6', title:'UI/UX Fundamentals', instructorName:'Kavya Rao', category:'design', difficulty:'beginner', emoji:'🎨', totalLessons:20, durationStr:'9h', enrolledCount:234, sections:[] },
+  { id:'c7', title:'AWS Cloud Practitioner', instructorName:'Rohit Agarwal', category:'devops', difficulty:'advanced', emoji:'☁️', totalLessons:38, durationStr:'16h', enrolledCount:119, sections:[] },
+  { id:'c8', title:'Node.js & Express API', instructorName:'Vikram Singh', category:'web', difficulty:'intermediate', emoji:'🟢', totalLessons:30, durationStr:'11h', enrolledCount:142, sections:[] },
+];
+const DEMO_PROGRESS = [
+  { courseId:'c1', course:{ id:'c1', title:'React.js Complete Guide', emoji:'⚛️', totalLessons:6, instructorName:'Arjun Mehta' }, percentComplete:33, completedLessons:['l1','l2'], lastLessonId:'l3' },
+  { courseId:'c2', course:{ id:'c2', title:'Python for Data Science', emoji:'🐍', totalLessons:4, instructorName:'Priya Sharma' }, percentComplete:50, completedLessons:['p1'], lastLessonId:'p2' },
+];
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+const init = async () => {
+  // Check API
+  try {
+    await fetch(API + '/health');
+    S.demo = false;
+  } catch {
+    S.demo = true;
+    S.user = DEMO_USER;
+    S.token = 'demo';
+    S.courses = DEMO_COURSES;
+    S.progress = DEMO_PROGRESS;
+    localStorage.setItem('jd_token','demo');
+    onLogin();
+    showPage('home');
+    return;
+  }
+  // Restore session
+  if (S.token && S.token !== 'demo') {
+    try {
+      const { user } = await api('/auth/me');
+      S.user = user;
+      const prog = await api('/progress/user/all');
+      S.progress = prog.records || [];
+      onLogin();
+    } catch {
+      S.token = null;
+      localStorage.removeItem('jd_token');
+    }
+  }
+  await loadCourses();
+  if (!S.token) showPage('auth');
+  else showPage('home');
+};
+
+// ═══════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════
+let isSignIn = true;
+const toggleMode = () => {
+  isSignIn = !isSignIn;
+  document.getElementById('auth-title').textContent = isSignIn ? 'Welcome back' : 'Create account';
+  document.getElementById('auth-sub').textContent = isSignIn ? 'Sign in to continue learning' : 'Join thousands of learners';
+  document.getElementById('name-field').style.display = isSignIn ? 'none' : 'block';
+  document.getElementById('auth-btn').textContent = isSignIn ? 'Sign In' : 'Create Account';
+  document.getElementById('auth-toggle').innerHTML = isSignIn
+    ? 'New here? <span onclick="toggleMode()">Create account</span>'
+    : 'Already registered? <span onclick="toggleMode()">Sign in</span>';
+  document.getElementById('auth-error').classList.remove('show');
+};
+
+const doAuth = async () => {
+  const email = document.getElementById('f-email').value.trim();
+  const pass  = document.getElementById('f-pass').value;
+  const name  = document.getElementById('f-name').value.trim();
+  if (!email || !pass) { showError('Please fill in all fields'); return; }
+  const btn = document.getElementById('auth-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>' + (isSignIn ? 'Signing in…' : 'Creating…');
+  try {
+    if (S.demo) {
+      S.user = { ...DEMO_USER, name: name || DEMO_USER.name, email };
+      S.progress = DEMO_PROGRESS;
+    } else {
+      const ep = isSignIn ? '/auth/login' : '/auth/register';
+      const body = isSignIn ? { email, password: pass } : { name, email, password: pass };
+      const data = await api(ep, { method:'POST', body: JSON.stringify(body) });
+      S.token = data.token;
+      S.user  = data.user;
+      localStorage.setItem('jd_token', data.token);
+      const prog = await api('/progress/user/all');
+      S.progress = prog.records || [];
+    }
+    onLogin();
+    showPage('home');
+    toast('Welcome, ' + S.user.name.split(' ')[0] + '! 👋');
+  } catch(e) { showError(e.message); }
+  finally { btn.disabled = false; btn.textContent = isSignIn ? 'Sign In' : 'Create Account'; }
+};
+
+const showError = (msg) => {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.add('show');
+};
+
+const onLogin = () => {
+  const u = S.user;
+  document.getElementById('main-nav').style.display = 'flex';
+  document.getElementById('search-wrap').style.display = 'flex';
+  document.getElementById('xp-chip').style.display = 'flex';
+  document.getElementById('user-chip').style.display = 'flex';
+  document.getElementById('login-btn').style.display = 'none';
+  document.getElementById('xp-val').textContent = (u.xp || 0).toLocaleString();
+  const ini = (u.name || '??').split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('nav-avatar').textContent = ini;
+  document.getElementById('nav-name').textContent = (u.name || '').split(' ')[0];
+};
+
+const logout = () => {
+  S.token = null; S.user = null;
+  localStorage.removeItem('jd_token');
+  location.reload();
+};
+
+// ═══════════════════════════════════════════════════
+//  COURSES
+// ═══════════════════════════════════════════════════
+const loadCourses = async () => {
+  try {
+    if (!S.demo) {
+      const data = await api('/courses?limit=50');
+      S.courses = (data.courses || []).map(c => ({ ...c, id: c.id || c._id }));
+    }
+  } catch {}
+  renderHomeCourses();
+  renderExploreCourses();
+};
+
+const isEnrolled = id => (S.user?.enrolledCourses || []).includes(id);
+const getProgress = id => S.progress.find(p => p.courseId === id);
+const getCoverBg = cat => ({'web':'linear-gradient(135deg,#fef2ee,#ffe8e0)','data':'linear-gradient(135deg,#eff8ff,#dbeafe)','mobile':'linear-gradient(135deg,#f0faf5,#d1fae5)','design':'linear-gradient(135deg,#fef9f0,#fef3c7)','devops':'linear-gradient(135deg,#f5f0ff,#ede9fe)'}[cat] || 'linear-gradient(135deg,#f7f5f0,#ede8de)');
+
+const courseCard = (c) => {
+  const en = isEnrolled(c.id);
+  const pr = getProgress(c.id);
+  const dc = {beginner:'chip-b',intermediate:'chip-i',advanced:'chip-a'}[c.difficulty] || 'chip-b';
+  const dl = (c.difficulty||'').charAt(0).toUpperCase() + (c.difficulty||'').slice(1);
+  return `<div class="course-card" onclick="openCourse('${c.id}')">
+    <div class="cc-cover" style="background:${getCoverBg(c.category)}"><span>${c.emoji||'📚'}</span></div>
+    <div class="cc-body">
+      <div class="cc-title">${c.title}</div>
+      <div class="cc-instructor">by ${c.instructorName||'Instructor'}</div>
+      <div class="cc-meta"><span>📖 ${c.totalLessons||0}</span><span>⏱ ${c.durationStr||'—'}</span><span>👥 ${c.enrolledCount||0}</span></div>
+      ${pr ? `<div class="prog-bar"><div class="prog-fill" style="width:${pr.percentComplete}%"></div></div><div class="prog-pct">${pr.percentComplete}% complete</div>` : ''}
+      <div class="cc-footer">
+        <span class="diff-chip ${dc}">${dl}</span>
+        <button class="enroll-btn ${en?'enrolled':''}" onclick="event.stopPropagation();enrollCourse('${c.id}')">${en?'✓ Enrolled':'Enroll'}</button>
+      </div>
+    </div>
+  </div>`;
+};
+
+const renderHomeCourses = () => {
+  const el = document.getElementById('home-courses');
+  if (el) el.innerHTML = S.courses.slice(0,8).map(courseCard).join('');
+};
+const renderExploreCourses = (cat='') => {
+  const el = document.getElementById('explore-courses');
+  if (!el) return;
+  const list = cat ? S.courses.filter(c=>c.category===cat) : S.courses;
+  el.innerHTML = list.length ? list.map(courseCard).join('') : '<div class="empty-state"><div class="e-icon">🔍</div><p>No courses in this category yet.</p></div>';
+};
+const filterExplore = (cat, btn) => {
+  document.querySelectorAll('#explore-filters .enroll-btn').forEach(b=>{b.classList.remove('enrolled')});
+  btn.classList.add('enrolled');
+  renderExploreCourses(cat);
+};
+
+const enrollCourse = async (id) => {
+  if (!S.user) { showPage('auth'); return; }
+  if (isEnrolled(id)) { openCourse(id); return; }
+  try {
+    if (!S.demo) {
+      const data = await api('/courses/' + id + '/enroll', { method:'POST' });
+      toast('Enrolled! +' + data.xpEarned + ' XP 🎉');
+      S.user.xp = (S.user.xp||0) + (data.xpEarned||50);
+      document.getElementById('xp-val').textContent = S.user.xp.toLocaleString();
+    } else {
+      toast('Enrolled! +50 XP 🎉');
+    }
+    if (!S.user.enrolledCourses) S.user.enrolledCourses = [];
+    S.user.enrolledCourses.push(id);
+    renderHomeCourses(); renderExploreCourses();
+    openCourse(id);
+  } catch(e) { toast(e.message); }
+};
+
+// ═══════════════════════════════════════════════════
+//  PLAYER
+// ═══════════════════════════════════════════════════
+const openCourse = async (id) => {
+  let c = S.courses.find(x => x.id === id);
+  if (!c) return;
+  S.currentCourse = c;
+  if (!S.demo && isEnrolled(id)) {
+    try {
+      const data = await api('/courses/' + id);
+      S.currentCourse = { ...data.course, id: data.course.id || data.course._id };
+    } catch {}
+  }
+  showPage('player');
+  renderCurriculum();
+  const prog = getProgress(id);
+  const allLessons = (S.currentCourse.sections||[]).flatMap(s=>s.lessons||[]);
+  const start = prog?.lastLessonId ? allLessons.find(l=>l.id===prog.lastLessonId) : allLessons[0];
+  if (start) loadLesson(start);
+};
+
+const renderCurriculum = () => {
+  const c = S.currentCourse; if (!c) return;
+  const prog = getProgress(c.id);
+  const done = prog?.completedLessons || [];
+  const total = c.totalLessons || 0;
+  const pct = total ? Math.round(done.length/total*100) : 0;
+  document.getElementById('curr-prog').textContent = pct + '%';
+  const html = (c.sections||[]).map(s =>
+    `<div class="curr-section-hdr">${s.title} <span style="font-weight:400">(${s.lessons?.length||0})</span></div>` +
+    (s.lessons||[]).map(l => {
+      const isDone = done.includes(l.id);
+      const isActive = S.currentLesson?.id === l.id;
+      const locked = !isEnrolled(c.id) && !l.isFree;
+      return `<div class="curr-lesson ${isActive?'active':''} ${isDone?'done':''}" onclick="${locked?`toast('Enroll to unlock')`:`loadLessonById('${l.id}')`}">
+        <span class="lesson-status">${isDone?'✅':isActive?'▶':locked?'🔒':'○'}</span>
+        <span style="flex:1;font-size:13px">${l.title}</span>
+        <span class="lesson-dur">${l.durationStr||''}</span>
+      </div>`;
+    }).join('')
+  ).join('') || '<div style="padding:16px;font-size:12px;color:var(--muted);text-align:center">No lessons yet</div>';
+  document.getElementById('curriculum-panel').innerHTML = html;
+};
+
+const loadLessonById = (id) => {
+  const l = (S.currentCourse?.sections||[]).flatMap(s=>s.lessons||[]).find(x=>x.id===id);
+  if (l) loadLesson(l);
+};
+
+const loadLesson = (l) => {
+  S.currentLesson = l;
+  const c = S.currentCourse;
+  document.getElementById('player-lesson-title').textContent = l.title;
+  document.getElementById('player-course-name').textContent = (c?.emoji||'') + ' ' + (c?.title||'');
+  document.getElementById('player-dur').textContent = '⏱ ' + (l.durationStr||'—');
+  document.getElementById('player-free-tag').textContent = l.isFree ? '🆓 Free Preview' : '';
+  const box = document.getElementById('video-box');
+  const enrolled = isEnrolled(c?.id);
+  const src = l.videoUrl || (l.githubPath && enrolled
+    ? `https://raw.githubusercontent.com/${window._ghOwner||'YOUR_USERNAME'}/${window._ghRepo||'lms-videos'}/main/${l.githubPath}`
+    : null);
+  if (src) {
+    box.innerHTML = `<video id="mv" controls autoplay style="width:100%;display:block;max-height:60vh;background:#000"><source src="${src}" type="video/mp4"><p style="color:#fff;padding:20px">Video not supported.</p></video>`;
+    document.getElementById('mv').addEventListener('ended', markComplete);
+    document.getElementById('mv').addEventListener('error', () => {
+      box.innerHTML = fallbackHtml(l.title, '⚠️ Video not found on GitHub. Push the .mp4 file to: ' + l.githubPath);
+    });
+  } else {
+    box.innerHTML = fallbackHtml(l.title, l.isFree
+      ? 'Push this video to GitHub to watch the free preview'
+      : (enrolled ? 'Push this video to GitHub to watch' : '🔒 Enroll in this course to watch'));
+  }
+  renderCurriculum();
+};
+
+const fallbackHtml = (title, hint) =>
+  `<div class="video-fallback"><div style="font-size:48px;margin-bottom:12px">🎬</div><p style="font-size:14px;color:rgba(255,255,255,.6)">${title}</p><p style="font-size:12px;margin-top:6px;color:rgba(255,255,255,.3);max-width:360px">${hint}</p></div>`;
+
+const markComplete = async () => {
+  const l = S.currentLesson, c = S.currentCourse;
+  if (!l || !c) return;
+  try {
+    if (!S.demo) {
+      const data = await api('/progress/' + c.id + '/complete-lesson', { method:'POST', body: JSON.stringify({ lessonId: l.id, watchSeconds: 60 }) });
+      if (data.xpEarned) { S.user.xp = (S.user.xp||0)+data.xpEarned; document.getElementById('xp-val').textContent = S.user.xp.toLocaleString(); }
+      toast('Lesson complete! +' + (data.xpEarned||0) + ' XP ⚡');
+      if (data.isCompleted) setTimeout(()=>toast('🎉 Course complete! Certificate earned!'), 1500);
+      const prog = await api('/progress/user/all');
+      S.progress = prog.records || [];
+    } else {
+      let p = S.progress.find(x=>x.courseId===c.id);
+      if (!p) { p = { courseId:c.id, course:{ id:c.id, title:c.title, emoji:c.emoji, totalLessons:c.totalLessons, instructorName:c.instructorName }, completedLessons:[], percentComplete:0, lastLessonId:null }; S.progress.push(p); }
+      if (!p.completedLessons.includes(l.id)) { p.completedLessons.push(l.id); p.percentComplete = Math.round(p.completedLessons.length/(c.totalLessons||1)*100); S.user.xp=(S.user.xp||0)+20; document.getElementById('xp-val').textContent=S.user.xp.toLocaleString(); toast('Lesson complete! +20 XP ⚡'); }
+      else toast('Already completed ✓');
+      p.lastLessonId = l.id;
+    }
+    renderCurriculum();
+  } catch(e) { toast(e.message); }
+};
+
+// ═══════════════════════════════════════════════════
+//  HOME render
+// ═══════════════════════════════════════════════════
+const renderHome = () => {
+  const u = S.user; if (!u) return;
+  document.getElementById('hero-greeting').textContent = 'Welcome back, ' + (u.name||'').split(' ')[0] + ' 👋';
+  const progs = S.progress;
+  const avgPct = progs.length ? Math.round(progs.reduce((a,p)=>a+(p.percentComplete||0),0)/progs.length) : 0;
+  const completed = progs.filter(p=>p.percentComplete>=100).length;
+  document.getElementById('hs-enrolled').textContent = (u.enrolledCourses||[]).length;
+  document.getElementById('hs-avg').textContent = avgPct + '%';
+  document.getElementById('hs-completed').textContent = completed;
+  document.getElementById('streak-num').textContent = u.streakDays || 0;
+  document.getElementById('ps-enrolled').textContent = (u.enrolledCourses||[]).length;
+  document.getElementById('ps-avg').textContent = avgPct + '%';
+  document.getElementById('ps-xp').textContent = (u.xp||0).toLocaleString();
+  document.getElementById('ps-streak').textContent = u.streakDays || 0;
+  const s = u.streakDays||0;
+  document.getElementById('streak-dots').innerHTML = Array.from({length:10},(_,i)=>`<div class="sdot ${i<s?'done':''}"></div>`).join('');
+  const ini = (u.name||'??').split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('prof-av').textContent = ini;
+  document.getElementById('prof-name').textContent = u.name||'—';
+  document.getElementById('prof-email').textContent = (u.email||'') + ' · Student';
+  document.getElementById('prof-badges').innerHTML = (u.badges||[]).map(b=>`<span class="pbadge">${b}</span>`).join('');
+  // Achievements
+  if ((u.enrolledCourses||[]).length > 0) document.getElementById('ach1').classList.remove('locked');
+  if ((u.streakDays||0) >= 7) document.getElementById('ach2').classList.remove('locked');
+  // Continue learning
+  const inProg = progs.filter(p=>p.percentComplete>0&&p.percentComplete<100);
+  if (inProg.length) {
+    document.getElementById('continue-section').style.display = 'block';
+    document.getElementById('continue-grid').innerHTML = inProg.slice(0,3).map(p => {
+      const c = p.course;
+      return `<div class="continue-card" onclick="openCourse('${c?.id||p.courseId}')">
+        <div style="font-size:30px;margin-bottom:10px">${c?.emoji||'📚'}</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">${c?.title||'Course'}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${c?.instructorName||''}</div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${p.percentComplete}%"></div></div>
+        <div class="prog-pct">${p.percentComplete}% complete</div>
+        <button class="resume-btn">▶ Resume</button>
+      </div>`;
+    }).join('');
+  }
+};
+
+// ═══════════════════════════════════════════════════
+//  MY LEARNING
+// ═══════════════════════════════════════════════════
+const renderLearning = (tab='inprogress') => {
+  const el = document.getElementById('learning-grid');
+  const list = tab==='inprogress' ? S.progress.filter(p=>p.percentComplete<100) : S.progress.filter(p=>p.percentComplete>=100);
+  if (!list.length) { el.innerHTML=`<div class="empty-state"><div class="e-icon">${tab==='inprogress'?'📖':'🎓'}</div><p>${tab==='inprogress'?'No courses in progress. Enroll in something!':'No completed courses yet.'}</p></div>`; return; }
+  el.innerHTML = list.map(p => {
+    const c = p.course;
+    return `<div class="learn-card">
+      <div class="learn-hdr"><div class="learn-emoji">${c?.emoji||'📚'}</div><div><div class="learn-title">${c?.title||'Course'}</div><div class="learn-meta-s">${c?.instructorName||''} · ${p.completedLessons?.length||0}/${c?.totalLessons||0} lessons</div></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted)"><span>Progress</span><span style="color:var(--accent);font-weight:600">${p.percentComplete}%</span></div>
+      <div class="prog-bar-lg"><div class="prog-fill-lg" style="width:${p.percentComplete}%"></div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-cont" onclick="openCourse('${c?.id||p.courseId}')">${p.percentComplete>=100?'✓ Review':'▶ Continue'}</button>
+        <button class="btn-ghost" onclick="toast('Notes coming soon!')">📝</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+const switchTab = (tab, btn) => {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderLearning(tab);
+};
+
+// ═══════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════
+const gotoHome = () => { if (S.user) showPage('home'); else showPage('auth'); };
+const showPage = (page, btn) => {
+  if (!S.user && page !== 'auth') { showPage('auth'); return; }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else { const m={home:0,explore:1,mylearning:2,profile:3}; const btns=document.querySelectorAll('.nav-btn'); if(m[page]!==undefined) btns[m[page]]?.classList.add('active'); }
+  if (page==='home') renderHome();
+  if (page==='explore') renderExploreCourses();
+  if (page==='mylearning') renderLearning();
+};
+
+// ═══════════════════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════════════════
+const handleSearch = (val) => {
+  if (val.length < 2) return;
+  showPage('explore');
+  const f = S.courses.filter(c => c.title.toLowerCase().includes(val.toLowerCase()) || c.instructorName?.toLowerCase().includes(val.toLowerCase()));
+  document.getElementById('explore-courses').innerHTML = f.map(courseCard).join('') || '<div class="empty-state"><div class="e-icon">🔍</div><p>No results found.</p></div>';
+};
+
+// ═══════════════════════════════════════════════════
+//  TOAST + KEEP-ALIVE
+// ═══════════════════════════════════════════════════
+const toast = (msg) => {
+  const el = document.getElementById('toast-el');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 2800);
+};
+window.toast = toast;
+
+// Keep Render free tier awake every 13 minutes
+setInterval(() => fetch(API + '/health').catch(()=>{}), 13*60*1000);
+
+// ═══════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════
+init();
+</script>
+
+<script>
+// Keep Render free tier awake — ping every 13 minutes
+const _KA_API = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')
+  ? 'http://localhost:5000/api' : window.location.origin+'/api';
+setInterval(()=>fetch(_KA_API+'/health').catch(()=>{}), 13*60*1000);
+</script>
+</body>
+</html>
