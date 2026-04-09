@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: jain-lms-api
+    runtime: node
+    region: singapore
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Firebase credentials are loaded from serviceAccountKey.json
+      # which is bundled in config/ — no Firebase env vars needed!
+      #
+      # Only set these if you use GitHub video storage:
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_OWNER
+        sync: false
+      - key: GITHUB_REPO
+        sync: false
+      - key: GITHUB_BRANCH
+        value: main
+      # JWT secret for admin panel login
+      - key: JWT_SECRET
+        sync: false
