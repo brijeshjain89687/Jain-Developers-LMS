@@ -14,10 +14,23 @@ services:
         value: production
       - key: PORT
         value: 10000
-      # Firebase credentials are loaded from serviceAccountKey.json
-      # which is bundled in config/ — no Firebase env vars needed!
-      #
-      # Only set these if you use GitHub video storage:
+
+      # ── Firebase Service Account ─────────────────────────────
+      # Set these in Render Dashboard → Environment (sync: false = secret)
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY_ID
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_CLIENT_ID
+        sync: false
+      - key: FIREBASE_DATABASE_URL
+        value: https://jain-lms-f14cd-default-rtdb.firebaseio.com
+
+      # ── GitHub video storage ─────────────────────────────────
       - key: GITHUB_TOKEN
         sync: false
       - key: GITHUB_OWNER
@@ -26,6 +39,7 @@ services:
         sync: false
       - key: GITHUB_BRANCH
         value: main
-      # JWT secret for admin panel login
+
+      # ── JWT secret for admin panel ───────────────────────────
       - key: JWT_SECRET
         sync: false
