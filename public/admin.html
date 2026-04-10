@@ -492,10 +492,19 @@ const init = async () => {
 const checkConn = async () => {
   try {
     const d = await fetch(CFG.apiUrl + '/health').then(r=>r.json());
-    DATA.connected = true;
-    document.getElementById('api-pill').className = 'api-pill on';
-    document.getElementById('api-txt').textContent = 'Firebase Connected';
-    document.getElementById('conn-dot').className = 'conn-dot';
+    const dbOk = d.db && d.db.startsWith('firestore-ok');
+    DATA.connected = dbOk;
+    if (dbOk) {
+      document.getElementById('api-pill').className = 'api-pill on';
+      document.getElementById('api-txt').textContent = 'Firebase Connected';
+      document.getElementById('conn-dot').className = 'conn-dot';
+    } else {
+      // API is up but Firestore auth failed — show the real error
+      document.getElementById('api-pill').className = 'api-pill off';
+      document.getElementById('api-txt').textContent = 'Firestore Error — check env vars';
+      document.getElementById('conn-dot').className = 'conn-dot off';
+      console.error('Firestore status from /health:', d.db);
+    }
   } catch {
     DATA.connected = false;
     document.getElementById('api-pill').className = 'api-pill off';
