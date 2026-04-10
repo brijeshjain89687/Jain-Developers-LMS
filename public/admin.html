@@ -147,6 +147,34 @@ textarea.fi{resize:vertical;min-height:80px}
 </head>
 <body>
 
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="position:fixed;inset:0;background:#0e0e16;display:flex;align-items:center;justify-content:center;z-index:9999;font-family:'Sora',sans-serif;">
+  <div style="background:#16161f;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:40px;width:400px;max-width:92vw;text-align:center;">
+    <div style="width:48px;height:48px;background:#e94560;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;margin:0 auto 16px;">JD</div>
+    <div style="font-size:20px;font-weight:700;color:#eeeef5;margin-bottom:4px;">Admin Panel</div>
+    <div style="font-size:13px;color:#7a7a9a;margin-bottom:28px;">Jain Developers LMS</div>
+    <div style="margin-bottom:14px;text-align:left;">
+      <label style="font-size:11px;font-weight:600;color:#7a7a9a;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px;">Email</label>
+      <input id="li-email" type="email" value="admin@jaindevelopers.com" onkeydown="if(event.key==='Enter')doAdminLogin()"
+        style="width:100%;background:#0e0e16;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 13px;color:#eeeef5;font-family:'Sora',sans-serif;font-size:13px;outline:none;">
+    </div>
+    <div style="margin-bottom:20px;text-align:left;">
+      <label style="font-size:11px;font-weight:600;color:#7a7a9a;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px;">Password</label>
+      <input id="li-pass" type="password" value="admin123" onkeydown="if(event.key==='Enter')doAdminLogin()"
+        style="width:100%;background:#0e0e16;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 13px;color:#eeeef5;font-family:'Sora',sans-serif;font-size:13px;outline:none;">
+    </div>
+    <div id="li-err" style="color:#e94560;font-size:12px;margin-bottom:12px;display:none;padding:8px;background:rgba(233,69,96,.1);border-radius:6px;"></div>
+    <button id="li-btn" onclick="doAdminLogin()"
+      style="width:100%;padding:12px;background:#e94560;color:#fff;border:none;border-radius:10px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;">
+      Sign In
+    </button>
+    <div style="margin-top:16px;font-size:11px;color:#7a7a9a;line-height:1.8;">
+      Default: admin@jaindevelopers.com / admin123<br>
+      <span style="color:#5a5a7a;">First time? Visit <strong style="color:#e94560;">/api/seed?secret=jain-seed-2024</strong></span>
+    </div>
+  </div>
+</div>
+
 <aside class="sidebar">
   <div class="logo-area">
     <div class="logo-box">JD</div>
@@ -764,7 +792,7 @@ const openModal  = (id) => { document.getElementById(id).classList.add('open'); 
 const closeModal = (id) => document.getElementById(id).classList.remove('open');
 document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
 
-const doLogout = () => { localStorage.removeItem('jd_admin_token'); window.location.href='/'; };
+const doLogout = () => { localStorage.removeItem('jd_admin_token'); CFG.token = ''; document.getElementById('login-screen').style.display = 'flex'; };
 
 // ═══════════════════════════════════════════
 //  TOAST + KEEPALIVE
@@ -772,8 +800,66 @@ const doLogout = () => { localStorage.removeItem('jd_admin_token'); window.locat
 const toast = (msg) => { const el=document.getElementById('toast-el'); el.textContent=msg; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),3000); };
 setInterval(()=>fetch(CFG.apiUrl+'/health').catch(()=>{}), 13*60*1000);
 
+
+// ═══════════════════════════════════════════════
+//  ADMIN LOGIN
+// ═══════════════════════════════════════════════
+const doAdminLogin = async () => {
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  const errEl = document.getElementById('li-err');
+  const btn   = document.getElementById('li-btn');
+  errEl.style.display = 'none';
+  if (!email || !pass) { errEl.textContent='Enter email and password'; errEl.style.display='block'; return; }
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  try {
+    const res  = await fetch(CFG.apiUrl + '/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Login failed');
+    if (!['admin','instructor'].includes(data.user && data.user.role)) {
+      throw new Error('Access denied. Admin or instructor role required.');
+    }
+    CFG.token = data.token;
+    localStorage.setItem('jd_admin_token', data.token);
+    const ini = (data.user.name || 'AD').split(' ').map(function(x){return x[0];}).join('').substring(0,2).toUpperCase();
+    document.getElementById('sb-av').textContent   = ini;
+    document.getElementById('sb-name').textContent = data.user.name || 'Admin';
+    document.getElementById('sb-role').textContent = data.user.role || 'admin';
+    document.getElementById('login-screen').style.display = 'none';
+    DATA.connected = true;
+    await loadAll();
+    renderDashboard();
+  } catch (err) {
+    errEl.textContent = err.message; errEl.style.display = 'block';
+  } finally {
+    btn.textContent = 'Sign In'; btn.disabled = false;
+  }
+};
+
+const tryAutoLogin = async () => {
+  const saved = localStorage.getItem('jd_admin_token');
+  if (!saved) return;
+  CFG.token = saved;
+  try {
+    const res  = await fetch(CFG.apiUrl + '/auth/me', { headers: { 'Authorization': 'Bearer ' + saved } });
+    const data = await res.json();
+    if (res.ok && ['admin','instructor'].includes(data.user && data.user.role)) {
+      const ini = (data.user.name || 'AD').split(' ').map(function(x){return x[0];}).join('').substring(0,2).toUpperCase();
+      document.getElementById('sb-av').textContent   = ini;
+      document.getElementById('sb-name').textContent = data.user.name || 'Admin';
+      document.getElementById('sb-role').textContent = data.user.role || 'admin';
+      document.getElementById('login-screen').style.display = 'none';
+      await loadAll(); renderDashboard(); return;
+    }
+  } catch {}
+  localStorage.removeItem('jd_admin_token'); CFG.token = '';
+};
+
 // BOOT
-init();
+tryAutoLogin();
 </script>
 
 <script>

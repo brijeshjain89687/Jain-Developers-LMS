@@ -4,5 +4,6 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# NEVER commit Firebase credentials to git — use Render env vars instead
-config/serviceAccountKey.json
+# NOTE: config/serviceAccountKey.json is intentionally committed.
+# It is required on Render for Firebase authentication.
+# Do NOT add it here. If you rotate the key, replace the file and redeploy.

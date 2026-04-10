@@ -1,58 +1,52 @@
 // config/firebase.js
 // ============================================================
-//  Firebase Admin SDK initialisation
+//  Firebase Admin SDK — environment variables only
 //
-//  Credentials are loaded ONLY from environment variables.
-//  Never commit serviceAccountKey.json to git.
+//  Set these in Render Dashboard → Environment:
 //
-//  Required env vars (set in Render Dashboard → Environment):
-//    FIREBASE_PROJECT_ID
-//    FIREBASE_PRIVATE_KEY_ID
-//    FIREBASE_PRIVATE_KEY      ← paste the full key including -----BEGIN/END-----
-//    FIREBASE_CLIENT_EMAIL
-//    FIREBASE_CLIENT_ID
-//    FIREBASE_DATABASE_URL     (optional, has default)
+//  FIREBASE_PROJECT_ID      = jain-lms-f14cd
+//  FIREBASE_PRIVATE_KEY_ID  = 7f6ade1d1b51b3152780797ec2081729c96a2758
+//  FIREBASE_CLIENT_EMAIL    = firebase-adminsdk-fbsvc@jain-lms-f14cd.iam.gserviceaccount.com
+//  FIREBASE_CLIENT_ID       = 101739915886213945364
+//  FIREBASE_PRIVATE_KEY     = (the full private key — see README)
 // ============================================================
 
 const admin = require('firebase-admin');
 
 if (!admin.apps.length) {
-  const requiredVars = [
+  const missing = [
     'FIREBASE_PROJECT_ID',
     'FIREBASE_PRIVATE_KEY_ID',
     'FIREBASE_PRIVATE_KEY',
     'FIREBASE_CLIENT_EMAIL',
     'FIREBASE_CLIENT_ID',
-  ];
+  ].filter(v => !process.env[v]);
 
-  const missing = requiredVars.filter(v => !process.env[v]);
   if (missing.length) {
     throw new Error(
-      `❌ Missing Firebase environment variables: ${missing.join(', ')}\n` +
-      '   Set them in Render Dashboard → Environment (or your .env file locally).'
+      `❌ Missing Firebase env vars: ${missing.join(', ')}\n` +
+      `   Add them in Render Dashboard → your service → Environment tab.`
     );
   }
 
-  const serviceAccount = {
-    type:           'service_account',
-    project_id:     process.env.FIREBASE_PROJECT_ID,
-    private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-    // Render stores \n as literal \\n — this converts them back to real newlines
-    private_key:    process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    client_email:   process.env.FIREBASE_CLIENT_EMAIL,
-    client_id:      process.env.FIREBASE_CLIENT_ID,
-    auth_uri:       'https://accounts.google.com/o/oauth2/auth',
-    token_uri:      'https://oauth2.googleapis.com/token',
-  };
-
   admin.initializeApp({
-    credential:  admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert({
+      type:           'service_account',
+      project_id:     process.env.FIREBASE_PROJECT_ID,
+      private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+      // Render saves newlines as \n literally — this restores them
+      private_key:    process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      client_email:   process.env.FIREBASE_CLIENT_EMAIL,
+      client_id:      process.env.FIREBASE_CLIENT_ID,
+      auth_uri:       'https://accounts.google.com/o/oauth2/auth',
+      token_uri:      'https://oauth2.googleapis.com/token',
+    }),
     databaseURL: process.env.FIREBASE_DATABASE_URL ||
                  'https://jain-lms-f14cd-default-rtdb.firebaseio.com',
   });
 
   admin.firestore().settings({ ignoreUndefinedProperties: true });
-  console.log('✅ Firebase Admin SDK initialised — project:', process.env.FIREBASE_PROJECT_ID);
+  console.log('✅ Firebase connected — project:', process.env.FIREBASE_PROJECT_ID);
 }
 
 const db   = admin.firestore();
