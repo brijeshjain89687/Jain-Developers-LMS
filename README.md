@@ -1,101 +1,132 @@
-# Jain Developers LMS
+# Jain Developers LMS — Firebase Edition
 
-Node.js + Express + **Firebase Firestore** (jain-lms-f14cd) + GitHub Videos → Render.com
+## 🚨 Fix: UNAUTHENTICATED Error on Render
 
-## Firebase Project
+If you see `❌ 16 UNAUTHENTICATED` in Render logs, the service account JSON
+is not being found. Fix it with ONE of these methods:
 
-| Field | Value |
-|-------|-------|
-| Project ID | `jain-lms-f14cd` |
-| Firestore | Already configured |
-| Auth | Email/Password enabled |
-| Service Account | `config/serviceAccountKey.json` |
+### Method A — Ensure JSON is committed to git (simplest)
 
-The service account key is bundled in `config/serviceAccountKey.json`. No Firebase environment variables needed — it just works.
-
-## Local Development
+The `serviceAccountKey.json` file MUST be committed to your GitHub repo.
+Run these commands after unzipping:
 
 ```bash
-npm install
-npm run seed     # seed Firestore with demo data
-npm run dev      # starts at http://localhost:5000
-```
-
-Pages:
-- http://localhost:5000/           Landing page
-- http://localhost:5000/student    Student platform
-- http://localhost:5000/admin      Admin panel
-- http://localhost:5000/api/health Health check
-
-## Deploy to Render (3 steps)
-
-### 1. Push to GitHub
-```bash
+cd backend
 git init
 git add .
-git commit -m "Jain Developers LMS"
+git add -f config/serviceAccountKey.json   # force-add just in case
+git commit -m "Jain LMS with Firebase credentials"
 git remote add origin https://github.com/YOUR_USERNAME/jain-lms.git
 git push -u origin main
 ```
 
-### 2. Create Web Service on Render
-- render.com → New → Web Service → connect your repo
-- Render reads `render.yaml` automatically
-- Build: `npm install` | Start: `npm start` | Free plan
+Verify it's in the repo: go to GitHub → your repo → config/serviceAccountKey.json
+If you can see it there, Render will have it too.
 
-### 3. Add Environment Variables (Render Dashboard → Environment)
+### Method B — Add environment variables in Render (alternative)
 
-Only 3 variables needed (Firebase is already bundled):
-
-| Variable | Value |
-|----------|-------|
-| `JWT_SECRET` | Any long random string |
-| `GITHUB_TOKEN` | Your GitHub fine-grained token (for video uploads) |
-| `GITHUB_OWNER` | Your GitHub username |
-| `GITHUB_REPO` | `lms-videos` |
-
-That's it — deploy!
-
-## Your Live URLs
+In Render Dashboard → your service → Environment, add:
 
 ```
-https://YOUR-APP.onrender.com/          Landing page
-https://YOUR-APP.onrender.com/student   Student platform
-https://YOUR-APP.onrender.com/admin     Admin panel
-https://YOUR-APP.onrender.com/api/health  Health check
+FIREBASE_PROJECT_ID      =  jain-lms-f14cd
+FIREBASE_PRIVATE_KEY_ID  =  7f6ade1d1b51b3152780797ec2081729c96a2758
+FIREBASE_CLIENT_EMAIL    =  firebase-adminsdk-fbsvc@jain-lms-f14cd.iam.gserviceaccount.com
+FIREBASE_CLIENT_ID       =  101739915886213945364
+FIREBASE_DATABASE_URL    =  https://jain-lms-f14cd-default-rtdb.firebaseio.com
+FIREBASE_PRIVATE_KEY     =  (paste the entire private key including -----BEGIN PRIVATE KEY----- and -----END PRIVATE KEY-----)
 ```
 
-## Demo Accounts (after npm run seed)
+For FIREBASE_PRIVATE_KEY in Render: paste the raw value from the JSON file.
+Render preserves newlines in env vars — no need to replace \n.
+
+---
+
+## 🌱 Seed Firestore (no terminal needed!)
+
+Once deployed, seed your database by visiting:
+
+```
+POST https://YOUR-APP.onrender.com/api/seed
+Body: { "secret": "jain-seed-2024" }
+```
+
+Or use curl:
+```bash
+curl -X POST https://YOUR-APP.onrender.com/api/seed \
+  -H "Content-Type: application/json" \
+  -d '{"secret": "jain-seed-2024"}'
+```
+
+Or open this URL in browser (GET version also accepted):
+```
+https://YOUR-APP.onrender.com/api/seed?secret=jain-seed-2024
+```
+
+After seeding, these accounts will be available:
 
 | Role | Email | Password |
 |------|-------|----------|
 | Admin | admin@jaindevelopers.com | admin123 |
 | Instructor | priya@jaindevelopers.com | priya123 |
-| Instructor | arjun@jaindevelopers.com | arjun123 |
 | Student | aarav@email.com | aarav123 |
 
-## Firestore Collections
+---
 
-| Collection | Purpose |
-|-----------|---------|
-| `users` | Profiles, XP, enrolled courses |
-| `courses` | Course data with sections and lessons |
-| `progress` | Per-user lesson completion |
-| `quizzes` | Quiz questions |
-| `announcements` | Platform notices |
+## 🚀 Deploy Steps
 
-## GitHub Video Upload
+```bash
+# 1. Unzip and go into backend folder
+unzip 1-jain-lms-backend.zip && cd backend
 
-1. Create a GitHub repo called `lms-videos`
-2. Push .mp4 files following this structure:
+# 2. Commit EVERYTHING including the JSON key
+git init
+git add .
+git add -f config/serviceAccountKey.json
+git commit -m "Jain LMS initial deploy"
+git remote add origin https://github.com/YOUR_USERNAME/jain-lms.git
+git push -u origin main
+
+# 3. On render.com → New → Web Service → connect repo → Deploy
+
+# 4. Add these env vars in Render dashboard:
+#    JWT_SECRET  = any-long-random-string
+#    GITHUB_TOKEN = your-github-token  (for video uploads)
+#    GITHUB_OWNER = your-github-username
+#    GITHUB_REPO  = lms-videos
+
+# 5. After deploy, seed by visiting:
+#    https://YOUR-APP.onrender.com/api/seed?secret=jain-seed-2024
 ```
-lms-videos/
-└── web-development/
-    └── react-complete-guide/
-        ├── lesson-01-introduction.mp4
-        └── lesson-02-setup.mp4
-```
-3. In Admin Panel → Videos → Sync & Scan Repo
-4. In Course Builder → Assign Video to each lesson
 
-⚠️ If you rotate your Firebase service account key, replace `config/serviceAccountKey.json` and redeploy.
+## Live URLs
+
+```
+https://YOUR-APP.onrender.com/           Landing page
+https://YOUR-APP.onrender.com/student    Student platform
+https://YOUR-APP.onrender.com/admin      Admin panel
+https://YOUR-APP.onrender.com/api/health Health check
+```
+
+## Firebase Project
+
+- Project ID: `jain-lms-f14cd`
+- Service: Firestore + Firebase Authentication
+- Collections: users, courses, progress, quizzes, announcements
+
+## Firestore Security Rules
+
+Go to Firebase Console → Firestore → Rules and set:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;  // Admin SDK bypasses all rules
+    }
+  }
+}
+```
+
+The Admin SDK (server-side) ALWAYS bypasses Firestore security rules.
+The rules only affect direct client-side access, which we don't use.
