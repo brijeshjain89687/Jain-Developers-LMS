@@ -18,9 +18,8 @@ const injectVideoUrls = (course, enrolled) => {
   return course;
 };
 
-// ── GET /api/courses/requests/my ──────────────────────────────
-// Student: get their own pending/approved/rejected requests
-// NOTE: must be defined BEFORE /:id or Express will match 'requests' as an id
+// ── GET /api/courses/requests/my ─────────────────────────────
+// IMPORTANT: must be before /:id or Express treats 'requests' as a course id
 router.get('/requests/my', protect, async (req, res, next) => {
   try {
     const snap = await db.collection('enrollmentRequests')
@@ -32,9 +31,8 @@ router.get('/requests/my', protect, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// ── GET /api/courses/requests/all ─────────────────────────────
-// Admin: get ALL enrollment requests
-// NOTE: must be defined BEFORE /:id
+// ── GET /api/courses/requests/all ────────────────────────────
+// IMPORTANT: must be before /:id
 router.get('/requests/all', protect, authorize('admin', 'instructor'), async (req, res, next) => {
   try {
     const { status = 'pending' } = req.query;

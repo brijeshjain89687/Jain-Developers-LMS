@@ -237,14 +237,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
-<!-- STARTUP LOADER OVERLAY -->
-<div id="startup-loader" style="position:fixed;inset:0;background:var(--bg,#fff);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px">
-  <div class="logo-mark" style="width:56px;height:56px;font-size:18px;background:var(--accent,#e84c2b);color:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800">JD</div>
-  <div style="font-size:15px;font-weight:600;color:var(--text,#1a1a1a)">Jain Developers LMS</div>
-  <span class="spinner" style="width:22px;height:22px;border:3px solid #eee;border-top-color:var(--accent,#e84c2b);border-radius:50%;animation:spin .7s linear infinite;display:inline-block"></span>
-  <div style="font-size:12px;color:var(--muted,#888)" id="loader-msg">Connecting to server…</div>
-</div>
-
 <!-- HOME -->
 <div class="page" id="page-home">
   <div class="hero">
@@ -449,36 +441,6 @@ const DEMO_PROGRESS = [
 //  INIT
 // ═══════════════════════════════════════════════════
 const init = async () => {
-  const loader    = document.getElementById('startup-loader');
-  const loaderMsg = document.getElementById('loader-msg');
-
-  // Update message after 5s so user knows it's a cold start, not a hang
-  const msgTimer = setTimeout(() => {
-    if (loaderMsg) loaderMsg.textContent = 'Server is waking up on Render, please wait…';
-  }, 5000);
-
-  // Wait for server — no artificial abort, loader covers the page while we wait
-  try {
-    await fetch(API + '/health');
-    clearTimeout(msgTimer);
-    S.demo = false;
-  } catch {
-    // Genuine network failure (offline, DNS error, etc.)
-    clearTimeout(msgTimer);
-    S.demo = false;
-    localStorage.removeItem('jd_token');
-    if (loader) loader.style.display = 'none';
-    showPage('auth');
-    setTimeout(() => {
-      const el = document.getElementById('auth-error');
-      if (el) {
-        el.textContent = '⚠️ Cannot reach server. Check your connection or try again later.';
-        el.classList.add('show');
-      }
-    }, 200);
-    return;
-  }
-
   // Restore existing session if token present
   if (S.token && S.token !== 'demo') {
     try {
@@ -491,16 +453,22 @@ const init = async () => {
         S.myRequests = reqs.requests || [];
       } catch { S.myRequests = []; }
       onLogin();
+      await loadCourses();
+      showPage('home');
     } catch {
+      // Token expired or invalid — clear it and show login
       S.token = null;
       localStorage.removeItem('jd_token');
+      await loadCourses();
+      showPage('auth');
     }
+  } else {
+    // No token — clear any stale demo token and show login
+    localStorage.removeItem('jd_token');
+    S.token = null;
+    await loadCourses();
+    showPage('auth');
   }
-
-  await loadCourses();
-  if (loader) loader.style.display = 'none';
-  if (!S.token) showPage('auth');
-  else showPage('home');
 };
 
 // ═══════════════════════════════════════════════════
@@ -654,7 +622,7 @@ const enrollCourse = async (id) => {
   if (isEnrolled(id)) { openCourse(id); return; }
   // Students must go through admin-approval flow
   if (S.user.role !== 'admin') { await requestEnrollment(id, null); return; }
-  // Admin: direct enroll
+  // Admin direct enroll
   try {
     if (!S.demo) {
       const data = await api('/courses/' + id + '/enroll', { method:'POST' });
