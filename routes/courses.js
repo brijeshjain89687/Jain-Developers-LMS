@@ -18,6 +18,34 @@ const injectVideoUrls = (course, enrolled) => {
   return course;
 };
 
+// ── GET /api/courses/requests/my ──────────────────────────────
+// Student: get their own pending/approved/rejected requests
+// NOTE: must be defined BEFORE /:id or Express will match 'requests' as an id
+router.get('/requests/my', protect, async (req, res, next) => {
+  try {
+    const snap = await db.collection('enrollmentRequests')
+      .where('uid', '==', req.user.uid)
+      .orderBy('requestedAt', 'desc')
+      .get();
+    const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    res.json({ success: true, requests });
+  } catch (err) { next(err); }
+});
+
+// ── GET /api/courses/requests/all ─────────────────────────────
+// Admin: get ALL enrollment requests
+// NOTE: must be defined BEFORE /:id
+router.get('/requests/all', protect, authorize('admin', 'instructor'), async (req, res, next) => {
+  try {
+    const { status = 'pending' } = req.query;
+    let q = db.collection('enrollmentRequests').orderBy('requestedAt', 'desc');
+    if (status !== 'all') q = db.collection('enrollmentRequests').where('status', '==', status).orderBy('requestedAt', 'desc');
+    const snap = await q.get();
+    const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    res.json({ success: true, requests });
+  } catch (err) { next(err); }
+});
+
 // GET /api/courses — public listing
 router.get('/', optionalAuth, async (req, res, next) => {
   try {
@@ -106,31 +134,6 @@ router.post('/:id/request-enrollment', protect, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// ── GET /api/courses/requests/my ──────────────────────────────
-// Student: get their own pending/approved/rejected requests
-router.get('/requests/my', protect, async (req, res, next) => {
-  try {
-    const snap = await db.collection('enrollmentRequests')
-      .where('uid', '==', req.user.uid)
-      .orderBy('requestedAt', 'desc')
-      .get();
-    const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    res.json({ success: true, requests });
-  } catch (err) { next(err); }
-});
-
-// ── GET /api/courses/requests/all ─────────────────────────────
-// Admin: get ALL pending enrollment requests
-router.get('/requests/all', protect, authorize('admin', 'instructor'), async (req, res, next) => {
-  try {
-    const { status = 'pending' } = req.query;
-    let q = db.collection('enrollmentRequests').orderBy('requestedAt', 'desc');
-    if (status !== 'all') q = db.collection('enrollmentRequests').where('status', '==', status).orderBy('requestedAt', 'desc');
-    const snap = await q.get();
-    const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    res.json({ success: true, requests });
-  } catch (err) { next(err); }
-});
 
 // ── POST /api/courses/requests/:requestId/approve ─────────────
 // Admin: approve an enrollment request → actually enrolls the student

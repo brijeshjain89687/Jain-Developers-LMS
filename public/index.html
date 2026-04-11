@@ -449,25 +449,22 @@ const DEMO_PROGRESS = [
 //  INIT
 // ═══════════════════════════════════════════════════
 const init = async () => {
-  // Show loader while server wakes up (Render cold start can take 30-60s)
-  const loader = document.getElementById('startup-loader');
+  const loader    = document.getElementById('startup-loader');
   const loaderMsg = document.getElementById('loader-msg');
 
-  // Check API with 8-second timeout
+  // Update message after 5s so user knows it's a cold start, not a hang
+  const msgTimer = setTimeout(() => {
+    if (loaderMsg) loaderMsg.textContent = 'Server is waking up on Render, please wait…';
+  }, 5000);
+
+  // Wait for server — no artificial abort, loader covers the page while we wait
   try {
-    const ctrl = new AbortController();
-    const tid = setTimeout(() => {
-      ctrl.abort();
-      if (loaderMsg) loaderMsg.textContent = 'Server is waking up, please wait…';
-    }, 4000);
-    try {
-      await fetch(API + '/health', { signal: ctrl.signal });
-    } finally {
-      clearTimeout(tid);
-    }
+    await fetch(API + '/health');
+    clearTimeout(msgTimer);
     S.demo = false;
   } catch {
-    // Server cold-starting or offline
+    // Genuine network failure (offline, DNS error, etc.)
+    clearTimeout(msgTimer);
     S.demo = false;
     localStorage.removeItem('jd_token');
     if (loader) loader.style.display = 'none';
@@ -475,13 +472,14 @@ const init = async () => {
     setTimeout(() => {
       const el = document.getElementById('auth-error');
       if (el) {
-        el.textContent = '⚠️ Server is starting up. Please wait ~30 seconds and refresh the page.';
+        el.textContent = '⚠️ Cannot reach server. Check your connection or try again later.';
         el.classList.add('show');
       }
-    }, 300);
+    }, 200);
     return;
   }
-  // Restore session
+
+  // Restore existing session if token present
   if (S.token && S.token !== 'demo') {
     try {
       const { user } = await api('/auth/me');
@@ -498,6 +496,7 @@ const init = async () => {
       localStorage.removeItem('jd_token');
     }
   }
+
   await loadCourses();
   if (loader) loader.style.display = 'none';
   if (!S.token) showPage('auth');
