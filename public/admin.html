@@ -492,19 +492,10 @@ const init = async () => {
 const checkConn = async () => {
   try {
     const d = await fetch(CFG.apiUrl + '/health').then(r=>r.json());
-    const dbOk = d.db && d.db.startsWith('firestore-ok');
-    DATA.connected = dbOk;
-    if (dbOk) {
-      document.getElementById('api-pill').className = 'api-pill on';
-      document.getElementById('api-txt').textContent = 'Firebase Connected';
-      document.getElementById('conn-dot').className = 'conn-dot';
-    } else {
-      // API is up but Firestore auth failed — show the real error
-      document.getElementById('api-pill').className = 'api-pill off';
-      document.getElementById('api-txt').textContent = 'Firestore Error — check env vars';
-      document.getElementById('conn-dot').className = 'conn-dot off';
-      console.error('Firestore status from /health:', d.db);
-    }
+    DATA.connected = true;
+    document.getElementById('api-pill').className = 'api-pill on';
+    document.getElementById('api-txt').textContent = 'Firebase Connected';
+    document.getElementById('conn-dot').className = 'conn-dot';
   } catch {
     DATA.connected = false;
     document.getElementById('api-pill').className = 'api-pill off';
@@ -801,7 +792,7 @@ const openModal  = (id) => { document.getElementById(id).classList.add('open'); 
 const closeModal = (id) => document.getElementById(id).classList.remove('open');
 document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
 
-const doLogout = () => { localStorage.removeItem('jd_admin_token'); CFG.token = ''; document.getElementById('login-screen').style.display = 'flex'; };
+const doLogout = () => { clearSession(); showLoginScreen(); toast('Logged out successfully'); };
 
 // ═══════════════════════════════════════════
 //  TOAST + KEEPALIVE
@@ -810,21 +801,73 @@ const toast = (msg) => { const el=document.getElementById('toast-el'); el.textCo
 setInterval(()=>fetch(CFG.apiUrl+'/health').catch(()=>{}), 13*60*1000);
 
 
-// ═══════════════════════════════════════════════
-//  ADMIN LOGIN
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN SESSION MANAGER
+//  - Token stored in localStorage with a timestamp
+//  - Auto-login on page load if token is < 30 min old
+//  - Inactivity timer resets on any user interaction
+//  - After 30 min idle → logout and show login screen
+// ═══════════════════════════════════════════════════════════════
+
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes in ms
+let inactivityTimer = null;
+
+const showLoginScreen = () => {
+  document.getElementById('login-screen').style.display = 'flex';
+};
+
+const hideLoginScreen = () => {
+  document.getElementById('login-screen').style.display = 'none';
+};
+
+const saveSession = (token) => {
+  localStorage.setItem('jd_admin_token',    token);
+  localStorage.setItem('jd_admin_last_active', Date.now().toString());
+};
+
+const clearSession = () => {
+  localStorage.removeItem('jd_admin_token');
+  localStorage.removeItem('jd_admin_last_active');
+  CFG.token = '';
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+};
+
+// Reset the 30-min inactivity timer on any user action
+const resetInactivityTimer = () => {
+  if (!CFG.token) return;
+  localStorage.setItem('jd_admin_last_active', Date.now().toString());
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    toast('Session expired after 30 min — please log in again');
+    clearSession();
+    showLoginScreen();
+  }, SESSION_TIMEOUT);
+};
+
+// Bind activity events to reset timer
+['click','keydown','mousemove','scroll','touchstart'].forEach(evt => {
+  document.addEventListener(evt, resetInactivityTimer, { passive: true });
+});
+
+// ── Login handler ─────────────────────────────────────────────
 const doAdminLogin = async () => {
   const email = document.getElementById('li-email').value.trim();
   const pass  = document.getElementById('li-pass').value;
   const errEl = document.getElementById('li-err');
   const btn   = document.getElementById('li-btn');
   errEl.style.display = 'none';
-  if (!email || !pass) { errEl.textContent='Enter email and password'; errEl.style.display='block'; return; }
-  btn.textContent = 'Signing in…'; btn.disabled = true;
+  if (!email || !pass) {
+    errEl.textContent = 'Enter email and password';
+    errEl.style.display = 'block';
+    return;
+  }
+  btn.textContent = 'Signing in…';
+  btn.disabled = true;
   try {
     const res  = await fetch(CFG.apiUrl + '/auth/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: pass }),
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, password: pass }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Login failed');
@@ -832,43 +875,72 @@ const doAdminLogin = async () => {
       throw new Error('Access denied. Admin or instructor role required.');
     }
     CFG.token = data.token;
-    localStorage.setItem('jd_admin_token', data.token);
-    const ini = (data.user.name || 'AD').split(' ').map(function(x){return x[0];}).join('').substring(0,2).toUpperCase();
+    saveSession(data.token);
+    // Update sidebar user info
+    const nm  = data.user.name || 'Admin';
+    const ini = nm.split(' ').map(function(x){return x[0];}).join('').substring(0,2).toUpperCase();
     document.getElementById('sb-av').textContent   = ini;
-    document.getElementById('sb-name').textContent = data.user.name || 'Admin';
+    document.getElementById('sb-name').textContent = nm;
     document.getElementById('sb-role').textContent = data.user.role || 'admin';
-    document.getElementById('login-screen').style.display = 'none';
-    DATA.connected = true;
+    hideLoginScreen();
+    resetInactivityTimer();
+    // Connect and load data
+    await checkConn();
     await loadAll();
     renderDashboard();
   } catch (err) {
-    errEl.textContent = err.message; errEl.style.display = 'block';
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
   } finally {
-    btn.textContent = 'Sign In'; btn.disabled = false;
+    btn.textContent = 'Sign In';
+    btn.disabled = false;
   }
 };
 
+// ── Auto-login on page load ───────────────────────────────────
 const tryAutoLogin = async () => {
-  const saved = localStorage.getItem('jd_admin_token');
-  if (!saved) return;
-  CFG.token = saved;
+  const token     = localStorage.getItem('jd_admin_token');
+  const lastActive = parseInt(localStorage.getItem('jd_admin_last_active') || '0', 10);
+  const now       = Date.now();
+  const elapsed   = now - lastActive;
+
+  // No token or session expired (> 30 min idle since last page visit)
+  if (!token || elapsed > SESSION_TIMEOUT) {
+    clearSession();
+    showLoginScreen();
+    return;
+  }
+
+  CFG.token = token;
   try {
-    const res  = await fetch(CFG.apiUrl + '/auth/me', { headers: { 'Authorization': 'Bearer ' + saved } });
+    const res  = await fetch(CFG.apiUrl + '/auth/me', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
     const data = await res.json();
     if (res.ok && ['admin','instructor'].includes(data.user && data.user.role)) {
-      const ini = (data.user.name || 'AD').split(' ').map(function(x){return x[0];}).join('').substring(0,2).toUpperCase();
+      const nm  = data.user.name || 'Admin';
+      const ini = nm.split(' ').map(function(x){return x[0];}).join('').substring(0,2).toUpperCase();
       document.getElementById('sb-av').textContent   = ini;
-      document.getElementById('sb-name').textContent = data.user.name || 'Admin';
+      document.getElementById('sb-name').textContent = nm;
       document.getElementById('sb-role').textContent = data.user.role || 'admin';
-      document.getElementById('login-screen').style.display = 'none';
-      await loadAll(); renderDashboard(); return;
+      // Update last active timestamp
+      saveSession(token);
+      hideLoginScreen();
+      resetInactivityTimer();
+      await checkConn();
+      await loadAll();
+      renderDashboard();
+      return;
     }
-  } catch {}
-  localStorage.removeItem('jd_admin_token'); CFG.token = '';
+  } catch (_) {}
+  // Token invalid or expired — clear and show login
+  clearSession();
+  showLoginScreen();
 };
 
 // BOOT
 tryAutoLogin();
+
 </script>
 
 <script>

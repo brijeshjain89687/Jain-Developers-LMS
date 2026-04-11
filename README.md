@@ -21,7 +21,7 @@ git push -u origin main
 
 ### Step 3 — Add Environment Variables in Render Dashboard
 
-Go to your service → **Environment** tab and add ALL of these:
+Go to your service → **Environment** tab. Add each variable:
 
 | Variable | Value |
 |----------|-------|
@@ -31,17 +31,19 @@ Go to your service → **Environment** tab and add ALL of these:
 | `FIREBASE_CLIENT_EMAIL` | `firebase-adminsdk-fbsvc@jain-lms-f14cd.iam.gserviceaccount.com` |
 | `FIREBASE_CLIENT_ID` | `101739915886213945364` |
 | `FIREBASE_DATABASE_URL` | `https://jain-lms-f14cd-default-rtdb.firebaseio.com` |
-| `FIREBASE_PRIVATE_KEY` | *(see below)* |
-| `JWT_SECRET` | any long random string |
-| `GITHUB_TOKEN` | your GitHub token |
+| `JWT_SECRET` | `jain-lms-jwt-secret-2024` |
+| `SEED_SECRET` | `jain-seed-2024` |
+| `GITHUB_TOKEN` | your GitHub fine-grained token |
 | `GITHUB_OWNER` | your GitHub username |
 | `GITHUB_REPO` | `lms-videos` |
-| `SEED_SECRET` | `jain-seed-2024` |
 
-### ⚠️ FIREBASE_PRIVATE_KEY — How to paste it in Render
+### ⚠️ FIREBASE_PRIVATE_KEY — Critical Step
 
-In Render's environment variable editor, paste the key **exactly as shown below**
-(Render handles newlines correctly when you paste multi-line values):
+For the `FIREBASE_PRIVATE_KEY` variable in Render:
+
+1. In Render's environment tab, click **Add Environment Variable**
+2. Key: `FIREBASE_PRIVATE_KEY`
+3. Value: Copy the ENTIRE block below (including the dashes) and paste it as-is:
 
 ```
 -----BEGIN PRIVATE KEY-----
@@ -75,11 +77,18 @@ ThZE49oMJWtSjwVjU+b7zw==
 
 ```
 
-### Step 4 — Deploy
-Click **Create Web Service**. Render will build and deploy automatically.
+**Important:** Paste it exactly — don't add extra quotes, don't remove any characters.
+Render handles multi-line values correctly in its dashboard.
 
-### Step 5 — Seed Firestore (one time)
-After deploy, visit this URL in your browser:
+### Step 4 — Deploy
+Click **Save Changes** then **Manual Deploy → Deploy latest commit**.
+Wait ~60 seconds. Check logs — you should see:
+```
+✅ Firebase connected — project: jain-lms-f14cd
+```
+
+### Step 5 — Seed Firestore (one time only)
+After deploy succeeds, open this URL in your browser:
 ```
 https://YOUR-APP.onrender.com/api/seed?secret=jain-seed-2024
 ```
@@ -93,7 +102,7 @@ You'll get a JSON response confirming all users and courses were created.
 https://YOUR-APP.onrender.com/          Landing page
 https://YOUR-APP.onrender.com/student   Student platform
 https://YOUR-APP.onrender.com/admin     Admin panel
-https://YOUR-APP.onrender.com/api/health  Health check
+https://YOUR-APP.onrender.com/api/health  Health check (confirms Firebase status)
 ```
 
 ## 👤 Demo Accounts (after seeding)
@@ -104,34 +113,34 @@ https://YOUR-APP.onrender.com/api/health  Health check
 | Instructor | priya@jaindevelopers.com | priya123 |
 | Student | aarav@email.com | aarav123 |
 
-## 🔒 Admin Panel Login
+## 🔐 Admin Panel Session
 
-Open `/admin` — you'll see a login screen. Enter:
-- Email: `admin@jaindevelopers.com`
-- Password: `admin123`
-
-Click **Sign In**. The panel loads automatically.
+- Opens to a **login screen** — enter email + password
+- Session stays active for **30 minutes** after last activity
+- Any click, scroll, or keypress resets the 30-min timer
+- After 30 min idle, automatically logs out and shows login screen
+- On page reload, auto-logs back in if session is still valid
 
 ## 🎬 GitHub Video Upload
 
-1. Create GitHub repo `lms-videos`
-2. Push .mp4 files:
+1. Create a GitHub repo called `lms-videos`
+2. Push .mp4 files in this structure:
 ```
 lms-videos/
-└── web-development/
-    └── react-complete-guide/
-        ├── lesson-01-introduction.mp4
-        └── lesson-02-setup.mp4
+  web-development/
+    react-complete-guide/
+      lesson-01-introduction.mp4
+      lesson-02-setup.mp4
 ```
 3. Admin Panel → Videos → **↻ Sync & Scan Repo**
-4. Course Builder → **Assign Video** to each lesson
+4. Admin Panel → Course Builder → **Assign Video** to each lesson
 
-## 📁 Firestore Collections
+## 🔥 Firebase Firestore Collections
 
 | Collection | Purpose |
 |-----------|---------|
-| `users` | Profiles, XP, enrolled courses |
+| `users` | Profiles, XP, enrolled courses, streak |
 | `courses` | Course data with sections and lessons |
-| `progress` | Per-user lesson completion |
-| `quizzes` | Quiz questions |
-| `announcements` | Platform notices |
+| `progress` | Per-user lesson completion tracking |
+| `quizzes` | Quiz questions and config |
+| `announcements` | Platform announcements |

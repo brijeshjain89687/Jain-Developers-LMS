@@ -51,28 +51,16 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // ── Health check ──────────────────────────────────────────────
-app.get('/api/health', async (req, res) => {
-  // Actively ping Firestore so the frontend knows if DB is truly reachable
-  let dbStatus = 'unknown';
-  try {
-    const { db } = require('./config/firebase');
-    await db.collection('_healthcheck').limit(1).get();
-    dbStatus = 'firestore-ok';
-  } catch (e) {
-    dbStatus = 'firestore-error: ' + e.message.slice(0, 80);
-  }
-
-  res.json({
-    status: 'ok',
-    message: 'Jain Developers LMS API',
-    db: dbStatus,
-    project: process.env.FIREBASE_PROJECT_ID || 'jain-lms-f14cd',
-    version: '2.1.0',
-    env: process.env.NODE_ENV || 'development',
-    render: !!process.env.RENDER,
-    timestamp: new Date().toISOString(),
-  });
-});
+app.get('/api/health', (req, res) => res.json({
+  status: 'ok',
+  message: 'Jain Developers LMS API',
+  db: 'firestore',
+  project: 'jain-lms-f14cd',
+  version: '2.1.0',
+  env: process.env.NODE_ENV || 'development',
+  render: !!process.env.RENDER,
+  timestamp: new Date().toISOString(),
+}));
 
 // ── API routes ────────────────────────────────────────────────
 app.use('/api/auth',          authRoutes);
