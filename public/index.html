@@ -232,9 +232,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="form-error" id="auth-error"></div>
       <button class="btn-primary" id="auth-btn" onclick="doAuth()">Sign In</button>
       <div class="auth-toggle" id="auth-toggle">New here? <span onclick="toggleMode()">Create account</span></div>
-      <div class="demo-box"><strong>Demo accounts:</strong><br>Student: aarav@email.com / aarav123<br>Admin: admin@jaindevelopers.com / admin123</div>
+      <div class="demo-box" style="display:none"></div>
     </div>
   </div>
+</div>
+
+<!-- STARTUP LOADER OVERLAY -->
+<div id="startup-loader" style="position:fixed;inset:0;background:var(--bg,#fff);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px">
+  <div class="logo-mark" style="width:56px;height:56px;font-size:18px;background:var(--accent,#e84c2b);color:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800">JD</div>
+  <div style="font-size:15px;font-weight:600;color:var(--text,#1a1a1a)">Jain Developers LMS</div>
+  <span class="spinner" style="width:22px;height:22px;border:3px solid #eee;border-top-color:var(--accent,#e84c2b);border-radius:50%;animation:spin .7s linear infinite;display:inline-block"></span>
+  <div style="font-size:12px;color:var(--muted,#888)" id="loader-msg">Connecting to server…</div>
 </div>
 
 <!-- HOME -->
@@ -441,16 +449,36 @@ const DEMO_PROGRESS = [
 //  INIT
 // ═══════════════════════════════════════════════════
 const init = async () => {
-  // Check API
+  // Show loader while server wakes up (Render cold start can take 30-60s)
+  const loader = document.getElementById('startup-loader');
+  const loaderMsg = document.getElementById('loader-msg');
+
+  // Check API with 8-second timeout
   try {
-    await fetch(API + '/health');
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => {
+      ctrl.abort();
+      if (loaderMsg) loaderMsg.textContent = 'Server is waking up, please wait…';
+    }, 4000);
+    try {
+      await fetch(API + '/health', { signal: ctrl.signal });
+    } finally {
+      clearTimeout(tid);
+    }
     S.demo = false;
   } catch {
-    // Backend is offline — show error, do NOT auto-login as demo user
+    // Server cold-starting or offline
     S.demo = false;
     localStorage.removeItem('jd_token');
+    if (loader) loader.style.display = 'none';
     showPage('auth');
-    setTimeout(() => toast('⚠️ Cannot reach server. Please try again later or contact your admin.'), 500);
+    setTimeout(() => {
+      const el = document.getElementById('auth-error');
+      if (el) {
+        el.textContent = '⚠️ Server is starting up. Please wait ~30 seconds and refresh the page.';
+        el.classList.add('show');
+      }
+    }, 300);
     return;
   }
   // Restore session
@@ -471,6 +499,7 @@ const init = async () => {
     }
   }
   await loadCourses();
+  if (loader) loader.style.display = 'none';
   if (!S.token) showPage('auth');
   else showPage('home');
 };
@@ -624,12 +653,9 @@ const filterExplore = (cat, btn) => {
 const enrollCourse = async (id) => {
   if (!S.user) { showPage('auth'); return; }
   if (isEnrolled(id)) { openCourse(id); return; }
-  // Students must go through the request-enrollment flow (admin approval required)
-  if (S.user.role !== 'admin') {
-    await requestEnrollment(id, null);
-    return;
-  }
-  // Admin direct enroll
+  // Students must go through admin-approval flow
+  if (S.user.role !== 'admin') { await requestEnrollment(id, null); return; }
+  // Admin: direct enroll
   try {
     if (!S.demo) {
       const data = await api('/courses/' + id + '/enroll', { method:'POST' });

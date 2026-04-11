@@ -56,11 +56,7 @@ router.post('/login', [body('email').isEmail(), body('password').notEmpty()], as
     if (!doc.exists) return res.status(401).json({ error: 'User profile not found' });
     const profile = doc.data();
     if (!profile.isActive) return res.status(403).json({ error: 'Account deactivated' });
-    if (!profile.passwordHash) {
-      return res.status(400).json({
-        error: 'Your account was not set up with a password. Please ask your admin to reset your password.',
-      });
-    }
+    if (!profile.passwordHash) return res.status(400).json({ error: 'Account has no password set. Ask your admin to reset your password.' });
 
     const valid = await bcrypt.compare(password, profile.passwordHash);
     if (!valid) return res.status(401).json({ error: 'Invalid email or password' });
