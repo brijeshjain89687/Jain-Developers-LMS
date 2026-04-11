@@ -67,6 +67,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .tag{font-size:10px;padding:2px 7px;border-radius:5px;font-weight:600}
 .tag-active{background:rgba(34,197,94,.15);color:var(--green)}
 .tag-inactive{background:rgba(122,122,154,.2);color:var(--muted)}
+.tag-pending{background:rgba(245,166,35,.15);color:var(--gold)}
 .tag-pub{background:rgba(59,130,246,.15);color:var(--blue)}
 .tag-draft{background:rgba(122,122,154,.2);color:var(--muted)}
 /* VIDEO */
@@ -188,6 +189,7 @@ textarea.fi{resize:vertical;min-height:80px}
     <button class="nav-item" onclick="nav('students',this)"><span class="ni">👥</span>Students<span class="nbadge" id="nb-students">0</span></button>
     <button class="nav-item" onclick="nav('quizzes',this)"><span class="ni">📝</span>Quizzes</button>
     <div class="nav-group">Content</div>
+    <button class="nav-item" onclick="nav('requests',this)"><span class="ni">📋</span>Enrollment Requests<span class="nbadge" id="nb-requests">0</span></button>
     <button class="nav-item" onclick="nav('builder',this)"><span class="ni">🔧</span>Course Builder</button>
     <button class="nav-item" onclick="nav('announcements',this)"><span class="ni">📢</span>Announcements</button>
     <div class="nav-group">System</div>
@@ -340,7 +342,24 @@ textarea.fi{resize:vertical;min-height:80px}
       </div>
     </div>
 
-    <!-- ANNOUNCEMENTS -->
+    <!-- ENROLLMENT REQUESTS -->
+    <div class="page" id="page-requests">
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <button class="vbtn" style="border-color:var(--accent);color:var(--accent)" onclick="filterRequests('pending',this)">&#x23F3; Pending</button>
+        <button class="vbtn" onclick="filterRequests('approved',this)">&#x2705; Approved</button>
+        <button class="vbtn" onclick="filterRequests('rejected',this)">&#x2717; Rejected</button>
+        <button class="vbtn" onclick="filterRequests('all',this)">All</button>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);line-height:32px" id="req-count-lbl"></span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Email</th><th>Course</th><th>Requested</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="requests-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+<!-- ANNOUNCEMENTS -->
     <div class="page" id="page-announcements">
       <div class="card" style="margin-bottom:20px">
         <div class="card-hdr">Post New Announcement</div>
@@ -773,7 +792,7 @@ const nav = (page, btn) => {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
-  const titles={dashboard:'Dashboard',courses:'Courses',videos:'Videos (GitHub)',students:'Students',quizzes:'Quizzes',builder:'Course Builder',announcements:'Announcements',settings:'Settings'};
+  const titles={dashboard:'Dashboard',courses:'Courses',videos:'Videos (GitHub)',students:'Students',quizzes:'Quizzes',builder:'Course Builder',announcements:'Announcements',settings:'Settings',requests:'Enrollment Requests'};
   document.getElementById('topbar-title').textContent=titles[page]||page;
   if(btn) btn.classList.add('active');
   if(page==='courses') renderCourses();
@@ -782,6 +801,8 @@ const nav = (page, btn) => {
   if(page==='videos') renderVideos();
   if(page==='builder') { populateBuilderSel(); renderBuilderVids(); }
   if(page==='announcements') renderAnnouncements();
+  if(page==='requests') loadRequests();
+  if(page==='requests') loadRequests();
   if(page==='settings') { document.getElementById('api-url-input').value=CFG.apiUrl; document.getElementById('token-input').value=CFG.token; }
 };
 
@@ -887,6 +908,7 @@ const doAdminLogin = async () => {
     // Connect and load data
     await checkConn();
     await loadAll();
+    await loadRequests();
     renderDashboard();
   } catch (err) {
     errEl.textContent = err.message;
@@ -947,6 +969,79 @@ tryAutoLogin();
 const _ADMIN_KA = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')
   ? 'http://localhost:5000/api' : window.location.origin+'/api';
 setInterval(()=>fetch(_ADMIN_KA+'/health').catch(()=>{}), 13*60*1000);
+
+
+// ═══════════════════════════════════════════════
+//  ENROLLMENT REQUESTS
+// ═══════════════════════════════════════════════
+var ALL_REQUESTS = [];
+
+var loadRequests = async function() {
+  if (!DATA.connected) {
+    ALL_REQUESTS = [
+      { id:'r1', userName:'Aarav Joshi',   userEmail:'aarav@email.com',  courseTitle:'React.js Complete Guide', courseEmoji:'⚛️', status:'pending' },
+      { id:'r2', userName:'Meera Kapoor',  userEmail:'meera@email.com',  courseTitle:'Python for Data Science', courseEmoji:'🐍', status:'pending' },
+      { id:'r3', userName:'Karan Malhotra',userEmail:'karan@email.com',  courseTitle:'JavaScript ES6+',         courseEmoji:'💛', status:'approved' },
+    ];
+  } else {
+    try {
+      var data = await api('/courses/requests/all?status=all');
+      ALL_REQUESTS = data.requests || [];
+    } catch(e) { ALL_REQUESTS = []; }
+  }
+  var pending = ALL_REQUESTS.filter(function(r){ return r.status==='pending'; }).length;
+  document.getElementById('nb-requests').textContent = pending;
+  renderRequests('pending');
+};
+
+var renderRequests = function(statusFilter) {
+  var list = statusFilter === 'all' ? ALL_REQUESTS : ALL_REQUESTS.filter(function(r){ return r.status===statusFilter; });
+  document.getElementById('req-count-lbl').textContent = list.length + ' request' + (list.length!==1?'s':'');
+  var statusBadge = function(s) {
+    var cls = s==='approved' ? 'tag-active' : s==='rejected' ? 'tag-inactive' : 'tag-pending';
+    return '<span class="tag '+cls+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</span>';
+  };
+  document.getElementById('requests-tbody').innerHTML = list.length ? list.map(function(r) {
+    var dateStr = '—';
+    try {
+      var dt = r.requestedAt && r.requestedAt.toDate ? r.requestedAt.toDate() : new Date((r.requestedAt && r.requestedAt.seconds ? r.requestedAt.seconds*1000 : Date.now()));
+      dateStr = dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    } catch(e) {}
+    var isPending = r.status === 'pending';
+    var initials = (r.userName||'?').split(' ').map(function(x){return x[0];}).join('').substring(0,2).toUpperCase();
+    return '<tr><td><div style="display:flex;align-items:center;gap:8px"><div class="uav" style="width:28px;height:28px;font-size:10px">'+initials+'</div><span style="font-weight:500">'+(r.userName||'—')+'</span></div></td><td style="color:var(--muted);font-size:11px">'+(r.userEmail||'—')+'</td><td><span style="font-size:16px;margin-right:6px">'+(r.courseEmoji||'📚')+'</span>'+(r.courseTitle||'—')+'</td><td style="font-size:11px;color:var(--muted)">'+dateStr+'</td><td>'+statusBadge(r.status)+'</td><td>'+(isPending ? '<button class="vbtn" style="border-color:var(--green);color:var(--green)" onclick="approveRequest(''+r.id+'')">✓ Approve</button><button class="vbtn del" style="margin-left:6px" onclick="rejectRequest(''+r.id+'')">✗ Reject</button>' : '<span style="font-size:11px;color:var(--muted)">Reviewed</span>')+'</td></tr>';
+  }).join('') : '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">No '+statusFilter+' requests</td></tr>';
+};
+
+var filterRequests = function(status, btn) {
+  document.querySelectorAll('#page-requests .vbtn').forEach(function(b){ b.style.borderColor=''; b.style.color=''; });
+  btn.style.borderColor='var(--accent)'; btn.style.color='var(--accent)';
+  renderRequests(status);
+};
+
+var approveRequest = async function(reqId) {
+  try {
+    if (DATA.connected) await api('/courses/requests/'+reqId+'/approve', {method:'POST'});
+    var r = ALL_REQUESTS.find(function(x){return x.id===reqId;});
+    if (r) r.status = 'approved';
+    document.getElementById('nb-requests').textContent = ALL_REQUESTS.filter(function(x){return x.status==='pending';}).length;
+    renderRequests('pending');
+    toast('Student enrolled successfully! ✅');
+  } catch(err) { toast('Error: '+err.message); }
+};
+
+var rejectRequest = async function(reqId) {
+  if (!confirm('Reject this enrollment request?')) return;
+  try {
+    if (DATA.connected) await api('/courses/requests/'+reqId+'/reject', {method:'POST'});
+    var r = ALL_REQUESTS.find(function(x){return x.id===reqId;});
+    if (r) r.status = 'rejected';
+    document.getElementById('nb-requests').textContent = ALL_REQUESTS.filter(function(x){return x.status==='pending';}).length;
+    renderRequests('pending');
+    toast('Request rejected');
+  } catch(err) { toast('Error: '+err.message); }
+};
+
 </script>
 </body>
 </html>

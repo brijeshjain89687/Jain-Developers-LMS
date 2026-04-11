@@ -166,6 +166,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;max-width:90vw}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.enroll-btn.pending{background:#fffbf0;color:var(--gold);border-color:#f0e0a0;cursor:default}
+.enroll-btn.rejected{background:#fef2ee;color:var(--accent);border-color:#fac4b8;cursor:default}
+.request-banner{background:#fffbf0;border:1px solid #f0e0a0;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:13px;color:var(--gold);display:flex;align-items:center;gap:8px}
+.request-banner.approved{background:#f0faf5;border-color:#b8e8ce;color:var(--green)}
+.request-banner.rejected{background:#fef2ee;border-color:#fac4b8;color:var(--accent)}
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 @media(max-width:1100px){.grid4{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:repeat(2,1fr)}.player-wrap{grid-template-columns:1fr}.stats-row4{grid-template-columns:repeat(2,1fr)}.ach-grid{grid-template-columns:repeat(2,1fr)}}
@@ -300,6 +306,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <span id="player-dur">—</span>
           <span id="player-free-tag" style="color:var(--green)"></span>
         </div>
+        <div id="enroll-request-banner"></div>
         <div class="player-actions">
           <button class="action-btn" onclick="markComplete()">✓ Mark Complete</button>
           <button class="action-btn" onclick="toast('Notes coming soon!')">📝 Notes</button>
@@ -378,6 +385,7 @@ const S = {
   progress: [],
   currentCourse: null,
   currentLesson: null,
+  myRequests: [],
   demo: false,
 };
 
@@ -455,6 +463,10 @@ const init = async () => {
       S.user = user;
       const prog = await api('/progress/user/all');
       S.progress = prog.records || [];
+      try {
+        const reqs = await api('/courses/requests/my');
+        S.myRequests = reqs.requests || [];
+      } catch { S.myRequests = []; }
       onLogin();
     } catch {
       S.token = null;
@@ -503,6 +515,10 @@ const doAuth = async () => {
       localStorage.setItem('jd_token', data.token);
       const prog = await api('/progress/user/all');
       S.progress = prog.records || [];
+      try {
+        const reqs = await api('/courses/requests/my');
+        S.myRequests = reqs.requests || [];
+      } catch { S.myRequests = []; }
     }
     onLogin();
     showPage('home');
@@ -552,26 +568,44 @@ const loadCourses = async () => {
 
 const isEnrolled = id => (S.user?.enrolledCourses || []).includes(id);
 const getProgress = id => S.progress.find(p => p.courseId === id);
+const getMyRequest = (courseId) => {
+  const r = S.myRequests.find(x => x.courseId === courseId);
+  return r ? r.status : null;
+};
 const getCoverBg = cat => ({'web':'linear-gradient(135deg,#fef2ee,#ffe8e0)','data':'linear-gradient(135deg,#eff8ff,#dbeafe)','mobile':'linear-gradient(135deg,#f0faf5,#d1fae5)','design':'linear-gradient(135deg,#fef9f0,#fef3c7)','devops':'linear-gradient(135deg,#f5f0ff,#ede9fe)'}[cat] || 'linear-gradient(135deg,#f7f5f0,#ede8de)');
 
 const courseCard = (c) => {
-  const en = isEnrolled(c.id);
-  const pr = getProgress(c.id);
-  const dc = {beginner:'chip-b',intermediate:'chip-i',advanced:'chip-a'}[c.difficulty] || 'chip-b';
-  const dl = (c.difficulty||'').charAt(0).toUpperCase() + (c.difficulty||'').slice(1);
-  return `<div class="course-card" onclick="openCourse('${c.id}')">
-    <div class="cc-cover" style="background:${getCoverBg(c.category)}"><span>${c.emoji||'📚'}</span></div>
+  const en  = isEnrolled(c.id);
+  const pr  = getProgress(c.id);
+  const req = getMyRequest(c.id);   // pending | approved | rejected | null
+  const dc  = {beginner:'chip-b',intermediate:'chip-i',advanced:'chip-a'}[c.difficulty] || 'chip-b';
+  const dl  = (c.difficulty||'').charAt(0).toUpperCase() + (c.difficulty||'').slice(1);
+
+  // Decide button state
+  let btnClass = '', btnText = '', btnAction = '';
+  if (en) {
+    btnClass = 'enrolled'; btnText = '✓ Enrolled'; btnAction = `openCourse('${c.id}')`;
+  } else if (req === 'pending') {
+    btnClass = 'pending';  btnText = '⏳ Pending';  btnAction = `toast('Your request is pending admin approval')`;
+  } else if (req === 'rejected') {
+    btnClass = 'rejected'; btnText = '✗ Rejected';  btnAction = `toast('Your request was rejected. Contact admin.')`;
+  } else {
+    btnClass = '';         btnText = 'Request Enrollment'; btnAction = `requestEnrollment('${c.id}', event)`;
+  }
+
+  return \`<div class="course-card" onclick="openCourse('\${c.id}')">
+    <div class="cc-cover" style="background:\${getCoverBg(c.category)}"><span>\${c.emoji||'📚'}</span></div>
     <div class="cc-body">
-      <div class="cc-title">${c.title}</div>
-      <div class="cc-instructor">by ${c.instructorName||'Instructor'}</div>
-      <div class="cc-meta"><span>📖 ${c.totalLessons||0}</span><span>⏱ ${c.durationStr||'—'}</span><span>👥 ${c.enrolledCount||0}</span></div>
-      ${pr ? `<div class="prog-bar"><div class="prog-fill" style="width:${pr.percentComplete}%"></div></div><div class="prog-pct">${pr.percentComplete}% complete</div>` : ''}
+      <div class="cc-title">\${c.title}</div>
+      <div class="cc-instructor">by \${c.instructorName||'Instructor'}</div>
+      <div class="cc-meta"><span>📖 \${c.totalLessons||0}</span><span>⏱ \${c.durationStr||'—'}</span><span>👥 \${c.enrolledCount||0}</span></div>
+      \${pr ? \`<div class="prog-bar"><div class="prog-fill" style="width:\${pr.percentComplete}%"></div></div><div class="prog-pct">\${pr.percentComplete}% complete</div>\` : ''}
       <div class="cc-footer">
-        <span class="diff-chip ${dc}">${dl}</span>
-        <button class="enroll-btn ${en?'enrolled':''}" onclick="event.stopPropagation();enrollCourse('${c.id}')">${en?'✓ Enrolled':'Enroll'}</button>
+        <span class="diff-chip \${dc}">\${dl}</span>
+        <button class="enroll-btn \${btnClass}" onclick="event.stopPropagation();\${btnAction}">\${btnText}</button>
       </div>
     </div>
-  </div>`;
+  </div>\`;
 };
 
 const renderHomeCourses = () => {
@@ -612,6 +646,23 @@ const enrollCourse = async (id) => {
 // ═══════════════════════════════════════════════════
 //  PLAYER
 // ═══════════════════════════════════════════════════
+const requestEnrollment = async (id, e) => {
+  if (e) e.stopPropagation();
+  if (!S.user) { showPage('auth'); return; }
+  if (S.demo) {
+    S.myRequests.push({ courseId: id, status: 'pending' });
+    toast('Enrollment request sent! Waiting for admin approval 📋');
+    renderHomeCourses(); renderExploreCourses();
+    return;
+  }
+  try {
+    const data = await api('/courses/' + id + '/request-enrollment', { method: 'POST' });
+    toast(data.message || 'Request sent! ✓');
+    S.myRequests.push({ courseId: id, status: 'pending' });
+    renderHomeCourses(); renderExploreCourses();
+  } catch (err) { toast(err.message); }
+};
+
 const openCourse = async (id) => {
   let c = S.courses.find(x => x.id === id);
   if (!c) return;
@@ -624,6 +675,40 @@ const openCourse = async (id) => {
   }
   showPage('player');
   renderCurriculum();
+  // Show enrollment status banner
+  const _banner = document.getElementById('enroll-request-banner');
+  if (_banner) {
+    const _enrolled = isEnrolled(id);
+    const _reqStatus = getMyRequest(id);
+    if (!_enrolled) {
+      if (_reqStatus === 'pending') {
+        _banner.innerHTML = '<div class="request-banner">⏳ Your enrollment request is pending admin approval. Free preview lessons are available below.</div>';
+      } else if (_reqStatus === 'rejected') {
+        _banner.innerHTML = '<div class="request-banner rejected">✗ Your request was rejected. Please contact the admin.</div>';
+      } else {
+        _banner.innerHTML = '<div class="request-banner" style="justify-content:space-between">📋 You are not enrolled in this course.<button onclick="requestEnrollment('' + id + '', event)" style="padding:5px 14px;background:var(--gold);color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">Request Enrollment</button></div>';
+      }
+    } else {
+      _banner.innerHTML = '';
+    }
+  }
+  // Show enrollment status banner
+  const banner = document.getElementById('enroll-request-banner');
+  if (banner) {
+    const enrolled = isEnrolled(id);
+    const reqStatus = getMyRequest(id);
+    if (!enrolled) {
+      if (reqStatus === 'pending') {
+        banner.innerHTML = '<div class="request-banner">⏳ Your enrollment request is pending admin approval. Free preview lessons are available below.</div>';
+      } else if (reqStatus === 'rejected') {
+        banner.innerHTML = '<div class="request-banner rejected">✗ Your enrollment request was rejected. Please contact the admin.</div>';
+      } else {
+        banner.innerHTML = '<div class="request-banner"><span>📋 You are not enrolled.</span><button onclick="requestEnrollment(\''+id+'\', event)" style="margin-left:auto;padding:5px 14px;background:var(--gold);color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">Request Enrollment</button></div>';
+      }
+    } else {
+      banner.innerHTML = '';
+    }
+  }
   const prog = getProgress(id);
   const allLessons = (S.currentCourse.sections||[]).flatMap(s=>s.lessons||[]);
   const start = prog?.lastLessonId ? allLessons.find(l=>l.id===prog.lastLessonId) : allLessons[0];
@@ -698,6 +783,10 @@ const markComplete = async () => {
       if (data.isCompleted) setTimeout(()=>toast('🎉 Course complete! Certificate earned!'), 1500);
       const prog = await api('/progress/user/all');
       S.progress = prog.records || [];
+      try {
+        const reqs = await api('/courses/requests/my');
+        S.myRequests = reqs.requests || [];
+      } catch { S.myRequests = []; }
     } else {
       let p = S.progress.find(x=>x.courseId===c.id);
       if (!p) { p = { courseId:c.id, course:{ id:c.id, title:c.title, emoji:c.emoji, totalLessons:c.totalLessons, instructorName:c.instructorName }, completedLessons:[], percentComplete:0, lastLessonId:null }; S.progress.push(p); }
