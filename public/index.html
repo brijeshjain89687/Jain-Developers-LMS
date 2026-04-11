@@ -446,14 +446,11 @@ const init = async () => {
     await fetch(API + '/health');
     S.demo = false;
   } catch {
-    S.demo = true;
-    S.user = DEMO_USER;
-    S.token = 'demo';
-    S.courses = DEMO_COURSES;
-    S.progress = DEMO_PROGRESS;
-    localStorage.setItem('jd_token','demo');
-    onLogin();
-    showPage('home');
+    // Backend is offline — show error, do NOT auto-login as demo user
+    S.demo = false;
+    localStorage.removeItem('jd_token');
+    showPage('auth');
+    setTimeout(() => toast('⚠️ Cannot reach server. Please try again later or contact your admin.'), 500);
     return;
   }
   // Restore session
@@ -627,6 +624,12 @@ const filterExplore = (cat, btn) => {
 const enrollCourse = async (id) => {
   if (!S.user) { showPage('auth'); return; }
   if (isEnrolled(id)) { openCourse(id); return; }
+  // Students must go through the request-enrollment flow (admin approval required)
+  if (S.user.role !== 'admin') {
+    await requestEnrollment(id, null);
+    return;
+  }
+  // Admin direct enroll
   try {
     if (!S.demo) {
       const data = await api('/courses/' + id + '/enroll', { method:'POST' });
