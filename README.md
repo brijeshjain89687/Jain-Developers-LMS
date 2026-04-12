@@ -144,3 +144,26 @@ lms-videos/
 | `progress` | Per-user lesson completion tracking |
 | `quizzes` | Quiz questions and config |
 | `announcements` | Platform announcements |
+
+---
+
+## 🛠️ Changelog — Bug Fixes (April 2026)
+
+### Login Fixes
+- **Demo mode retry**: App now retries the server health check 3 times (2s apart) before falling back to demo mode, preventing cold-start false negatives on Render free tier.
+- **Demo mode warning banner**: A visible orange banner now appears whenever the app is in demo mode so users know real credentials are not being used.
+- **Clearer error for incomplete accounts**: Users created directly in Firebase Console (not via `/register`) get a helpful error message instead of a cryptic one.
+- **Hardcoded admin credentials removed**: `admin.html` login form no longer pre-fills credentials.
+
+### New Admin Endpoint
+**`PUT /api/auth/admin-set-password`** — Fixes accounts that were created in Firebase Console and are missing a `passwordHash`. Requires admin token.
+```json
+{ "targetUid": "firebase-uid-here", "newPassword": "newpass123" }
+```
+
+### Other Fixes
+- **keepAlive.js**: Now works on Render **free** tier (no longer requires `RENDER_EXTERNAL_URL`, falls back to localhost ping).
+- **progress.js**: Used `set({ merge: true })` for new progress docs to prevent race condition; `watchSeconds` is now safely cast to `Number`.
+- **admin.html `loadAll()`**: Removed call to `/quizzes/course/all` (route does not exist) which was causing a silent error on every admin page load.
+- **users.js**: Role-filtered user queries now include `orderBy('createdAt', 'desc')` for consistent ordering.
+

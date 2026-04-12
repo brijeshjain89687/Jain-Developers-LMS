@@ -31,7 +31,7 @@ router.get('/', protect, authorize('admin'), async (req, res, next) => {
   try {
     const { role, limit = 50 } = req.query;
     let q = db.collection('users').orderBy('createdAt','desc').limit(Number(limit));
-    if (role) q = db.collection('users').where('role','==',role).limit(Number(limit));
+    if (role) q = db.collection('users').where('role','==',role).orderBy('createdAt','desc').limit(Number(limit));
     const snap = await q.get();
     const users = snap.docs.map(d => { const { passwordHash, ...s } = d.data(); return { id: d.id, ...s }; });
     res.json({ success: true, total: users.length, users });

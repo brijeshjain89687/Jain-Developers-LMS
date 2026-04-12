@@ -56,7 +56,7 @@ router.post('/login', [body('email').isEmail(), body('password').notEmpty()], as
     if (!doc.exists) return res.status(401).json({ error: 'User profile not found' });
     const profile = doc.data();
     if (!profile.isActive) return res.status(403).json({ error: 'Account deactivated' });
-    if (!profile.passwordHash) return res.status(400).json({ error: 'Use Firebase sign-in on the student platform.' });
+    if (!profile.passwordHash) return res.status(400).json({ error: 'Account setup incomplete. Please contact admin or re-register via the sign-up form.' });
 
     const valid = await bcrypt.compare(password, profile.passwordHash);
     if (!valid) return res.status(401).json({ error: 'Invalid email or password' });
@@ -92,6 +92,22 @@ router.put('/change-password', protect, async (req, res, next) => {
     const hash = await bcrypt.hash(newPassword, 10);
     await db.collection('users').doc(req.user.uid).update({ passwordHash: hash });
     res.json({ success: true, message: 'Password updated' });
+  } catch (err) { next(err); }
+});
+
+// PUT /api/auth/admin-set-password — admin fixes accounts missing passwordHash
+// Use this for users created directly in Firebase Console (not via /register)
+router.put('/admin-set-password', protect, async (req, res, next) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { targetUid, newPassword } = req.body;
+    if (!targetUid || !newPassword || newPassword.length < 6) {
+      return res.status(400).json({ error: 'targetUid and newPassword (min 6 chars) required' });
+    }
+    await auth.updateUser(targetUid, { password: newPassword });
+    const hash = await bcrypt.hash(newPassword, 10);
+    await db.collection('users').doc(targetUid).update({ passwordHash: hash });
+    res.json({ success: true, message: 'Password set — user can now log in via the LMS.' });
   } catch (err) { next(err); }
 });
 

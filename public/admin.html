@@ -156,12 +156,12 @@ textarea.fi{resize:vertical;min-height:80px}
     <div style="font-size:13px;color:#7a7a9a;margin-bottom:28px;">Jain Developers LMS</div>
     <div style="margin-bottom:14px;text-align:left;">
       <label style="font-size:11px;font-weight:600;color:#7a7a9a;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px;">Email</label>
-      <input id="li-email" type="email" value="admin@jaindevelopers.com" onkeydown="if(event.key==='Enter')doAdminLogin()"
+      <input id="li-email" type="email" placeholder="admin@jaindevelopers.com" onkeydown="if(event.key==='Enter')doAdminLogin()"
         style="width:100%;background:#0e0e16;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 13px;color:#eeeef5;font-family:'Sora',sans-serif;font-size:13px;outline:none;">
     </div>
     <div style="margin-bottom:20px;text-align:left;">
       <label style="font-size:11px;font-weight:600;color:#7a7a9a;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px;">Password</label>
-      <input id="li-pass" type="password" value="admin123" onkeydown="if(event.key==='Enter')doAdminLogin()"
+      <input id="li-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdminLogin()"
         style="width:100%;background:#0e0e16;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 13px;color:#eeeef5;font-family:'Sora',sans-serif;font-size:13px;outline:none;">
     </div>
     <div id="li-err" style="color:#e94560;font-size:12px;margin-bottom:12px;display:none;padding:8px;background:rgba(233,69,96,.1);border-radius:6px;"></div>
@@ -526,10 +526,10 @@ const checkConn = async () => {
 const loadAll = async () => {
   try {
     const [c, u] = await Promise.all([ api('/courses?limit=50'), api('/users?limit=50') ]);
-    DATA.courses  = (c.courses||[]).map(x=>({...x, id:x.id||x._id}));
-    DATA.students = (u.users||[]).map(x=>({...x, id:x.id||x.uid}));
-    try { const q = await api('/quizzes/course/all'); DATA.quizzes = q.quizzes||[]; } catch {}
-    try { const l = await api('/users/leaderboard'); DATA.leaders = l.leaders||[]; } catch {}
+    DATA.courses  = (c.courses  || []).map(x => ({ ...x, id: x.id  || x._id }));
+    DATA.students = (u.users    || []).map(x => ({ ...x, id: x.id  || x.uid }));
+    // Note: quizzes are per-course only; no global list endpoint exists
+    try { const l = await api('/users/leaderboard'); DATA.leaders = l.leaders || []; } catch {}
     updateBadges();
   } catch { toast('Load failed — showing demo data'); loadDemo(); }
 };
@@ -545,7 +545,7 @@ const updateBadges = () => {
 const renderDashboard = () => {
   document.getElementById('st-courses').textContent  = DATA.courses.length;
   document.getElementById('st-students').textContent = DATA.students.length;
-  document.getElementById('st-complete').textContent = DATA.students.filter(s=>(s.enrolledCourses||[]).length>0).length;
+  document.getElementById('st-complete').textContent = (DATA.students||[]).filter(s=>(s.enrolledCourses||[]).length>0).length;
   document.getElementById('st-videos').textContent   = DATA.videos.length;
   const vals=[42,65,28,80,55,92,70], labels=['14','18','8','22','15','28','20'];
   document.getElementById('enroll-chart').innerHTML = vals.map((h,i)=>`<div class="mbar" style="height:${h}%"><span class="mbar-tip">${labels[i]} enrolled</span></div>`).join('');
