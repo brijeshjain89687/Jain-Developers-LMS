@@ -18,33 +18,7 @@ const injectVideoUrls = (course, enrolled) => {
   return course;
 };
 
-// ── GET /api/courses/requests/my ─────────────────────────────
-// IMPORTANT: must be before /:id or Express treats 'requests' as a course id
-router.get('/requests/my', protect, async (req, res, next) => {
-  try {
-    const snap = await db.collection('enrollmentRequests')
-      .where('uid', '==', req.user.uid)
-      .orderBy('requestedAt', 'desc')
-      .get();
-    const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    res.json({ success: true, requests });
-  } catch (err) { next(err); }
-});
-
-// ── GET /api/courses/requests/all ────────────────────────────
-// IMPORTANT: must be before /:id
-router.get('/requests/all', protect, authorize('admin', 'instructor'), async (req, res, next) => {
-  try {
-    const { status = 'pending' } = req.query;
-    let q = db.collection('enrollmentRequests').orderBy('requestedAt', 'desc');
-    if (status !== 'all') q = db.collection('enrollmentRequests').where('status', '==', status).orderBy('requestedAt', 'desc');
-    const snap = await q.get();
-    const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    res.json({ success: true, requests });
-  } catch (err) { next(err); }
-});
-
-// GET /api/courses — public listing
+// ── GET /api/courses — public listing ────────────────────────
 router.get('/', optionalAuth, async (req, res, next) => {
   try {
     const { category, difficulty, search, limit = 20 } = req.query;
@@ -59,7 +33,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
       courses = courses.filter(c =>
         c.title?.toLowerCase().includes(s) ||
         c.instructorName?.toLowerCase().includes(s) ||
-        (c.tags||[]).some(t => t.toLowerCase().includes(s))
+        (c.tags || []).some(t => t.toLowerCase().includes(s))
       );
     }
     const listing = courses.map(({ sections, ...rest }) => rest);
@@ -67,74 +41,40 @@ router.get('/', optionalAuth, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// GET /api/courses/:id — single course
-router.get('/:id', optionalAuth, async (req, res, next) => {
+// ── IMPORTANT: specific /requests/* routes MUST come before /:id ──
+// Otherwise Express matches "requests" as the :id parameter.
+
+// GET /api/courses/requests/my — student's own requests
+router.get('/requests/my', protect, async (req, res, next) => {
   try {
-    const doc = await db.collection('courses').doc(req.params.id).get();
-    if (!doc.exists) return res.status(404).json({ error: 'Course not found' });
-    const course = { id: doc.id, ...doc.data() };
-    if (!course.isPublished && !['admin','instructor'].includes(req.user?.role)) {
-      return res.status(404).json({ error: 'Course not found' });
-    }
-    const enrolled = req.user
-      ? (req.user.enrolledCourses||[]).includes(doc.id) || req.user.role === 'admin'
-      : false;
-    res.json({ success: true, course: injectVideoUrls(course, enrolled), isEnrolled: enrolled });
-  } catch (err) { next(err); }
-});
-
-// ── POST /api/courses/:id/request-enrollment ──────────────────
-// Student sends an enrollment request — admin must approve it.
-// Creates a document in the 'enrollmentRequests' collection.
-router.post('/:id/request-enrollment', protect, async (req, res, next) => {
-  try {
-    if (req.user.role === 'admin') {
-      return res.status(400).json({ error: 'Admins do not need to request enrollment.' });
-    }
-
-    const courseDoc = await db.collection('courses').doc(req.params.id).get();
-    if (!courseDoc.exists) return res.status(404).json({ error: 'Course not found' });
-
-    // Check already enrolled
-    if ((req.user.enrolledCourses||[]).includes(req.params.id)) {
-      return res.status(400).json({ error: 'Already enrolled in this course.' });
-    }
-
-    // Check if request already pending
-    const existing = await db.collection('enrollmentRequests')
+    const snap = await db.collection('enrollmentRequests')
       .where('uid', '==', req.user.uid)
-      .where('courseId', '==', req.params.id)
-      .where('status', '==', 'pending')
-      .limit(1).get();
-
-    if (!existing.empty) {
-      return res.status(400).json({ error: 'Enrollment request already pending. Please wait for admin approval.' });
-    }
-
-    // Create request document
-    await db.collection('enrollmentRequests').add({
-      uid:          req.user.uid,
-      userName:     req.user.name,
-      userEmail:    req.user.email,
-      courseId:     req.params.id,
-      courseTitle:  courseDoc.data().title,
-      courseEmoji:  courseDoc.data().emoji || '📚',
-      status:       'pending',     // pending | approved | rejected
-      requestedAt:  timestamp(),
-      reviewedAt:   null,
-      reviewedBy:   null,
-    });
-
-    res.json({
-      success: true,
-      message: 'Enrollment request sent! You will be enrolled once an admin approves it.',
-    });
+      .orderBy('requestedAt', 'desc')
+      .get();
+    const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    res.json({ success: true, requests });
   } catch (err) { next(err); }
 });
 
+// GET /api/courses/requests/all — admin view all requests
+router.get('/requests/all', protect, authorize('admin', 'instructor'), async (req, res, next) => {
+  try {
+    const { status = 'pending' } = req.query;
+    let snap;
+    if (status === 'all') {
+      snap = await db.collection('enrollmentRequests').orderBy('requestedAt', 'desc').get();
+    } else {
+      snap = await db.collection('enrollmentRequests')
+        .where('status', '==', status)
+        .orderBy('requestedAt', 'desc')
+        .get();
+    }
+    const requests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    res.json({ success: true, requests });
+  } catch (err) { next(err); }
+});
 
-// ── POST /api/courses/requests/:requestId/approve ─────────────
-// Admin: approve an enrollment request → actually enrolls the student
+// POST /api/courses/requests/:requestId/approve — admin approve
 router.post('/requests/:requestId/approve', protect, authorize('admin', 'instructor'), async (req, res, next) => {
   try {
     const reqDoc = await db.collection('enrollmentRequests').doc(req.params.requestId).get();
@@ -145,45 +85,31 @@ router.post('/requests/:requestId/approve', protect, authorize('admin', 'instruc
     }
 
     const batch = db.batch();
-
-    // Update request status
     batch.update(db.collection('enrollmentRequests').doc(req.params.requestId), {
-      status:     'approved',
-      reviewedAt: timestamp(),
-      reviewedBy: req.user.uid,
+      status: 'approved', reviewedAt: timestamp(), reviewedBy: req.user.uid,
     });
-
-    // Enroll the student
     batch.update(db.collection('users').doc(request.uid), {
-      enrolledCourses: arrayUnion(request.courseId),
-      xp: increment(50),
+      enrolledCourses: arrayUnion(request.courseId), xp: increment(50),
     });
-
-    // Increment course enrolled count
     batch.update(db.collection('courses').doc(request.courseId), {
       enrolledCount: increment(1),
     });
-
-    // Create progress document
     batch.set(db.collection('progress').doc(`${request.uid}_${request.courseId}`), {
       uid: request.uid, courseId: request.courseId,
-      completedLessons: [], percentComplete: 0,
-      isCompleted: false, lastLessonId: null, lastWatchedAt: null,
-      watchTime: {}, quizScores: [],
+      completedLessons: [], percentComplete: 0, isCompleted: false,
+      lastLessonId: null, lastWatchedAt: null, watchTime: {}, quizScores: [],
       createdAt: timestamp(), updatedAt: timestamp(),
     });
-
     await batch.commit();
 
     res.json({
       success: true,
-      message: `${request.userName} has been enrolled in ${request.courseTitle}!`,
+      message: `${request.userName} enrolled in ${request.courseTitle}!`,
     });
   } catch (err) { next(err); }
 });
 
-// ── POST /api/courses/requests/:requestId/reject ──────────────
-// Admin: reject an enrollment request
+// POST /api/courses/requests/:requestId/reject — admin reject
 router.post('/requests/:requestId/reject', protect, authorize('admin', 'instructor'), async (req, res, next) => {
   try {
     const reqDoc = await db.collection('enrollmentRequests').doc(req.params.requestId).get();
@@ -192,16 +118,72 @@ router.post('/requests/:requestId/reject', protect, authorize('admin', 'instruct
       return res.status(400).json({ error: `Request already ${reqDoc.data().status}` });
     }
     await db.collection('enrollmentRequests').doc(req.params.requestId).update({
-      status:     'rejected',
-      reviewedAt: timestamp(),
-      reviewedBy: req.user.uid,
+      status: 'rejected', reviewedAt: timestamp(), reviewedBy: req.user.uid,
     });
     res.json({ success: true, message: 'Request rejected.' });
   } catch (err) { next(err); }
 });
 
-// ── POST /api/courses/:id/enroll (Admin only direct enroll) ───
-// Admin can directly enroll a student without a request
+// ── GET /api/courses/:id — AFTER all specific routes ─────────
+router.get('/:id', optionalAuth, async (req, res, next) => {
+  try {
+    const doc = await db.collection('courses').doc(req.params.id).get();
+    if (!doc.exists) return res.status(404).json({ error: 'Course not found' });
+    const course = { id: doc.id, ...doc.data() };
+    if (!course.isPublished && !['admin', 'instructor'].includes(req.user?.role)) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+    const enrolled = req.user
+      ? (req.user.enrolledCourses || []).includes(doc.id) || req.user.role === 'admin'
+      : false;
+    res.json({ success: true, course: injectVideoUrls(course, enrolled), isEnrolled: enrolled });
+  } catch (err) { next(err); }
+});
+
+// POST /api/courses/:id/request-enrollment — student requests
+router.post('/:id/request-enrollment', protect, async (req, res, next) => {
+  try {
+    if (req.user.role === 'admin') {
+      return res.status(400).json({ error: 'Admins do not need to request enrollment.' });
+    }
+    const courseDoc = await db.collection('courses').doc(req.params.id).get();
+    if (!courseDoc.exists) return res.status(404).json({ error: 'Course not found' });
+
+    if ((req.user.enrolledCourses || []).includes(req.params.id)) {
+      return res.status(400).json({ error: 'Already enrolled in this course.' });
+    }
+
+    const existing = await db.collection('enrollmentRequests')
+      .where('uid', '==', req.user.uid)
+      .where('courseId', '==', req.params.id)
+      .where('status', '==', 'pending')
+      .limit(1).get();
+
+    if (!existing.empty) {
+      return res.status(400).json({ error: 'Enrollment request already pending. Wait for admin approval.' });
+    }
+
+    await db.collection('enrollmentRequests').add({
+      uid:         req.user.uid,
+      userName:    req.user.name,
+      userEmail:   req.user.email,
+      courseId:    req.params.id,
+      courseTitle: courseDoc.data().title,
+      courseEmoji: courseDoc.data().emoji || '📚',
+      status:      'pending',
+      requestedAt: timestamp(),
+      reviewedAt:  null,
+      reviewedBy:  null,
+    });
+
+    res.json({
+      success: true,
+      message: 'Enrollment request sent! You will be enrolled once an admin approves it.',
+    });
+  } catch (err) { next(err); }
+});
+
+// POST /api/courses/:id/enroll — admin direct enroll a student
 router.post('/:id/enroll', protect, authorize('admin'), async (req, res, next) => {
   try {
     const { userId } = req.body;
@@ -213,14 +195,13 @@ router.post('/:id/enroll', protect, authorize('admin'), async (req, res, next) =
     const userDoc = await db.collection('users').doc(userId).get();
     if (!userDoc.exists) return res.status(404).json({ error: 'User not found' });
 
-    if ((userDoc.data().enrolledCourses||[]).includes(req.params.id)) {
+    if ((userDoc.data().enrolledCourses || []).includes(req.params.id)) {
       return res.status(400).json({ error: 'User already enrolled' });
     }
 
     const batch = db.batch();
     batch.update(db.collection('users').doc(userId), {
-      enrolledCourses: arrayUnion(req.params.id),
-      xp: increment(50),
+      enrolledCourses: arrayUnion(req.params.id), xp: increment(50),
     });
     batch.update(db.collection('courses').doc(req.params.id), { enrolledCount: increment(1) });
     batch.set(db.collection('progress').doc(`${userId}_${req.params.id}`), {
@@ -230,33 +211,40 @@ router.post('/:id/enroll', protect, authorize('admin'), async (req, res, next) =
       createdAt: timestamp(), updatedAt: timestamp(),
     });
     await batch.commit();
-
     res.json({ success: true, message: `User enrolled in ${courseDoc.data().title}!` });
   } catch (err) { next(err); }
 });
 
-// POST /api/courses — create
-router.post('/', protect, authorize('admin','instructor'), async (req, res, next) => {
+// POST /api/courses — create course
+router.post('/', protect, authorize('admin', 'instructor'), async (req, res, next) => {
   try {
-    const data = { ...req.body, instructor: req.user.uid, instructorName: req.user.name,
-      enrolledCount: 0, totalLessons: (req.body.sections||[]).reduce((n,s)=>n+(s.lessons?.length||0),0),
-      createdAt: timestamp(), updatedAt: timestamp() };
+    const data = {
+      ...req.body,
+      instructor: req.user.uid,
+      instructorName: req.user.name,
+      enrolledCount: 0,
+      totalLessons: (req.body.sections || []).reduce((n, s) => n + (s.lessons?.length || 0), 0),
+      createdAt: timestamp(),
+      updatedAt: timestamp(),
+    };
     const ref = await db.collection('courses').add(data);
     res.status(201).json({ success: true, course: { id: ref.id, ...data } });
   } catch (err) { next(err); }
 });
 
-// PUT /api/courses/:id — update
-router.put('/:id', protect, authorize('admin','instructor'), async (req, res, next) => {
+// PUT /api/courses/:id — update course
+router.put('/:id', protect, authorize('admin', 'instructor'), async (req, res, next) => {
   try {
     const updates = { ...req.body, updatedAt: timestamp() };
-    if (updates.sections) updates.totalLessons = updates.sections.reduce((n,s)=>n+(s.lessons?.length||0),0);
+    if (updates.sections) {
+      updates.totalLessons = updates.sections.reduce((n, s) => n + (s.lessons?.length || 0), 0);
+    }
     await db.collection('courses').doc(req.params.id).update(updates);
     res.json({ success: true, message: 'Course updated' });
   } catch (err) { next(err); }
 });
 
-// DELETE /api/courses/:id
+// DELETE /api/courses/:id — delete course
 router.delete('/:id', protect, authorize('admin'), async (req, res, next) => {
   try {
     await db.collection('courses').doc(req.params.id).delete();

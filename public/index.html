@@ -232,7 +232,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="form-error" id="auth-error"></div>
       <button class="btn-primary" id="auth-btn" onclick="doAuth()">Sign In</button>
       <div class="auth-toggle" id="auth-toggle">New here? <span onclick="toggleMode()">Create account</span></div>
-      <div class="demo-box" style="display:none"></div>
+      <div class="demo-box"><strong>Demo accounts:</strong><br>Student: aarav@email.com / aarav123<br>Admin: admin@jaindevelopers.com / admin123</div>
     </div>
   </div>
 </div>
@@ -441,7 +441,22 @@ const DEMO_PROGRESS = [
 //  INIT
 // ═══════════════════════════════════════════════════
 const init = async () => {
-  // Restore existing session if token present
+  // Check API
+  try {
+    await fetch(API + '/health');
+    S.demo = false;
+  } catch {
+    S.demo = true;
+    S.user = DEMO_USER;
+    S.token = 'demo';
+    S.courses = DEMO_COURSES;
+    S.progress = DEMO_PROGRESS;
+    localStorage.setItem('jd_token','demo');
+    onLogin();
+    showPage('home');
+    return;
+  }
+  // Restore session
   if (S.token && S.token !== 'demo') {
     try {
       const { user } = await api('/auth/me');
@@ -453,22 +468,14 @@ const init = async () => {
         S.myRequests = reqs.requests || [];
       } catch { S.myRequests = []; }
       onLogin();
-      await loadCourses();
-      showPage('home');
     } catch {
-      // Token expired or invalid — clear it and show login
       S.token = null;
       localStorage.removeItem('jd_token');
-      await loadCourses();
-      showPage('auth');
     }
-  } else {
-    // No token — clear any stale demo token and show login
-    localStorage.removeItem('jd_token');
-    S.token = null;
-    await loadCourses();
-    showPage('auth');
   }
+  await loadCourses();
+  if (!S.token) showPage('auth');
+  else showPage('home');
 };
 
 // ═══════════════════════════════════════════════════
@@ -506,8 +513,12 @@ const doAuth = async () => {
       S.token = data.token;
       S.user  = data.user;
       localStorage.setItem('jd_token', data.token);
-      const prog = await api('/progress/user/all');
-      S.progress = prog.records || [];
+      // Load progress — non-blocking
+      try {
+        const prog = await api('/progress/user/all');
+        S.progress = prog.records || [];
+      } catch { S.progress = []; }
+      // Load enrollment requests — non-blocking, never blocks login
       try {
         const reqs = await api('/courses/requests/my');
         S.myRequests = reqs.requests || [];
@@ -620,9 +631,6 @@ const filterExplore = (cat, btn) => {
 const enrollCourse = async (id) => {
   if (!S.user) { showPage('auth'); return; }
   if (isEnrolled(id)) { openCourse(id); return; }
-  // Students must go through admin-approval flow
-  if (S.user.role !== 'admin') { await requestEnrollment(id, null); return; }
-  // Admin direct enroll
   try {
     if (!S.demo) {
       const data = await api('/courses/' + id + '/enroll', { method:'POST' });
