@@ -1,78 +1,84 @@
 // routes/auth.js
 const express = require('express');
-const jwt     = require('jsonwebtoken');
 const bcrypt  = require('bcryptjs');
-const { body, validationResult } = require('express-validator');
-const { db, auth, timestamp } = require('../config/firebase');
+const jwt     = require('jsonwebtoken');
+const { db, fba, ts } = require('../config/firebase');
 const { protect } = require('../middleware/auth');
 
-const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'jain-lms-secret-key-2024';
-const signJwt = (uid) => jwt.sign({ uid }, JWT_SECRET, { expiresIn: '7d' });
+const router  = express.Router();
+const SECRET  = process.env.JWT_SECRET || 'jain-lms-2024';
+const signJwt = uid => jwt.sign({ uid }, SECRET, { expiresIn: '7d' });
 
 // POST /api/auth/register
-router.post('/register', [
-  body('name').trim().isLength({ min: 2 }),
-  body('email').isEmail(),
-  body('password').isLength({ min: 6 }),
-], async (req, res, next) => {
+router.post('/register', async (req, res, next) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-
     const { name, email, password, role = 'student' } = req.body;
-    let firebaseUser;
+    if (!name || !email || !password) return res.status(400).json({ error: 'name, email and password required' });
+    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+
+    let uid;
     try {
-      firebaseUser = await auth.createUser({ email, password, displayName: name });
+      const u = await fba.createUser({ email, password, displayName: name });
+      uid = u.uid;
     } catch (e) {
       if (e.code === 'auth/email-already-exists') return res.status(400).json({ error: 'Email already registered' });
       throw e;
     }
 
-    const uid  = firebaseUser.uid;
-    const hash = await bcrypt.hash(password, 10);
     const safeRole = ['admin','instructor','student'].includes(role) ? role : 'student';
-
+    const hash = await bcrypt.hash(password, 10);
     await db.collection('users').doc(uid).set({
       uid, name, email, role: safeRole, xp: 0, streakDays: 0,
       passwordHash: hash, enrolledCourses: [], certificates: [], badges: [],
-      isActive: true, lastActiveAt: timestamp(), createdAt: timestamp(),
+      isActive: true, createdAt: ts(),
     });
-    await auth.setCustomUserClaims(uid, { role: safeRole });
+    await fba.setCustomUserClaims(uid, { role: safeRole });
 
-    res.status(201).json({ success: true, token: signJwt(uid), user: { uid, name, email, role: safeRole, xp: 0, streakDays: 0 } });
+    res.status(201).json({ success: true, token: signJwt(uid), user: { uid, name, email, role: safeRole, xp: 0, streakDays: 0, enrolledCourses: [] } });
   } catch (err) { next(err); }
 });
 
 // POST /api/auth/login
-router.post('/login', [body('email').isEmail(), body('password').notEmpty()], async (req, res, next) => {
+router.post('/login', async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    let firebaseUser;
-    try { firebaseUser = await auth.getUserByEmail(email); }
+    if (!email || !password) return res.status(400).json({ error: 'email and password required' });
+
+    // Get Firebase Auth user
+    let fbUser;
+    try { fbUser = await fba.getUserByEmail(email); }
     catch { return res.status(401).json({ error: 'Invalid email or password' }); }
 
-    const doc = await db.collection('users').doc(firebaseUser.uid).get();
-    if (!doc.exists) return res.status(401).json({ error: 'User profile not found' });
+    // Get Firestore profile
+    const doc = await db.collection('users').doc(fbUser.uid).get();
+    if (!doc.exists) return res.status(401).json({ error: 'User profile not found. Please register.' });
+
     const profile = doc.data();
-    if (!profile.isActive) return res.status(403).json({ error: 'Account deactivated' });
-    if (!profile.passwordHash) return res.status(400).json({ error: 'Account setup incomplete. Please contact admin or re-register via the sign-up form.' });
+    if (!profile.isActive) return res.status(403).json({ error: 'Account deactivated. Contact admin.' });
+    if (!profile.passwordHash) return res.status(400).json({ error: 'No password set. Contact admin.' });
 
     const valid = await bcrypt.compare(password, profile.passwordHash);
     if (!valid) return res.status(401).json({ error: 'Invalid email or password' });
 
-    // Update streak
-    const now = new Date(), last = profile.lastActiveAt?.toDate?.() || new Date(0);
+    // Update last active & streak
+    const now   = new Date();
+    const last  = profile.lastActiveAt?.toDate?.() || new Date(0);
     const diffH = (now - last) / 3600000;
-    let streak = profile.streakDays || 0;
-    if (diffH >= 20 && diffH < 48) streak += 1;
+    let streak  = profile.streakDays || 0;
+    if (diffH >= 20 && diffH < 48) streak++;
     else if (diffH >= 48) streak = 1;
 
-    await db.collection('users').doc(firebaseUser.uid).update({ lastActiveAt: timestamp(), streakDays: streak });
+    await db.collection('users').doc(fbUser.uid).update({ lastActiveAt: ts(), streakDays: streak });
 
     res.json({
-      success: true, token: signJwt(firebaseUser.uid),
-      user: { uid: firebaseUser.uid, name: profile.name, email: profile.email, role: profile.role, xp: profile.xp, streakDays: streak, badges: profile.badges || [], enrolledCourses: profile.enrolledCourses || [] },
+      success: true,
+      token: signJwt(fbUser.uid),
+      user: {
+        uid: fbUser.uid, name: profile.name, email: profile.email,
+        role: profile.role, xp: profile.xp || 0, streakDays: streak,
+        enrolledCourses: profile.enrolledCourses || [],
+        badges: profile.badges || [], certificates: profile.certificates || [],
+      },
     });
   } catch (err) { next(err); }
 });
@@ -81,34 +87,6 @@ router.post('/login', [body('email').isEmail(), body('password').notEmpty()], as
 router.get('/me', protect, (req, res) => {
   const { passwordHash, ...safe } = req.user;
   res.json({ success: true, user: safe });
-});
-
-// PUT /api/auth/change-password
-router.put('/change-password', protect, async (req, res, next) => {
-  try {
-    const { newPassword } = req.body;
-    if (!newPassword || newPassword.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
-    await auth.updateUser(req.user.uid, { password: newPassword });
-    const hash = await bcrypt.hash(newPassword, 10);
-    await db.collection('users').doc(req.user.uid).update({ passwordHash: hash });
-    res.json({ success: true, message: 'Password updated' });
-  } catch (err) { next(err); }
-});
-
-// PUT /api/auth/admin-set-password — admin fixes accounts missing passwordHash
-// Use this for users created directly in Firebase Console (not via /register)
-router.put('/admin-set-password', protect, async (req, res, next) => {
-  try {
-    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
-    const { targetUid, newPassword } = req.body;
-    if (!targetUid || !newPassword || newPassword.length < 6) {
-      return res.status(400).json({ error: 'targetUid and newPassword (min 6 chars) required' });
-    }
-    await auth.updateUser(targetUid, { password: newPassword });
-    const hash = await bcrypt.hash(newPassword, 10);
-    await db.collection('users').doc(targetUid).update({ passwordHash: hash });
-    res.json({ success: true, message: 'Password set — user can now log in via the LMS.' });
-  } catch (err) { next(err); }
 });
 
 module.exports = router;
