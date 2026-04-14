@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jain Developers — Learn</title>
+<title>Jain Developers - Learn</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f7f5f0;--surface:#fff;--accent:#e8381a;--accent2:#ff6b35;--text:#2d2410;--muted:#8a7f6e;--border:#e8e2d6;--gold:#d4900a;--green:#1a7a45;--blue:#2563eb;--r:14px;--sh:0 2px 12px rgba(26,17,8,.07)}
@@ -221,10 +221,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
   <div class="navr">
     <div class="srch" id="srchwrap" style="display:none">
-      <span style="color:var(--muted);font-size:13px">🔍</span>
-      <input placeholder="Search courses…" oninput="doSearch(this.value)">
+      <span style="color:var(--muted);font-size:13px"></span>
+      <input placeholder="Search courses..." oninput="doSearch(this.value)">
     </div>
-    <div class="xpc" id="xpchip" style="display:none">⚡ <span id="xpval">0</span> XP</div>
+    <div class="xpc" id="xpchip" style="display:none"> XP <span id="xpval">0</span> XP</div>
     <div class="avc" id="usrchip" style="display:none" onclick="goPage('profile')">
       <div class="av" id="navav">?</div>
       <span style="font-size:12px;font-weight:600" id="navname">User</span>
@@ -255,7 +255,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       </div>
       <div class="fg">
         <label class="fl">Password</label>
-        <input class="fi" id="f-pass" placeholder="••••••••" type="password" onkeydown="if(event.key==='Enter')doAuth()">
+        <input class="fi" id="f-pass" placeholder="********" type="password" onkeydown="if(event.key==='Enter')doAuth()">
       </div>
       <div class="aerr" id="aerr"></div>
       <button class="btn-p" id="authbtn" onclick="doAuth()">Sign In</button>
@@ -270,11 +270,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   <div class="hero">
     <div class="hero-in">
       <div class="hero-t">
-        <div class="hgreet" id="hgreet">Welcome back 👋</div>
+        <div class="hgreet" id="hgreet">Welcome back!</div>
         <h1 class="htitle">Keep building.<br><em>Keep growing.</em></h1>
         <p class="hsub">Pick up where you left off and keep your streak alive!</p>
         <div class="hbtns">
-          <button class="hbtn" onclick="goPage('mylearn')">My Learning →</button>
+          <button class="hbtn" onclick="goPage('mylearn')">My Learning</button>
           <button class="hbtn ghost" onclick="goPage('explore')">Browse Courses</button>
         </div>
         <div class="hstats">
@@ -284,7 +284,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </div>
       </div>
       <div class="streak-box">
-        <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">🔥 Streak</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px"> Streak</div>
         <div class="snum" id="snum">0</div>
         <div class="slbl">days in a row</div>
         <div class="sdots" id="sdots"></div>
@@ -292,11 +292,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
   </div>
   <div class="sec" id="cont-sec" style="display:none">
-    <div class="sec-hdr"><div class="sec-title">Continue Learning</div><span class="sec-link" onclick="goPage('mylearn')">View all →</span></div>
+    <div class="sec-hdr"><div class="sec-title">Continue Learning</div><span class="sec-link" onclick="goPage('mylearn')">View all -></span></div>
     <div class="g3" id="cont-grid"></div>
   </div>
   <div class="sec">
-    <div class="sec-hdr"><div class="sec-title">Available Courses</div><span class="sec-link" onclick="goPage('explore')">See all →</span></div>
+    <div class="sec-hdr"><div class="sec-title">Available Courses</div><span class="sec-link" onclick="goPage('explore')">See all -></span></div>
     <div class="g4" id="home-courses"></div>
   </div>
 </div>
@@ -320,9 +320,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <div class="page" id="page-mylearn">
   <div class="sec">
     <div class="tab-row">
-      <button class="tab on" onclick="switchTab('courses',this)">📚 My Courses</button>
-      <button class="tab"    onclick="switchTab('quiz',this)">📝 Quizzes</button>
-      <button class="tab"    onclick="switchTab('projects',this)">🏗 Projects</button>
+      <button class="tab on" onclick="switchTab('courses',this)"> My Courses</button>
+      <button class="tab"    onclick="switchTab('quiz',this)"> Quizzes</button>
+      <button class="tab"    onclick="switchTab('projects',this)"> Projects</button>
     </div>
     <!-- COURSES TAB -->
     <div id="tab-courses">
@@ -345,22 +345,22 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="player-left">
       <div class="vbox" id="vbox">
         <div class="vfallback">
-          <div style="font-size:44px;margin-bottom:10px">🎬</div>
+          <div style="font-size:44px;margin-bottom:10px"></div>
           <p style="font-size:13px">Select a lesson from the panel</p>
         </div>
       </div>
       <div class="pinfo">
-        <div class="pltitle" id="pl-title">—</div>
+        <div class="pltitle" id="pl-title">-</div>
         <div class="plmeta">
-          <span id="pl-course">—</span>
-          <span id="pl-dur">—</span>
+          <span id="pl-course">-</span>
+          <span id="pl-dur">-</span>
           <span id="pl-free" style="color:var(--green)"></span>
         </div>
         <div class="pactions">
-          <button class="pabtn" onclick="markDone()">✓ Mark Complete</button>
-          <button class="pabtn" onclick="toast('Notes coming soon!')">📝 Notes</button>
-          <button class="pabtn" onclick="switchToQuiz()">📝 Quiz</button>
-          <button class="pabtn" onclick="switchToProject()">🏗 Project</button>
+          <button class="pabtn" onclick="markDone()">v Mark Complete</button>
+          <button class="pabtn" onclick="toast('Notes coming soon!')"> Notes</button>
+          <button class="pabtn" onclick="switchToQuiz()"> Quiz</button>
+          <button class="pabtn" onclick="switchToProject()"> Project</button>
         </div>
       </div>
     </div>
@@ -378,11 +378,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="prof-banner">
         <div class="prof-av" id="pav">?</div>
         <div style="flex:1">
-          <div class="prof-name" id="pname">—</div>
-          <div class="prof-email" id="pemail">—</div>
+          <div class="prof-name" id="pname">-</div>
+          <div class="prof-email" id="pemail">-</div>
           <div class="prof-badges" id="pbadges"></div>
         </div>
-        <button class="pabtn" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.2)" onclick="toast('Edit profile coming soon!')">✏ Edit</button>
+        <button class="pabtn" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.2)" onclick="toast('Edit profile coming soon!')">Edit Edit</button>
       </div>
       <div class="stat4">
         <div class="sbox"><div class="sval" id="ps-en">0</div><div class="slbl2">Enrolled</div></div>

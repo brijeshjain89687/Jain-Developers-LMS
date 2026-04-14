@@ -1,60 +1,57 @@
-// middleware/auth.js — Firebase ID token + JWT fallback verification
-
-const { auth, db } = require('../config/firebase');
+// middleware/auth.js
 const jwt = require('jsonwebtoken');
+const { db, fba } = require('../config/firebase');
+const SECRET = process.env.JWT_SECRET || 'jain-lms-2024';
+
+const getUser = async (uid) => {
+  const doc = await db.collection('users').doc(uid).get();
+  if (!doc.exists) return null;
+  return { uid, ...doc.data() };
+};
 
 const protect = async (req, res, next) => {
-  let token;
-  if (req.headers.authorization?.startsWith('Bearer ')) {
-    token = req.headers.authorization.split(' ')[1];
-  }
-  if (!token) return res.status(401).json({ error: 'Not authenticated. Please log in.' });
+  const header = req.headers.authorization || '';
+  const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token) return res.status(401).json({ error: 'Not authenticated' });
 
-  // Try Firebase ID token first
+  // Try Firebase token first
   try {
-    const decoded = await auth.verifyIdToken(token);
-    const doc = await db.collection('users').doc(decoded.uid).get();
-    if (!doc.exists) return res.status(401).json({ error: 'User profile not found.' });
-    req.user = { uid: decoded.uid, ...doc.data() };
+    const decoded = await fba.verifyIdToken(token);
+    req.user = await getUser(decoded.uid);
+    if (!req.user) return res.status(401).json({ error: 'User not found' });
     return next();
   } catch {}
 
-  // Fallback: our own JWT (admin panel manual login)
+  // Fall back to our JWT
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'jain-lms-secret-key-2024');
-    const doc = await db.collection('users').doc(decoded.uid).get();
-    if (!doc.exists) return res.status(401).json({ error: 'User not found.' });
-    req.user = { uid: decoded.uid, ...doc.data() };
+    const decoded = jwt.verify(token, SECRET);
+    req.user = await getUser(decoded.uid);
+    if (!req.user) return res.status(401).json({ error: 'User not found' });
     return next();
   } catch {
-    return res.status(401).json({ error: 'Invalid or expired token.' });
+    return res.status(401).json({ error: 'Invalid or expired token' });
   }
 };
 
 const authorize = (...roles) => (req, res, next) => {
   if (!roles.includes(req.user?.role)) {
-    return res.status(403).json({ error: `Access denied. Required: ${roles.join(' or ')}` });
+    return res.status(403).json({ error: 'Access denied' });
   }
   next();
 };
 
 const optionalAuth = async (req, res, next) => {
-  let token;
-  if (req.headers.authorization?.startsWith('Bearer ')) {
-    token = req.headers.authorization.split(' ')[1];
-  }
-  if (token) {
+  const header = req.headers.authorization || '';
+  const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token) return next();
+  try {
+    const decoded = await fba.verifyIdToken(token);
+    req.user = await getUser(decoded.uid);
+  } catch {
     try {
-      const decoded = await auth.verifyIdToken(token);
-      const doc = await db.collection('users').doc(decoded.uid).get();
-      if (doc.exists) req.user = { uid: decoded.uid, ...doc.data() };
-    } catch {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'jain-lms-secret-key-2024');
-        const doc = await db.collection('users').doc(decoded.uid).get();
-        if (doc.exists) req.user = { uid: decoded.uid, ...doc.data() };
-      } catch {}
-    }
+      const decoded = jwt.verify(token, SECRET);
+      req.user = await getUser(decoded.uid);
+    } catch {}
   }
   next();
 };
