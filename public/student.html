@@ -233,7 +233,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </nav>
 
-<!-- ══ PAGES ══ -->
+<!-- == PAGES == -->
 
 <!-- AUTH -->
 <div class="page on" id="page-auth">
@@ -400,11 +400,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <div class="toast" id="tst"></div>
 
 <script>
-// ═══ CONFIG ═══════════════════════════════════════════════
+// === CONFIG ===============================================
 const API = window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'
   ? 'http://localhost:5000/api' : window.location.origin+'/api';
 
-// ═══ STATE ════════════════════════════════════════════════
+// === STATE ================================================
 const S = {
   user: null, token: localStorage.getItem('jd_token'),
   courses: [], progress: [], requests: [],
@@ -412,7 +412,7 @@ const S = {
   quizState: null, demo: false,
 };
 
-// ═══ API HELPER ═══════════════════════════════════════════
+// === API HELPER ===========================================
 const api = async (path, opts={}) => {
   const h = {'Content-Type':'application/json'};
   if (S.token) h['Authorization'] = 'Bearer '+S.token;
@@ -422,7 +422,7 @@ const api = async (path, opts={}) => {
   return d;
 };
 
-// ═══ DEMO DATA ════════════════════════════════════════════
+// === DEMO DATA ============================================
 const DEMO_COURSES = [
   {id:'c1',title:'React.js Complete Guide',instructorName:'Arjun Mehta',category:'web',difficulty:'intermediate',emoji:'⚛️',totalLessons:6,durationStr:'22h 10m',enrolledCount:204,isPublished:true,projectTitle:'Build a Todo App',projectDescription:'Create a complete Todo app using React hooks.',projectDeadlineDays:7,
    sections:[{title:'Section 1',order:1,lessons:[{id:'l1',title:'Introduction',durationStr:'3 min',isFree:true,githubPath:'web/react/l1.mp4'},{id:'l2',title:'Setup',durationStr:'8 min',isFree:true,githubPath:'web/react/l2.mp4'},{id:'l3',title:'First App',durationStr:'15 min',isFree:false,githubPath:'web/react/l3.mp4'}]},{title:'Section 2',order:2,lessons:[{id:'l4',title:'useState',durationStr:'25 min',isFree:false,githubPath:'web/react/l4.mp4'},{id:'l5',title:'useEffect',durationStr:'30 min',isFree:false,githubPath:'web/react/l5.mp4'}]}]},
@@ -450,13 +450,13 @@ const DEMO_QUIZZES = [
   ]},
 ];
 
-// ═══ HELPERS ══════════════════════════════════════════════
+// === HELPERS ==============================================
 const isEnrolled = id => (S.user?.enrolledCourses||[]).includes(id);
 const getProgress = id => S.progress.find(p=>p.courseId===id);
 const getRequest = id => S.requests.find(r=>r.courseId===id);
 const getCoverBg = cat => ({web:'linear-gradient(135deg,#fef2ee,#ffe8e0)',data:'linear-gradient(135deg,#eff8ff,#dbeafe)',mobile:'linear-gradient(135deg,#f0faf5,#d1fae5)',design:'linear-gradient(135deg,#fef9f0,#fef3c7)',devops:'linear-gradient(135deg,#f5f0ff,#ede9fe)'  }[cat]||'linear-gradient(135deg,#f7f5f0,#ede8de)');
 
-// ═══ INIT ═════════════════════════════════════════════════
+// === INIT =================================================
 const init = async () => {
   try { await fetch(API+'/health'); S.demo=false; }
   catch { S.demo=true; loadDemo(); return; }
@@ -490,7 +490,7 @@ const loadCourses = async () => {
   try { const d=await api('/courses?limit=50'); S.courses=(d.courses||[]).map(c=>({...c,id:c.id||c._id})); } catch {}
 };
 
-// ═══ AUTH ═════════════════════════════════════════════════
+// === AUTH =================================================
 let isSignIn = true;
 const toggleMode = () => {
   isSignIn=!isSignIn;
@@ -548,7 +548,7 @@ const onLogin = () => {
 
 const logout = () => { S.token=null; S.user=null; localStorage.removeItem('jd_token'); location.reload(); };
 
-// ═══ COURSES ══════════════════════════════════════════════
+// === COURSES ==============================================
 const courseCard = (c, showProg=false) => {
   const en=isEnrolled(c.id), pr=getProgress(c.id), req=getRequest(c.id);
   const dc={beginner:'db',intermediate:'di',advanced:'da'}[c.difficulty]||'db';
@@ -611,7 +611,7 @@ const doSearch = val => {
   document.getElementById('explore-grid').innerHTML=list.map(c=>courseCard(c)).join('')||'<div class="empty"><div class="ico">🔍</div><p>No results</p></div>';
 };
 
-// ═══ HOME RENDER ══════════════════════════════════════════
+// === HOME RENDER ==========================================
 const renderHome = () => {
   const u=S.user; if (!u) return;
   document.getElementById('hgreet').textContent='Welcome back, '+(u.name||'').split(' ')[0]+' 👋';
@@ -649,7 +649,7 @@ const renderHome = () => {
   renderAllCourses();
 };
 
-// ═══ MY LEARNING ══════════════════════════════════════════
+// === MY LEARNING ==========================================
 const renderMyCourses = () => {
   const enrolled=S.courses.filter(c=>isEnrolled(c.id));
   const el=document.getElementById('my-courses-grid');
@@ -744,7 +744,7 @@ const switchTab = (tab, btn) => {
 const switchToQuiz = () => { goPage('mylearn'); switchTab('quiz', document.querySelectorAll('.tab')[1]); };
 const switchToProject = () => { goPage('mylearn'); switchTab('projects', document.querySelectorAll('.tab')[2]); };
 
-// ═══ QUIZ ENGINE ══════════════════════════════════════════
+// === QUIZ ENGINE ==========================================
 let QS = null; // quiz state
 const startQuiz = (quiz) => {
   QS = { quiz, current:0, answers:[], timer:null, seconds: quiz.timeLimit||300, started:false };
@@ -815,7 +815,7 @@ const finishQuiz = () => {
     </div>`;
 };
 
-// ═══ PLAYER ═══════════════════════════════════════════════
+// === PLAYER ===============================================
 const openCourse = async id => {
   const c=S.courses.find(x=>x.id===id); if (!c) return;
   S.currentCourse=c;
@@ -918,7 +918,7 @@ const markDone = async () => {
   } catch(e) { toast(e.message); }
 };
 
-// ═══ NAV ══════════════════════════════════════════════════
+// === NAV ==================================================
 const gotoHome = () => { if (S.user) goPage('home'); else goPage('auth'); };
 const goPage = (page, btn) => {
   if (!S.user&&page!=='auth') { goPage('auth'); return; }
@@ -947,7 +947,7 @@ const renderProfile = () => {
   document.getElementById('ps-streak').textContent=u.streakDays||0;
 };
 
-// ═══ TOAST + KEEPALIVE ════════════════════════════════════
+// === TOAST + KEEPALIVE ====================================
 const toast = msg => {
   const el=document.getElementById('tst'); el.textContent=msg; el.classList.add('on');
   clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),2800);
@@ -955,7 +955,7 @@ const toast = msg => {
 window.toast=toast;
 setInterval(()=>fetch(API+'/health').catch(()=>{}), 13*60*1000);
 
-// ═══ BOOT ════════════════════════════════════════════════
+// === BOOT ================================================
 init();
 </script>
 </body>
