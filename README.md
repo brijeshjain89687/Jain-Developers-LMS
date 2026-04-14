@@ -1,26 +1,27 @@
-# Jain Developers LMS v3
+# Jain Developers LMS
 
-Node.js + Express + Firebase Firestore + Render.com
+Node.js + Express + Firebase Firestore + GitHub Videos — Render.com
 
 ---
 
-## 🚀 Deploy in 5 minutes
+## 🚀 Deploy to Render
 
-### 1. Push to GitHub
+### Step 1 — Push to GitHub
 ```bash
-cd backend
 git init
 git add .
-git commit -m "Jain LMS v3"
+git commit -m "Jain Developers LMS"
 git remote add origin https://github.com/YOUR_USERNAME/jain-lms.git
 git push -u origin main
 ```
 
-### 2. Create Web Service on Render
-- render.com → New → Web Service → connect repo
-- Build: `npm install` | Start: `npm start` | Plan: Free | Region: Singapore
+### Step 2 — Create Web Service on Render
+- render.com → New → Web Service → connect your repo
+- Build: `npm install` | Start: `npm start` | Plan: Free
 
-### 3. Add Environment Variables in Render → Environment tab
+### Step 3 — Add Environment Variables in Render Dashboard
+
+Go to your service → **Environment** tab. Add each variable:
 
 | Variable | Value |
 |----------|-------|
@@ -29,13 +30,20 @@ git push -u origin main
 | `FIREBASE_PRIVATE_KEY_ID` | `7f6ade1d1b51b3152780797ec2081729c96a2758` |
 | `FIREBASE_CLIENT_EMAIL` | `firebase-adminsdk-fbsvc@jain-lms-f14cd.iam.gserviceaccount.com` |
 | `FIREBASE_CLIENT_ID` | `101739915886213945364` |
-| `FIREBASE_PRIVATE_KEY` | *(see below)* |
-| `JWT_SECRET` | any long random string |
+| `FIREBASE_DATABASE_URL` | `https://jain-lms-f14cd-default-rtdb.firebaseio.com` |
+| `JWT_SECRET` | `jain-lms-jwt-secret-2024` |
 | `SEED_SECRET` | `jain-seed-2024` |
+| `GITHUB_TOKEN` | your GitHub fine-grained token |
+| `GITHUB_OWNER` | your GitHub username |
+| `GITHUB_REPO` | `lms-videos` |
 
-### ⚠️ FIREBASE_PRIVATE_KEY — how to paste it
+### ⚠️ FIREBASE_PRIVATE_KEY — Critical Step
 
-In Render's Environment tab, add `FIREBASE_PRIVATE_KEY` and paste this exact value:
+For the `FIREBASE_PRIVATE_KEY` variable in Render:
+
+1. In Render's environment tab, click **Add Environment Variable**
+2. Key: `FIREBASE_PRIVATE_KEY`
+3. Value: Copy the ENTIRE block below (including the dashes) and paste it as-is:
 
 ```
 -----BEGIN PRIVATE KEY-----
@@ -69,29 +77,32 @@ ThZE49oMJWtSjwVjU+b7zw==
 
 ```
 
-Paste it as-is — Render handles the newlines correctly.
+**Important:** Paste it exactly — don't add extra quotes, don't remove any characters.
+Render handles multi-line values correctly in its dashboard.
 
-### 4. Deploy → Wait ~60 seconds → Check logs for:
+### Step 4 — Deploy
+Click **Save Changes** then **Manual Deploy → Deploy latest commit**.
+Wait ~60 seconds. Check logs — you should see:
 ```
-✅ Firebase connected: jain-lms-f14cd
-🚀 Jain LMS :10000
+✅ Firebase connected — project: jain-lms-f14cd
 ```
 
-### 5. Seed Firestore (one time)
-Open in browser:
+### Step 5 — Seed Firestore (one time only)
+After deploy succeeds, open this URL in your browser:
 ```
 https://YOUR-APP.onrender.com/api/seed?secret=jain-seed-2024
 ```
+You'll get a JSON response confirming all users and courses were created.
 
 ---
 
-## 📍 URLs
+## 📍 Your Live URLs
 
 ```
-https://YOUR-APP.onrender.com/          Landing
-https://YOUR-APP.onrender.com/student   Student Platform
-https://YOUR-APP.onrender.com/admin     Admin Panel
-https://YOUR-APP.onrender.com/api/health  Health Check
+https://YOUR-APP.onrender.com/          Landing page
+https://YOUR-APP.onrender.com/student   Student platform
+https://YOUR-APP.onrender.com/admin     Admin panel
+https://YOUR-APP.onrender.com/api/health  Health check (confirms Firebase status)
 ```
 
 ## 👤 Demo Accounts (after seeding)
@@ -102,39 +113,34 @@ https://YOUR-APP.onrender.com/api/health  Health Check
 | Instructor | priya@jaindevelopers.com | priya123 |
 | Student | aarav@email.com | aarav123 |
 
-## 🔐 Admin Login
+## 🔐 Admin Panel Session
 
-Visit `/admin` → login screen appears → enter email + password.
-Session stays active 30 min from last activity.
+- Opens to a **login screen** — enter email + password
+- Session stays active for **30 minutes** after last activity
+- Any click, scroll, or keypress resets the 30-min timer
+- After 30 min idle, automatically logs out and shows login screen
+- On page reload, auto-logs back in if session is still valid
 
-## ✨ Features
+## 🎬 GitHub Video Upload
 
-**Student Platform (`/student`):**
-- Browse all published courses (no login required to see them)
-- Request enrollment — admin must approve before access
-- Button states: Request Enrollment → ⏳ Pending → ✓ Enrolled / ✗ Rejected
-- My Learning tabs: My Courses / Quizzes / Projects
-- Quiz engine with timer, scoring, XP rewards
-- Project submission per course
-- Lesson player with progress tracking
-- XP system, streaks, certificates
+1. Create a GitHub repo called `lms-videos`
+2. Push .mp4 files in this structure:
+```
+lms-videos/
+  web-development/
+    react-complete-guide/
+      lesson-01-introduction.mp4
+      lesson-02-setup.mp4
+```
+3. Admin Panel → Videos → **↻ Sync & Scan Repo**
+4. Admin Panel → Course Builder → **Assign Video** to each lesson
 
-**Admin Panel (`/admin`):**
-- Login screen with 30-min session timeout
-- Dashboard with stats and pending requests widget
-- Courses: create/publish/delete with project fields
-- Enrollment Requests: approve/reject pending requests
-- Students: view all students, XP, streaks
-- Quizzes: create with full question builder (options, correct answer, explanation)
-- Announcements: post platform notices
-
-## 📁 Firestore Collections
+## 🔥 Firebase Firestore Collections
 
 | Collection | Purpose |
 |-----------|---------|
-| `users` | Profiles, XP, enrolled courses |
-| `courses` | Courses with sections, lessons, project details |
-| `progress` | Per-user lesson completion |
-| `quizzes` | Quiz questions with answers |
-| `announcements` | Platform notices |
-| `enrollmentRequests` | Pending/approved/rejected requests |
+| `users` | Profiles, XP, enrolled courses, streak |
+| `courses` | Course data with sections and lessons |
+| `progress` | Per-user lesson completion tracking |
+| `quizzes` | Quiz questions and config |
+| `announcements` | Platform announcements |

@@ -179,11 +179,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 </style>
 </head>
 <body>
-<!-- Demo mode warning banner -->
-<div id="demo-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#b45309;color:#fff;padding:10px 20px;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:500;">
-  ⚠️ <strong>Server Offline — Demo Mode Active.</strong> Your login credentials are NOT being saved. Real login will work once the server is back online.
-  <button onclick="document.getElementById('demo-banner').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:3px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin-left:8px;">✕ Dismiss</button>
-</div>
 <!-- NAV -->
 <nav class="topnav">
   <div class="logo" onclick="gotoHome()">
@@ -446,32 +441,21 @@ const DEMO_PROGRESS = [
 //  INIT
 // ═══════════════════════════════════════════════════
 const init = async () => {
-  // Check API — retry up to 3 times before falling back to demo mode
-  let serverUp = false;
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      await fetch(API + '/health');
-      serverUp = true;
-      break;
-    } catch {
-      if (attempt < 2) await new Promise(r => setTimeout(r, 2000));
-    }
-  }
-  if (!serverUp) {
+  // Check API
+  try {
+    await fetch(API + '/health');
+    S.demo = false;
+  } catch {
     S.demo = true;
     S.user = DEMO_USER;
     S.token = 'demo';
     S.courses = DEMO_COURSES;
     S.progress = DEMO_PROGRESS;
     localStorage.setItem('jd_token','demo');
-    // Show demo mode warning banner
-    const banner = document.getElementById('demo-banner');
-    if (banner) banner.style.display = 'flex';
     onLogin();
     showPage('home');
     return;
   }
-  S.demo = false;
   // Restore session
   if (S.token && S.token !== 'demo') {
     try {
@@ -520,9 +504,6 @@ const doAuth = async () => {
   btn.innerHTML = '<span class="spinner"></span>' + (isSignIn ? 'Signing in…' : 'Creating…');
   try {
     if (S.demo) {
-      // Server is offline — show warning and use demo account
-      const banner = document.getElementById('demo-banner');
-      if (banner) banner.style.display = 'flex';
       S.user = { ...DEMO_USER, name: name || DEMO_USER.name, email };
       S.progress = DEMO_PROGRESS;
     } else {

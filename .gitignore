@@ -3,3 +3,7 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+
+# NOTE: config/serviceAccountKey.json is intentionally committed.
+# It is required on Render for Firebase authentication.
+# Do NOT add it here. If you rotate the key, replace the file and redeploy.

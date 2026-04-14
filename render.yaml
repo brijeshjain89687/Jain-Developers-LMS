@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: jain-lms
+    name: jain-lms-api
     runtime: node
     region: singapore
     plan: free
@@ -12,6 +12,11 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 10000
+
+      # ── Firebase Service Account ─────────────────────────────
+      # Set these in Render Dashboard → Environment (sync: false = secret)
       - key: FIREBASE_PROJECT_ID
         sync: false
       - key: FIREBASE_PRIVATE_KEY_ID
@@ -22,13 +27,19 @@ services:
         sync: false
       - key: FIREBASE_CLIENT_ID
         sync: false
-      - key: JWT_SECRET
-        sync: false
-      - key: SEED_SECRET
-        value: jain-seed-2024
+      - key: FIREBASE_DATABASE_URL
+        value: https://jain-lms-f14cd-default-rtdb.firebaseio.com
+
+      # ── GitHub video storage ─────────────────────────────────
       - key: GITHUB_TOKEN
         sync: false
       - key: GITHUB_OWNER
         sync: false
       - key: GITHUB_REPO
-        value: lms-videos
+        sync: false
+      - key: GITHUB_BRANCH
+        value: main
+
+      # ── JWT secret for admin panel ───────────────────────────
+      - key: JWT_SECRET
+        sync: false
