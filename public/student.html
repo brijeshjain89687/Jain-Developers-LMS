@@ -424,28 +424,28 @@ const api = async (path, opts={}) => {
 
 // === DEMO DATA ============================================
 const DEMO_COURSES = [
-  {id:'c1',title:'React.js Complete Guide',instructorName:'Arjun Mehta',category:'web',difficulty:'intermediate',emoji:'⚛️',totalLessons:6,durationStr:'22h 10m',enrolledCount:204,isPublished:true,projectTitle:'Build a Todo App',projectDescription:'Create a complete Todo app using React hooks.',projectDeadlineDays:7,
+  {id:'c1',title:'React.js Complete Guide',instructorName:'Arjun Mehta',category:'web',difficulty:'intermediate',emoji:'React',totalLessons:6,durationStr:'22h 10m',enrolledCount:204,isPublished:true,projectTitle:'Build a Todo App',projectDescription:'Create a complete Todo app using React hooks.',projectDeadlineDays:7,
    sections:[{title:'Section 1',order:1,lessons:[{id:'l1',title:'Introduction',durationStr:'3 min',isFree:true,githubPath:'web/react/l1.mp4'},{id:'l2',title:'Setup',durationStr:'8 min',isFree:true,githubPath:'web/react/l2.mp4'},{id:'l3',title:'First App',durationStr:'15 min',isFree:false,githubPath:'web/react/l3.mp4'}]},{title:'Section 2',order:2,lessons:[{id:'l4',title:'useState',durationStr:'25 min',isFree:false,githubPath:'web/react/l4.mp4'},{id:'l5',title:'useEffect',durationStr:'30 min',isFree:false,githubPath:'web/react/l5.mp4'}]}]},
-  {id:'c2',title:'Python for Data Science',instructorName:'Priya Sharma',category:'data',difficulty:'beginner',emoji:'🐍',totalLessons:4,durationStr:'14h 45m',enrolledCount:178,isPublished:true,projectTitle:'Sales Data Analysis',projectDescription:'Analyze a sales CSV using Pandas and create visualizations.',projectDeadlineDays:10,
+  {id:'c2',title:'Python for Data Science',instructorName:'Priya Sharma',category:'data',difficulty:'beginner',emoji:'Python',totalLessons:4,durationStr:'14h 45m',enrolledCount:178,isPublished:true,projectTitle:'Sales Data Analysis',projectDescription:'Analyze a sales CSV using Pandas and create visualizations.',projectDeadlineDays:10,
    sections:[{title:'Python Basics',order:1,lessons:[{id:'p1',title:'Setup & Jupyter',durationStr:'10 min',isFree:true,githubPath:'data/python/p1.mp4'},{id:'p2',title:'Variables',durationStr:'20 min',isFree:false,githubPath:'data/python/p2.mp4'}]}]},
-  {id:'c3',title:'JavaScript ES6+',instructorName:'Priya Sharma',category:'web',difficulty:'beginner',emoji:'💛',totalLessons:28,durationStr:'10h',enrolledCount:287,isPublished:true,projectTitle:'Weather App',projectDescription:'Build a weather app using fetch API.',projectDeadlineDays:5,sections:[]},
-  {id:'c4',title:'Flutter Mobile Dev',instructorName:'Arjun Mehta',category:'mobile',difficulty:'intermediate',emoji:'📱',totalLessons:42,durationStr:'18h',enrolledCount:87,isPublished:true,projectTitle:'Chat App',projectDescription:'Build a simple real-time chat app.',projectDeadlineDays:14,sections:[]},
-  {id:'c5',title:'Machine Learning A-Z',instructorName:'Dr. Anil Kumar',category:'data',difficulty:'advanced',emoji:'🤖',totalLessons:60,durationStr:'32h',enrolledCount:98,isPublished:true,projectTitle:'ML Model Deployment',projectDescription:'Train and deploy a classification model.',projectDeadlineDays:21,sections:[]},
-  {id:'c6',title:'UI/UX Fundamentals',instructorName:'Kavya Rao',category:'design',difficulty:'beginner',emoji:'🎨',totalLessons:20,durationStr:'9h',enrolledCount:234,isPublished:true,projectTitle:'Redesign an App',projectDescription:'Redesign any popular app in Figma.',projectDeadlineDays:7,sections:[]},
-  {id:'c7',title:'AWS Cloud Practitioner',instructorName:'Rohit Agarwal',category:'devops',difficulty:'advanced',emoji:'☁️',totalLessons:38,durationStr:'16h',enrolledCount:119,isPublished:true,projectTitle:'Deploy a Node App',projectDescription:'Deploy a Node.js app on AWS EC2.',projectDeadlineDays:10,sections:[]},
-  {id:'c8',title:'Node.js & Express API',instructorName:'Vikram Singh',category:'web',difficulty:'intermediate',emoji:'🟢',totalLessons:30,durationStr:'11h',enrolledCount:142,isPublished:true,projectTitle:'Build a REST API',projectDescription:'Build a complete REST API with auth.',projectDeadlineDays:7,sections:[]},
+  {id:'c3',title:'JavaScript ES6+',instructorName:'Priya Sharma',category:'web',difficulty:'beginner',emoji:'JS',totalLessons:28,durationStr:'10h',enrolledCount:287,isPublished:true,projectTitle:'Weather App',projectDescription:'Build a weather app using fetch API.',projectDeadlineDays:5,sections:[]},
+  {id:'c4',title:'Flutter Mobile Dev',instructorName:'Arjun Mehta',category:'mobile',difficulty:'intermediate',emoji:'Mobile',totalLessons:42,durationStr:'18h',enrolledCount:87,isPublished:true,projectTitle:'Chat App',projectDescription:'Build a simple real-time chat app.',projectDeadlineDays:14,sections:[]},
+  {id:'c5',title:'Machine Learning A-Z',instructorName:'Dr. Anil Kumar',category:'data',difficulty:'advanced',emoji:'AI',totalLessons:60,durationStr:'32h',enrolledCount:98,isPublished:true,projectTitle:'ML Model Deployment',projectDescription:'Train and deploy a classification model.',projectDeadlineDays:21,sections:[]},
+  {id:'c6',title:'UI/UX Fundamentals',instructorName:'Kavya Rao',category:'design',difficulty:'beginner',emoji:'Design',totalLessons:20,durationStr:'9h',enrolledCount:234,isPublished:true,projectTitle:'Redesign an App',projectDescription:'Redesign any popular app in Figma.',projectDeadlineDays:7,sections:[]},
+  {id:'c7',title:'AWS Cloud Practitioner',instructorName:'Rohit Agarwal',category:'devops',difficulty:'advanced',emoji:'Cloud',totalLessons:38,durationStr:'16h',enrolledCount:119,isPublished:true,projectTitle:'Deploy a Node App',projectDescription:'Deploy a Node.js app on AWS EC2.',projectDeadlineDays:10,sections:[]},
+  {id:'c8',title:'Node.js & Express API',instructorName:'Vikram Singh',category:'web',difficulty:'intermediate',emoji:'Node',totalLessons:30,durationStr:'11h',enrolledCount:142,isPublished:true,projectTitle:'Build a REST API',projectDescription:'Build a complete REST API with auth.',projectDeadlineDays:7,sections:[]},
 ];
-const DEMO_USER = {uid:'d1',name:'Aarav Joshi',email:'aarav@email.com',role:'student',xp:2840,streakDays:7,enrolledCourses:['c1','c2'],badges:['🔥 7-Day Streak']};
+const DEMO_USER = {uid:'d1',name:'Aarav Joshi',email:'aarav@email.com',role:'student',xp:2840,streakDays:7,enrolledCourses:['c1','c2'],badges:['Fire 7-Day Streak']};
 const DEMO_PROGRESS = [
-  {courseId:'c1',course:{id:'c1',title:'React.js Complete Guide',emoji:'⚛️',totalLessons:6,instructorName:'Arjun Mehta'},completedLessons:['l1','l2'],percentComplete:33,lastLessonId:'l3'},
-  {courseId:'c2',course:{id:'c2',title:'Python for Data Science',emoji:'🐍',totalLessons:4,instructorName:'Priya Sharma'},completedLessons:['p1'],percentComplete:25,lastLessonId:'p2'},
+  {courseId:'c1',course:{id:'c1',title:'React.js Complete Guide',emoji:'React',totalLessons:6,instructorName:'Arjun Mehta'},completedLessons:['l1','l2'],percentComplete:33,lastLessonId:'l3'},
+  {courseId:'c2',course:{id:'c2',title:'Python for Data Science',emoji:'Python',totalLessons:4,instructorName:'Priya Sharma'},completedLessons:['p1'],percentComplete:25,lastLessonId:'p2'},
 ];
 const DEMO_QUIZZES = [
   {id:'q1',courseId:'c1',courseTitle:'React.js Complete Guide',title:'React Fundamentals Quiz',timeLimit:300,passMark:60,questions:[
     {question:'Which hook manages local state?',options:['useEffect','useState','useContext','useReducer']},
     {question:'What does JSX stand for?',options:['JavaScript XML','JavaScript Extension','Java Syntax','JSON XML']},
     {question:'Which hook runs after every render?',options:['useState','useMemo','useEffect','useRef']},
-    {question:'How is data passed parent → child?',options:['State','Context','Props','Redux']},
+    {question:'How is data passed parent -&gt; child?',options:['State','Context','Props','Redux']},
     {question:'Command to create React app?',options:['npm init react','npx create-react-app','npm install react','react new']},
   ]},
 ];
@@ -510,7 +510,7 @@ const doAuth = async () => {
   const name =document.getElementById('f-name').value.trim();
   if (!email||!pass) { showErr('Please fill in all fields'); return; }
   const btn=document.getElementById('authbtn');
-  btn.disabled=true; btn.textContent='…';
+  btn.disabled=true; btn.textContent='...';
   try {
     if (S.demo) {
       S.user={...DEMO_USER,name:name||DEMO_USER.name,email};
@@ -526,7 +526,7 @@ const doAuth = async () => {
     }
     onLogin();
     goPage('home');
-    toast('Welcome, '+S.user.name.split(' ')[0]+'! 👋');
+    toast('Welcome, '+S.user.name.split(' ')[0]+'! !');
   } catch(e) { showErr(e.message); }
   finally { btn.disabled=false; btn.textContent=isSignIn?'Sign In':'Create Account'; }
 };
@@ -554,17 +554,17 @@ const courseCard = (c, showProg=false) => {
   const dc={beginner:'db',intermediate:'di',advanced:'da'}[c.difficulty]||'db';
   const dl=(c.difficulty||'').charAt(0).toUpperCase()+(c.difficulty||'').slice(1);
   let bcls='', btxt='', bact='';
-  if (en) { bcls='enrolled'; btxt='✓ Enrolled'; bact=`openCourse('${c.id}')`; }
-  else if (req?.status==='pending')  { bcls='pending';  btxt='⏳ Pending';   bact=`toast('Awaiting admin approval')`; }
-  else if (req?.status==='rejected') { bcls='rejected'; btxt='✗ Rejected';   bact=`toast('Request rejected. Contact admin.')`; }
+  if (en) { bcls='enrolled'; btxt='v Enrolled'; bact=`openCourse('${c.id}')`; }
+  else if (req?.status==='pending')  { bcls='pending';  btxt='[Pending] Pending';   bact=`toast('Awaiting admin approval')`; }
+  else if (req?.status==='rejected') { bcls='rejected'; btxt='x Rejected';   bact=`toast('Request rejected. Contact admin.')`; }
   else { bcls=''; btxt='Request Enrollment'; bact=`requestEnroll('${c.id}',event)`; }
 
   return `<div class="cc" onclick="openCourse('${c.id}')">
-    <div class="cc-cov" style="background:${getCoverBg(c.category)}">${c.emoji||'📚'}</div>
+    <div class="cc-cov" style="background:${getCoverBg(c.category)}">${c.emoji||'[courses]'}</div>
     <div class="cc-body">
       <div class="cc-title">${c.title}</div>
       <div class="cc-inst">by ${c.instructorName||'Instructor'}</div>
-      <div class="cc-meta"><span>📖 ${c.totalLessons||0}</span><span>⏱ ${c.durationStr||'—'}</span><span>👥 ${c.enrolledCount||0}</span></div>
+      <div class="cc-meta"><span>[book] ${c.totalLessons||0}</span><span>Duration: ${c.durationStr||'-'}</span><span> ${c.enrolledCount||0}</span></div>
       ${showProg&&pr?`<div class="pb"><div class="pf" style="width:${pr.percentComplete}%"></div></div><div class="pct">${pr.percentComplete}% complete</div>`:''}
       <div class="cc-foot">
         <span class="diff ${dc}">${dl}</span>
@@ -579,7 +579,7 @@ const requestEnroll = async (id, e) => {
   if (!S.user) { goPage('auth'); return; }
   if (S.demo) {
     S.requests.push({courseId:id,status:'pending'});
-    toast('Enrollment request sent! 📋 Awaiting admin approval');
+    toast('Enrollment request sent! [Request] Awaiting admin approval');
     renderAllCourses(); return;
   }
   try {
@@ -594,8 +594,8 @@ const renderAllCourses = (cat='') => {
   const list=cat?S.courses.filter(c=>c.category===cat):S.courses;
   const el1=document.getElementById('home-courses');
   const el2=document.getElementById('explore-grid');
-  if (el1) el1.innerHTML=list.slice(0,8).map(c=>courseCard(c)).join('')||'<div class="empty"><div class="ico">📚</div><p>No courses yet</p></div>';
-  if (el2) el2.innerHTML=list.map(c=>courseCard(c)).join('')||'<div class="empty"><div class="ico">🔍</div><p>No courses found</p></div>';
+  if (el1) el1.innerHTML=list.slice(0,8).map(c=>courseCard(c)).join('')||'<div class="empty"><div class="ico">[courses]</div><p>No courses yet</p></div>';
+  if (el2) el2.innerHTML=list.map(c=>courseCard(c)).join('')||'<div class="empty"><div class="ico">[search]</div><p>No courses found</p></div>';
 };
 
 const filterCat = (cat, btn) => {
@@ -608,13 +608,13 @@ const doSearch = val => {
   if (val.length<2) return;
   goPage('explore');
   const list=S.courses.filter(c=>c.title.toLowerCase().includes(val.toLowerCase())||c.instructorName?.toLowerCase().includes(val.toLowerCase()));
-  document.getElementById('explore-grid').innerHTML=list.map(c=>courseCard(c)).join('')||'<div class="empty"><div class="ico">🔍</div><p>No results</p></div>';
+  document.getElementById('explore-grid').innerHTML=list.map(c=>courseCard(c)).join('')||'<div class="empty"><div class="ico">[search]</div><p>No results</p></div>';
 };
 
 // === HOME RENDER ==========================================
 const renderHome = () => {
   const u=S.user; if (!u) return;
-  document.getElementById('hgreet').textContent='Welcome back, '+(u.name||'').split(' ')[0]+' 👋';
+  document.getElementById('hgreet').textContent='Welcome back, '+(u.name||'').split(' ')[0]+' !';
   const progs=S.progress, avg=progs.length?Math.round(progs.reduce((a,p)=>a+(p.percentComplete||0),0)/progs.length):0;
   const done=progs.filter(p=>p.percentComplete>=100).length;
   document.getElementById('hs-en').textContent=(u.enrolledCourses||[]).length;
@@ -627,8 +627,8 @@ const renderHome = () => {
   document.getElementById('ps-xp').textContent=(u.xp||0).toLocaleString();
   document.getElementById('ps-streak').textContent=u.streakDays||0;
   document.getElementById('pav').textContent=(u.name||'??').split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
-  document.getElementById('pname').textContent=u.name||'—';
-  document.getElementById('pemail').textContent=(u.email||'')+ ' · Student';
+  document.getElementById('pname').textContent=u.name||'-';
+  document.getElementById('pemail').textContent=(u.email||'')+ ' . Student';
   document.getElementById('pbadges').innerHTML=(u.badges||[]).map(b=>`<span class="pb-badge">${b}</span>`).join('');
   // Continue learning
   const inp=progs.filter(p=>p.percentComplete>0&&p.percentComplete<100);
@@ -637,12 +637,12 @@ const renderHome = () => {
     document.getElementById('cont-grid').innerHTML=inp.slice(0,3).map(p=>{
       const c=p.course;
       return `<div class="contcard" onclick="openCourse('${c?.id||p.courseId}')">
-        <div style="font-size:28px;margin-bottom:9px">${c?.emoji||'📚'}</div>
+        <div style="font-size:28px;margin-bottom:9px">${c?.emoji||'[courses]'}</div>
         <div style="font-size:13px;font-weight:600;margin-bottom:3px">${c?.title||'Course'}</div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:3px">${c?.instructorName||''}</div>
         <div class="pb"><div class="pf" style="width:${p.percentComplete}%"></div></div>
         <div class="pct">${p.percentComplete}% complete</div>
-        <button class="resumebtn">▶ Resume</button>
+        <button class="resumebtn">> Resume</button>
       </div>`;
     }).join('');
   }
@@ -653,20 +653,20 @@ const renderHome = () => {
 const renderMyCourses = () => {
   const enrolled=S.courses.filter(c=>isEnrolled(c.id));
   const el=document.getElementById('my-courses-grid');
-  if (!enrolled.length) { el.innerHTML='<div class="empty"><div class="ico">📖</div><p>No enrolled courses. Request enrollment from the Explore page.</p></div>'; return; }
+  if (!enrolled.length) { el.innerHTML='<div class="empty"><div class="ico">[book]</div><p>No enrolled courses. Request enrollment from the Explore page.</p></div>'; return; }
   el.innerHTML=enrolled.map(c=>{
     const pr=getProgress(c.id);
     return `<div class="lcard">
       <div class="lcard-hdr">
-        <div style="font-size:26px">${c.emoji||'📚'}</div>
-        <div><div class="lcard-title">${c.title}</div><div class="lcard-meta">${c.instructorName||''} · ${pr?.completedLessons?.length||0}/${c.totalLessons||0} lessons</div></div>
+        <div style="font-size:26px">${c.emoji||'[courses]'}</div>
+        <div><div class="lcard-title">${c.title}</div><div class="lcard-meta">${c.instructorName||''} . ${pr?.completedLessons?.length||0}/${c.totalLessons||0} lessons</div></div>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>Progress</span><span style="color:var(--accent);font-weight:600">${pr?.percentComplete||0}%</span></div>
       <div class="pb-lg"><div class="pf-lg" style="width:${pr?.percentComplete||0}%"></div></div>
       <div class="lcards-actions">
-        <button class="btnc" onclick="openCourse('${c.id}')">${(pr?.percentComplete||0)>=100?'✓ Review':'▶ Continue'}</button>
-        <button class="btno" onclick="openCourseQuiz('${c.id}')">📝 Quiz</button>
-        <button class="btno" onclick="openCourseProject('${c.id}')">🏗 Project</button>
+        <button class="btnc" onclick="openCourse('${c.id}')">${(pr?.percentComplete||0)>=100?'v Review':'> Continue'}</button>
+        <button class="btno" onclick="openCourseQuiz('${c.id}')">[quiz] Quiz</button>
+        <button class="btno" onclick="openCourseProject('${c.id}')">[project] Project</button>
       </div>
     </div>`;
   }).join('');
@@ -674,9 +674,9 @@ const renderMyCourses = () => {
 
 const renderMyQuizzes = async () => {
   const el=document.getElementById('quiz-list');
-  el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">Loading quizzes…</div>';
+  el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">Loading quizzes...</div>';
   const enrolled=S.courses.filter(c=>isEnrolled(c.id));
-  if (!enrolled.length) { el.innerHTML='<div class="empty"><div class="ico">📝</div><p>Enroll in courses to access quizzes</p></div>'; return; }
+  if (!enrolled.length) { el.innerHTML='<div class="empty"><div class="ico">[quiz]</div><p>Enroll in courses to access quizzes</p></div>'; return; }
 
   let allQuizzes=[];
   if (S.demo) {
@@ -687,28 +687,28 @@ const renderMyQuizzes = async () => {
     }
   }
 
-  if (!allQuizzes.length) { el.innerHTML='<div class="empty"><div class="ico">📝</div><p>No quizzes available yet</p></div>'; return; }
+  if (!allQuizzes.length) { el.innerHTML='<div class="empty"><div class="ico">[quiz]</div><p>No quizzes available yet</p></div>'; return; }
   el.innerHTML=allQuizzes.map(q=>`
     <div class="quiz-box">
-      <div class="quiz-title">${q.courseEmoji||'📚'} ${q.title}</div>
-      <div class="quiz-meta">Course: ${q.courseTitle||'—'} · ${q.questions?.length||0} questions · ${Math.floor((q.timeLimit||300)/60)} min · Pass: ${q.passMark||60}%</div>
-      <button class="quiz-start-btn" onclick="startQuiz(${JSON.stringify(q).replace(/"/g,'&quot;')})">Start Quiz →</button>
+      <div class="quiz-title">${q.courseEmoji||'[courses]'} ${q.title}</div>
+      <div class="quiz-meta">Course: ${q.courseTitle||'-'} . ${q.questions?.length||0} questions . ${Math.floor((q.timeLimit||300)/60)} min . Pass: ${q.passMark||60}%</div>
+      <button class="quiz-start-btn" onclick="startQuiz(${JSON.stringify(q).replace(/"/g,'&quot;')})">Start Quiz -&gt;</button>
     </div>`).join('');
 };
 
 const renderMyProjects = () => {
   const enrolled=S.courses.filter(c=>isEnrolled(c.id)&&c.projectTitle);
   const el=document.getElementById('proj-list');
-  if (!enrolled.length) { el.innerHTML='<div class="empty"><div class="ico">🏗</div><p>Enroll in courses to access projects</p></div>'; return; }
+  if (!enrolled.length) { el.innerHTML='<div class="empty"><div class="ico">[project]</div><p>Enroll in courses to access projects</p></div>'; return; }
   el.innerHTML=enrolled.map(c=>`
     <div class="proj-box">
-      <div class="proj-title">${c.emoji||'📚'} ${c.projectTitle}</div>
+      <div class="proj-title">${c.emoji||'[courses]'} ${c.projectTitle}</div>
       <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Course: ${c.title}</div>
       <div class="proj-desc">${c.projectDescription||'Project details will be provided by your instructor.'}</div>
-      <div class="proj-deadline">⏰ Deadline: ${c.projectDeadlineDays||7} days after enrollment</div>
+      <div class="proj-deadline">Deadline: Deadline: ${c.projectDeadlineDays||7} days after enrollment</div>
       <button class="proj-submit" onclick="submitProject('${c.id}',this)">Submit Project</button>
-      <input class="fi proj-link-input" id="proj-input-${c.id}" placeholder="Paste GitHub/Drive link…">
-      <div id="proj-status-${c.id}" style="font-size:11px;color:var(--green);margin-top:6px;display:none">✓ Submitted!</div>
+      <input class="fi proj-link-input" id="proj-input-${c.id}" placeholder="Paste GitHub/Drive link...">
+      <div id="proj-status-${c.id}" style="font-size:11px;color:var(--green);margin-top:6px;display:none">v Submitted!</div>
     </div>`).join('');
 };
 
@@ -718,7 +718,7 @@ const submitProject = (cid, btn) => {
   if (!inp.value.trim()) { toast('Please paste a link first'); return; }
   btn.style.display='none'; inp.style.display='none';
   document.getElementById(`proj-status-${cid}`).style.display='block';
-  toast('Project submitted! ✓');
+  toast('Project submitted! v');
 };
 
 // Open quiz/project from My Courses tab
@@ -773,8 +773,8 @@ const renderActiveQuiz = () => {
       ${q.options.map((o,i)=>`<div class="opt ${QS.answers[QS.current]===i?'sel':''}" onclick="selectOpt(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span><span>${o}</span></div>`).join('')}
     </div>
     <div class="quiz-nav">
-      ${QS.current>0?`<button class="qbtn" onclick="quizBack()">← Back</button>`:''}
-      <button class="qbtn primary" onclick="quizNext()" style="margin-left:auto">${QS.current===QS.quiz.questions.length-1?'Finish →':'Next →'}</button>
+      ${QS.current>0?`<button class="qbtn" onclick="quizBack()">&lt;- Back</button>`:''}
+      <button class="qbtn primary" onclick="quizNext()" style="margin-left:auto">${QS.current===QS.quiz.questions.length-1?'Finish -&gt;':'Next -&gt;'}</button>
     </div>`;
   if (!QS.timer) {
     QS.timer=setInterval(()=>{
@@ -803,11 +803,11 @@ const finishQuiz = () => {
   if (!S.demo) api(`/quizzes/${QS.quiz.id}/submit`,{method:'POST',body:JSON.stringify({answers:QS.answers,courseId:QS.quiz.courseId})}).catch(()=>{});
   document.getElementById('quiz-list').innerHTML=`
     <div class="result-box">
-      <div style="font-size:44px;margin-bottom:12px">${passed?'🎉':'📚'}</div>
+      <div style="font-size:44px;margin-bottom:12px">${passed?':)':'[courses]'}</div>
       <div class="result-score">${score}</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:4px">out of 100</div>
-      <div class="result-grade">Grade: ${grade} · ${passed?'Passed ✓':'Try again'}</div>
-      <div class="result-detail">${correct} of ${total} correct · ${passed?'+'+Math.round(score/10)*10+' XP earned':''}</div>
+      <div class="result-grade">Grade: ${grade} . ${passed?'Passed v':'Try again'}</div>
+      <div class="result-detail">${correct} of ${total} correct . ${passed?'+'+Math.round(score/10)*10+' XP earned':''}</div>
       <div style="display:flex;gap:10px;justify-content:center">
         <button class="qbtn" onclick="renderMyQuizzes()">Back to Quizzes</button>
         <button class="qbtn primary" onclick="startQuiz(${JSON.stringify(QS.quiz).replace(/"/g,'&quot;')})">Retry</button>
@@ -834,13 +834,13 @@ const openCourse = async id => {
     banner.id='enroll-banner-player';
     if (req?.status==='pending') {
       banner.className='enroll-banner';
-      banner.innerHTML='⏳ Your enrollment request is pending admin approval. Free preview lessons available below.';
+      banner.innerHTML='[Pending] Your enrollment request is pending admin approval. Free preview lessons available below.';
     } else if (req?.status==='rejected') {
       banner.className='enroll-banner rejected';
-      banner.innerHTML='✗ Your enrollment request was rejected. Please contact the admin.';
+      banner.innerHTML='x Your enrollment request was rejected. Please contact the admin.';
     } else {
       banner.className='enroll-banner';
-      banner.innerHTML=`📋 You are not enrolled in this course.<button class="ebtn" onclick="requestEnroll('${id}',event)" style="margin-left:auto">Request Enrollment</button>`;
+      banner.innerHTML=`[Request] You are not enrolled in this course.<button class="ebtn" onclick="requestEnroll('${id}',event)" style="margin-left:auto">Request Enrollment</button>`;
     }
     document.querySelector('.player-left').insertBefore(banner, pinfo);
   }
@@ -862,7 +862,7 @@ const renderCurriculum = () => {
       const isDone=done.includes(l.id), isOn=S.currentLesson?.id===l.id;
       const locked=!isEnrolled(c.id)&&!l.isFree;
       return `<div class="cl ${isOn?'on':''} ${isDone?'done':''}" onclick="${locked?`toast('Enroll to unlock this lesson')`:`loadLessonById('${l.id}')`}">
-        <span class="cls">${isDone?'✅':isOn?'▶':locked?'🔒':'○'}</span>
+        <span class="cls">${isDone?'v':isOn?'>':locked?'[locked]':'o'}</span>
         <span style="flex:1">${l.title}</span>
         <span class="cldur">${l.durationStr||''}</span>
       </div>`;
@@ -881,37 +881,37 @@ const loadLesson = l => {
   const c=S.currentCourse;
   document.getElementById('pl-title').textContent=l.title;
   document.getElementById('pl-course').textContent=(c?.emoji||'')+' '+(c?.title||'');
-  document.getElementById('pl-dur').textContent='⏱ '+(l.durationStr||'—');
-  document.getElementById('pl-free').textContent=l.isFree?'🆓 Free Preview':'';
+  document.getElementById('pl-dur').textContent='Duration: '+(l.durationStr||'-');
+  document.getElementById('pl-free').textContent=l.isFree?'[Free] Free Preview':'';
   const vbox=document.getElementById('vbox');
   const enrolled=isEnrolled(c?.id);
   const src=l.videoUrl||(l.githubPath&&enrolled?`https://raw.githubusercontent.com/${window._ghOwner||'OWNER'}/${window._ghRepo||'lms-videos'}/main/${l.githubPath}`:null);
   if (src) {
     vbox.innerHTML=`<video id="mv" controls autoplay style="width:100%;display:block;max-height:58vh;background:#000"><source src="${src}" type="video/mp4"></video>`;
     document.getElementById('mv').addEventListener('ended',markDone);
-    document.getElementById('mv').addEventListener('error',()=>{ vbox.innerHTML=fallback(l.title,'⚠️ Video file not found on GitHub. Push the .mp4 file first.'); });
+    document.getElementById('mv').addEventListener('error',()=>{ vbox.innerHTML=fallback(l.title,'[!] Video file not found on GitHub. Push the .mp4 file first.'); });
   } else {
-    vbox.innerHTML=fallback(l.title, l.isFree?'Push this video to GitHub to watch':'🔒 Enroll in this course to watch all lessons');
+    vbox.innerHTML=fallback(l.title, l.isFree?'Push this video to GitHub to watch':'[locked] Enroll in this course to watch all lessons');
   }
   renderCurriculum();
 };
 
 const fallback = (title, hint) =>
-  `<div class="vfallback"><div style="font-size:44px;margin-bottom:10px">🎬</div><p style="font-size:13px;color:rgba(255,255,255,.6)">${title}</p><p style="font-size:11px;margin-top:6px;color:rgba(255,255,255,.3);max-width:320px">${hint}</p></div>`;
+  `<div class="vfallback"><div style="font-size:44px;margin-bottom:10px">[video]</div><p style="font-size:13px;color:rgba(255,255,255,.6)">${title}</p><p style="font-size:11px;margin-top:6px;color:rgba(255,255,255,.3);max-width:320px">${hint}</p></div>`;
 
 const markDone = async () => {
   const l=S.currentLesson, c=S.currentCourse; if (!l||!c) return;
   try {
     if (!S.demo) {
       const d=await api(`/progress/${c.id}/complete-lesson`,{method:'POST',body:JSON.stringify({lessonId:l.id,watchSeconds:60})});
-      if (d.xpEarned) { S.user.xp=(S.user.xp||0)+d.xpEarned; document.getElementById('xpval').textContent=S.user.xp.toLocaleString(); toast('Lesson complete! +'+d.xpEarned+' XP ⚡'); }
-      if (d.isCompleted) setTimeout(()=>toast('🎉 Course complete! Certificate earned!'),1500);
+      if (d.xpEarned) { S.user.xp=(S.user.xp||0)+d.xpEarned; document.getElementById('xpval').textContent=S.user.xp.toLocaleString(); toast('Lesson complete! +'+d.xpEarned+' XP +'); }
+      if (d.isCompleted) setTimeout(()=>toast(':) Course complete! Certificate earned!'),1500);
       await loadUserData();
     } else {
       let pr=S.progress.find(p=>p.courseId===c.id);
       if (!pr) { pr={courseId:c.id,course:{id:c.id,title:c.title,emoji:c.emoji,totalLessons:c.totalLessons,instructorName:c.instructorName},completedLessons:[],percentComplete:0}; S.progress.push(pr); }
-      if (!pr.completedLessons.includes(l.id)) { pr.completedLessons.push(l.id); pr.percentComplete=Math.round(pr.completedLessons.length/(c.totalLessons||1)*100); S.user.xp=(S.user.xp||0)+20; document.getElementById('xpval').textContent=S.user.xp.toLocaleString(); toast('Lesson complete! +20 XP ⚡'); }
-      else toast('Already marked complete ✓');
+      if (!pr.completedLessons.includes(l.id)) { pr.completedLessons.push(l.id); pr.percentComplete=Math.round(pr.completedLessons.length/(c.totalLessons||1)*100); S.user.xp=(S.user.xp||0)+20; document.getElementById('xpval').textContent=S.user.xp.toLocaleString(); toast('Lesson complete! +20 XP +'); }
+      else toast('Already marked complete v');
       pr.lastLessonId=l.id;
     }
     renderCurriculum();
@@ -937,8 +937,8 @@ const renderProfile = () => {
   const u=S.user; if (!u) return;
   const ini=(u.name||'??').split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
   document.getElementById('pav').textContent=ini;
-  document.getElementById('pname').textContent=u.name||'—';
-  document.getElementById('pemail').textContent=(u.email||'')+' · Student';
+  document.getElementById('pname').textContent=u.name||'-';
+  document.getElementById('pemail').textContent=(u.email||'')+' . Student';
   document.getElementById('pbadges').innerHTML=(u.badges||[]).map(b=>`<span class="pb-badge">${b}</span>`).join('');
   const progs=S.progress, avg=progs.length?Math.round(progs.reduce((a,p)=>a+(p.percentComplete||0),0)/progs.length):0;
   document.getElementById('ps-en').textContent=(u.enrolledCourses||[]).length;
