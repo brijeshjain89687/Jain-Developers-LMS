@@ -130,6 +130,37 @@ const doAuth = async () => {
   finally { btn.disabled=false; btn.textContent=isSignIn?'Sign In':'Create Account'; }
 };
 
+async function doAuth() {
+    const email = document.getElementById("f-email")?.value;
+    const password = document.getElementById("f-pass")?.value;
+
+    if (!email || !password) {
+        alert("Please enter email and password");
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            localStorage.setItem("token", data.token);
+            alert("Login successful!");
+            location.reload();
+        } else {
+            alert(data.message || "Login failed");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Server error");
+    }
+};
+
 const showErr = msg => { const e=document.getElementById('aerr'); e.textContent=msg; e.classList.add('on'); };
 
 const onLogin = () => {
