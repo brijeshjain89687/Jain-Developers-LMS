@@ -113,6 +113,7 @@
     <button class="sidebar-btn" onclick="showTab('quizzes')" id="nav-quizzes"><span class="sidebar-icon">🧠</span> Quizzes</button>
     <button class="sidebar-btn" onclick="showTab('students')" id="nav-students"><span class="sidebar-icon">👥</span> Students</button>
     <button class="sidebar-btn" onclick="showTab('announcements')" id="nav-announcements"><span class="sidebar-icon">📢</span> Announcements</button>
+    <button class="sidebar-btn" onclick="showTab('settings')" id="nav-settings"><span class="sidebar-icon">⚙️</span> Settings</button>
     <div style="margin-top:auto;padding:14px 18px;border-top:1px solid rgba(255,255,255,0.1)">
       <button onclick="doLogout()" style="background:transparent;color:rgba(255,255,255,0.5);border:none;cursor:pointer;font-size:12px">← Sign Out</button>
     </div>
@@ -192,6 +193,13 @@
         <button class="btn btn-primary" onclick="openAnnModal()">+ Post Announcement</button>
       </div>
       <div id="announcements-list"><div class="loader">Loading...</div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="tab-settings" class="hidden">
+      <div class="page-title">Settings</div>
+      <div class="page-sub">System status, Firebase info, and video upload guide</div>
+      <div id="settings-content"></div>
     </div>
 
   </div><!-- /main -->
@@ -692,6 +700,7 @@ function showTab(name) {
   else if (name === 'quizzes') renderQuizzesList();
   else if (name === 'students') renderStudentsList();
   else if (name === 'announcements') renderAnnouncementsList();
+  else if (name === 'settings') renderSettingsPage();
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────
@@ -719,6 +728,302 @@ function getDemoAnnouncements() {
     { id:'a2',title:'New Course: UI/UX Design Bootcamp',body:"We've just launched our design fundamentals course. Early bird pricing available this week!",tag:'Event',isActive:true },
     { id:'a3',title:'System Maintenance Tonight',body:'The platform will be under brief maintenance from 2–3 AM IST.',tag:'Urgent',isActive:true },
   ];
+}
+
+// ─── SETTINGS TAB ────────────────────────────────────────────
+async function renderSettingsPage() {
+  const el = document.getElementById('settings-content');
+  el.innerHTML = `
+    <div style="display:grid;gap:24px">
+
+      <!-- ── 1. SYSTEM STATUS ───────────────────────────── -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+          <div>
+            <h3 style="font-size:16px;font-weight:800;color:#1e1b4b;margin-bottom:3px">System Status</h3>
+            <p style="font-size:12px;color:#6b7280">Live health checks for all connected services</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="renderSettingsPage()">↺ Refresh</button>
+        </div>
+        <div id="status-checks" style="display:grid;gap:10px">
+          <div class="status-row" id="s-backend">
+            <div class="status-dot dot-checking"></div>
+            <div style="flex:1"><div class="status-name">Backend API</div><div class="status-detail" id="sd-backend">Checking...</div></div>
+            <span class="status-pill pill-checking">Checking</span>
+          </div>
+          <div class="status-row" id="s-firebase">
+            <div class="status-dot dot-checking"></div>
+            <div style="flex:1"><div class="status-name">Firebase Firestore</div><div class="status-detail" id="sd-firebase">Checking...</div></div>
+            <span class="status-pill pill-checking">Checking</span>
+          </div>
+          <div class="status-row" id="s-auth">
+            <div class="status-dot dot-checking"></div>
+            <div style="flex:1"><div class="status-name">Firebase Auth</div><div class="status-detail" id="sd-auth">Checking...</div></div>
+            <span class="status-pill pill-checking">Checking</span>
+          </div>
+          <div class="status-row" id="s-github">
+            <div class="status-dot dot-checking"></div>
+            <div style="flex:1"><div class="status-name">GitHub Video Repo</div><div class="status-detail" id="sd-github">Checking...</div></div>
+            <span class="status-pill pill-checking">Checking</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 2. ENVIRONMENT INFO ────────────────────────── -->
+      <div class="card">
+        <h3 style="font-size:16px;font-weight:800;color:#1e1b4b;margin-bottom:3px">Environment Info</h3>
+        <p style="font-size:12px;color:#6b7280;margin-bottom:16px">Deployment configuration loaded from your server</p>
+        <div id="env-info" style="display:grid;gap:8px">
+          <div class="loader" style="padding:20px">Loading...</div>
+        </div>
+      </div>
+
+      <!-- ── 3. VIDEO UPLOAD GUIDE ──────────────────────── -->
+      <div class="card">
+        <h3 style="font-size:16px;font-weight:800;color:#1e1b4b;margin-bottom:3px">📹 How to Add Videos to GitHub</h3>
+        <p style="font-size:12px;color:#6b7280;margin-bottom:18px">Step-by-step guide to uploading course videos to your <code style="background:#f3f4f6;padding:1px 6px;border-radius:4px">lms-videos</code> GitHub repository</p>
+
+        <div style="display:grid;gap:14px">
+
+          <div class="guide-step">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Install Git (if not already)</div>
+              <div class="step-body">Download from <a href="https://git-scm.com" target="_blank" style="color:#4f46e5">git-scm.com</a> and install. Verify with:</div>
+              <div class="code-block">git --version</div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Clone your lms-videos repo</div>
+              <div class="step-body">Open terminal and run:</div>
+              <div class="code-block">git clone https://github.com/YOUR_USERNAME/lms-videos.git
+cd lms-videos</div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Organise videos by course folder</div>
+              <div class="step-body">Create one folder per course matching the <strong>GitHub Folder</strong> field in your course settings. Keep videos under 25 MB per file (GitHub limit for API uploads; use Git push for larger files).</div>
+              <div class="code-block">lms-videos/
+├── web-dev/
+│   ├── 01-variables-data-types.mp4
+│   ├── 02-functions-closures.mp4
+│   └── 03-async-await.mp4
+├── data-science/
+│   ├── 01-python-setup.mp4
+│   └── 02-data-structures.mp4
+└── devops/
+    └── 01-what-is-docker.mp4</div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-num">4</div>
+            <div>
+              <div class="step-title">Add, commit and push</div>
+              <div class="step-body">Copy your video files into the correct folder, then:</div>
+              <div class="code-block">git add .
+git commit -m "Add web-dev lesson videos"
+git push origin main</div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-num">5</div>
+            <div>
+              <div class="step-title">Get the raw video URL</div>
+              <div class="step-body">Your video URL will be in this format — use it in the lesson <code style="background:#f3f4f6;padding:1px 5px;border-radius:3px">videoUrl</code> field:</div>
+              <div class="code-block">https://raw.githubusercontent.com/YOUR_USERNAME/lms-videos/main/web-dev/01-variables.mp4</div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="step-num">6</div>
+            <div>
+              <div class="step-title">For files larger than 25 MB</div>
+              <div class="step-body">Use Git LFS (Large File Storage). Run once per machine:</div>
+              <div class="code-block">git lfs install
+git lfs track "*.mp4"
+git add .gitattributes
+git add web-dev/large-video.mp4
+git commit -m "Add large video via LFS"
+git push origin main</div>
+            </div>
+          </div>
+
+          <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:14px 18px;margin-top:4px">
+            <div style="font-weight:700;font-size:13px;color:#166534;margin-bottom:4px">💡 Pro tip — Naming convention</div>
+            <div style="font-size:12px;color:#16a34a;line-height:1.6">Name your files with a number prefix (01-, 02-, etc.) matching the lesson order in your course. This makes it easy to find the right file when adding videoUrl values to lessons in Firestore.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 4. QUICK ACTIONS ───────────────────────────── -->
+      <div class="card">
+        <h3 style="font-size:16px;font-weight:800;color:#1e1b4b;margin-bottom:3px">Quick Actions</h3>
+        <p style="font-size:12px;color:#6b7280;margin-bottom:16px">Useful admin shortcuts</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-ghost" onclick="pingHealth()">🏓 Ping Health API</button>
+          <button class="btn btn-ghost" onclick="if(confirm('Re-seed will overwrite existing demo data. Continue?'))window.open('/api/seed?secret='+prompt('Enter SEED_SECRET:'),'_blank')">🌱 Re-seed Database</button>
+          <a href="/api/health" target="_blank" class="btn btn-ghost">📋 View Health JSON</a>
+          <button class="btn btn-ghost" onclick="clearSession()">🗑 Clear Session Cache</button>
+        </div>
+      </div>
+
+    </div>`;
+
+  // inject CSS once
+  if (!document.getElementById('settings-css')) {
+    const style = document.createElement('style');
+    style.id = 'settings-css';
+    style.textContent = `
+      .status-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#f9fafb;border-radius:10px;border:1px solid #e5e7eb}
+      .status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+      .dot-checking{background:#9ca3af;animation:pulse 1.2s infinite}
+      .dot-ok{background:#16a34a}
+      .dot-warn{background:#d97706}
+      .dot-error{background:#dc2626}
+      @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+      .status-name{font-size:13px;font-weight:700;color:#111}
+      .status-detail{font-size:11px;color:#6b7280;margin-top:2px}
+      .status-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0}
+      .pill-checking{background:#f3f4f6;color:#6b7280}
+      .pill-ok{background:#dcfce7;color:#16a34a}
+      .pill-warn{background:#fef3c7;color:#d97706}
+      .pill-error{background:#fee2e2;color:#dc2626}
+      .env-row{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#f9fafb;border-radius:8px;font-size:13px}
+      .env-key{font-weight:700;color:#374151}
+      .env-val{color:#4f46e5;font-family:monospace;font-size:12px}
+      .env-missing{color:#dc2626;font-size:12px}
+      .guide-step{display:flex;gap:14px;align-items:flex-start}
+      .step-num{width:28px;height:28px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;margin-top:2px}
+      .step-title{font-weight:700;font-size:14px;color:#1e1b4b;margin-bottom:4px}
+      .step-body{font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:8px}
+      .code-block{background:#1e1b4b;color:#a5b4fc;font-family:monospace;font-size:12px;padding:12px 16px;border-radius:8px;white-space:pre;overflow-x:auto;line-height:1.7}
+    `;
+    document.head.appendChild(style);
+  }
+
+  // run checks in parallel
+  await Promise.all([checkBackend(), checkFirebase(), checkGitHub(), loadEnvInfo()]);
+}
+
+async function checkBackend() {
+  const start = Date.now();
+  try {
+    const res = await fetch('/api/health');
+    const ms = Date.now() - start;
+    if (res.ok) {
+      const data = await res.json();
+      setStatus('backend', 'ok', `Online · ${ms}ms · v${data.version || '?'}`, 'Online');
+    } else {
+      setStatus('backend', 'error', `HTTP ${res.status}`, 'Error');
+    }
+  } catch (e) {
+    setStatus('backend', 'error', 'Unreachable — ' + e.message, 'Offline');
+  }
+}
+
+async function checkFirebase() {
+  try {
+    // hitting /api/courses proves Firestore is reachable (it reads from Firestore)
+    const start = Date.now();
+    const res = await fetch('/api/courses', { headers: { Authorization: 'Bearer ' + adminToken } });
+    const ms = Date.now() - start;
+    if (res.ok) {
+      setStatus('firebase', 'ok', `Firestore reachable · ${ms}ms`, 'Connected');
+      setStatus('auth', 'ok', 'JWT auth valid — admin session active', 'Connected');
+    } else {
+      setStatus('firebase', 'warn', 'Responded but with error: HTTP ' + res.status, 'Warning');
+      setStatus('auth', 'warn', 'Check Firebase credentials in env vars', 'Warning');
+    }
+  } catch (e) {
+    setStatus('firebase', 'error', 'Cannot reach Firestore — ' + e.message, 'Error');
+    setStatus('auth', 'error', 'Auth check failed', 'Error');
+  }
+}
+
+async function checkGitHub() {
+  try {
+    // We check if our backend /api/health reports githubConfigured
+    const res = await fetch('/api/health');
+    const data = await res.json();
+    if (data.githubConfigured) {
+      setStatus('github', 'ok', `Repo: ${data.githubRepo || 'lms-videos'} — token configured`, 'Connected');
+    } else {
+      setStatus('github', 'warn', 'GITHUB_TOKEN / GITHUB_OWNER not set in environment', 'Not Configured');
+    }
+  } catch {
+    // fallback: just try a known-safe GitHub URL
+    try {
+      const r = await fetch('https://api.github.com', { method: 'HEAD' });
+      setStatus('github', r.ok ? 'warn' : 'error',
+        r.ok ? 'GitHub reachable but repo config not verified' : 'GitHub unreachable',
+        r.ok ? 'Partial' : 'Error');
+    } catch {
+      setStatus('github', 'warn', 'Cannot verify — check GITHUB_TOKEN env var', 'Unknown');
+    }
+  }
+}
+
+async function loadEnvInfo() {
+  const el = document.getElementById('env-info');
+  try {
+    const res = await fetch('/api/health');
+    const data = await res.json();
+
+    const rows = [
+      { key: 'API Status', val: data.status === 'ok' ? '✓ Online' : '✗ Error', ok: data.status === 'ok' },
+      { key: 'Version', val: data.version || '3.0', ok: true },
+      { key: 'Firebase Project', val: data.projectId || 'jain-lms-f14cd', ok: !!data.projectId },
+      { key: 'GitHub Repo', val: data.githubRepo || 'Not configured', ok: !!data.githubRepo },
+      { key: 'Keep-Alive', val: data.keepAlive ? 'Active' : 'Render URL not set', ok: !!data.keepAlive },
+      { key: 'Timestamp', val: new Date(data.timestamp).toLocaleString(), ok: true },
+    ];
+
+    el.innerHTML = rows.map(r => `
+      <div class="env-row">
+        <span class="env-key">${r.key}</span>
+        <span class="${r.ok ? 'env-val' : 'env-missing'}">${r.val}</span>
+      </div>`).join('');
+  } catch {
+    el.innerHTML = '<div class="env-row"><span class="env-key">Status</span><span class="env-missing">Could not reach /api/health</span></div>';
+  }
+}
+
+function setStatus(id, state, detail, label) {
+  const row = document.getElementById('s-' + id);
+  if (!row) return;
+  const dot = row.querySelector('.status-dot');
+  const pill = row.querySelector('.status-pill');
+  const detailEl = document.getElementById('sd-' + id);
+
+  dot.className = 'status-dot dot-' + state;
+  pill.className = 'status-pill pill-' + state;
+  pill.textContent = label;
+  if (detailEl) detailEl.textContent = detail;
+}
+
+async function pingHealth() {
+  const start = Date.now();
+  try {
+    const res = await fetch('/api/health');
+    const data = await res.json();
+    toast(`✓ API online · ${Date.now() - start}ms · ${data.timestamp}`);
+  } catch (e) {
+    toast('✗ Health ping failed: ' + e.message);
+  }
+}
+
+function clearSession() {
+  localStorage.removeItem('jain_admin_token');
+  localStorage.removeItem('jain_admin_ts');
+  toast('Session cache cleared — you will be logged out on next reload');
 }
 </script>
 </body>

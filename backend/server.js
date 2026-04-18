@@ -78,6 +78,13 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     project: 'Jain Developers LMS',
     version: '3.0',
+    projectId: process.env.FIREBASE_PROJECT_ID || null,
+    githubConfigured: !!(process.env.GITHUB_TOKEN && process.env.GITHUB_OWNER),
+    githubRepo: (process.env.GITHUB_OWNER && process.env.GITHUB_REPO)
+      ? process.env.GITHUB_OWNER + '/' + process.env.GITHUB_REPO
+      : null,
+    keepAlive: !!process.env.RENDER_APP_URL,
+    nodeVersion: process.version,
   });
 });
 
