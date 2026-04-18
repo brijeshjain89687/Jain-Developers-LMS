@@ -1,404 +1,1049 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jain Developers - Learn</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#f7f5f0;--surface:#fff;--accent:#e8381a;--accent2:#ff6b35;--text:#2d2410;--muted:#8a7f6e;--border:#e8e2d6;--gold:#d4900a;--green:#1a7a45;--blue:#2563eb;--r:14px;--sh:0 2px 12px rgba(26,17,8,.07)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-/* NAV */
-.topnav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:var(--sh)}
-.logo{display:flex;align-items:center;gap:9px;cursor:pointer;text-decoration:none}
-.lm{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff}
-.ln{font-size:13px;font-weight:700;color:var(--text)}
-.ls{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-.navlinks{display:flex;gap:2px;margin-left:10px}
-.nb{padding:6px 13px;border-radius:7px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit;transition:all .18s}
-.nb:hover{color:var(--text);background:var(--bg)}
-.nb.on{color:var(--accent);background:#fef2ee}
-.navr{margin-left:auto;display:flex;align-items:center;gap:10px}
-.srch{display:flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:7px 12px;width:200px}
-.srch input{background:none;border:none;outline:none;font-family:inherit;font-size:12px;color:var(--text);width:100%}
-.srch input::placeholder{color:var(--muted)}
-.xpc{background:#fffbf0;border:1px solid #f0e0a0;border-radius:16px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gold)}
-.avc{display:flex;align-items:center;gap:7px;cursor:pointer;padding:3px 10px 3px 3px;border-radius:20px;border:1px solid var(--border);background:var(--surface)}
-.av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:#fff}
-/* PAGE SYSTEM */
-.page{display:none}.page.on{display:block}
-/* AUTH */
-.auth-wrap{min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:28px}
-.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:400px;max-width:100%;box-shadow:var(--sh)}
-.auth-logo{text-align:center;margin-bottom:24px}
-.auth-logo .lm{width:48px;height:48px;font-size:14px;margin:0 auto 10px}
-.atitle{font-size:20px;font-weight:700;text-align:center;margin-bottom:5px}
-.asub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:24px}
-.fg{margin-bottom:14px}
-.fl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px}
-.fi{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;color:var(--text);font-family:inherit;font-size:13px;outline:none;transition:border-color .2s}
-.fi:focus{border-color:var(--accent);background:#fff}
-.btn-p{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
-.btn-p:hover{background:var(--accent2)}
-.btn-p:disabled{opacity:.6;cursor:not-allowed}
-.atog{text-align:center;margin-top:14px;font-size:12px;color:var(--muted)}
-.atog span{color:var(--accent);cursor:pointer;font-weight:600}
-.aerr{color:var(--accent);font-size:11px;margin-top:5px;display:none;background:#fef2ee;padding:6px 10px;border-radius:6px}
-.aerr.on{display:block}
-.demo-hint{margin-top:14px;padding:10px;background:var(--bg);border-radius:8px;font-size:11px;color:var(--muted);text-align:center;line-height:1.8}
-/* HERO */
-.hero{background:linear-gradient(135deg,#1a1108,#2d1e0a);padding:44px 28px;overflow:hidden;position:relative}
-.hero::after{content:'';position:absolute;right:-80px;top:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(232,56,26,.1),transparent 70%);pointer-events:none}
-.hero-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:40px}
-.hero-t{flex:1}
-.hgreet{font-size:12px;color:var(--accent2);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
-.htitle{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,46px);line-height:1.12;color:#fff;margin-bottom:12px}
-.htitle em{color:var(--accent2);font-style:italic}
-.hsub{font-size:13px;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:20px;max-width:380px}
-.hbtns{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
-.hbtn{padding:11px 22px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
-.hbtn:hover{background:var(--accent2)}
-.hbtn.ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15)}
-.hstats{display:flex;gap:28px}
-.hsv{font-size:20px;font-weight:800;color:#fff}
-.hsl{font-size:10px;color:rgba(255,255,255,.4)}
-.streak-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:20px;min-width:180px;text-align:center;flex-shrink:0}
-.snum{font-size:48px;font-weight:800;color:var(--accent2);line-height:1}
-.slbl{font-size:12px;color:rgba(255,255,255,.5);margin-top:5px}
-.sdots{display:flex;gap:4px;justify-content:center;margin-top:12px}
-.sd{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15)}
-.sd.on{background:var(--accent2)}
-/* SECTION */
-.sec{padding:28px;max-width:1100px;margin:0 auto}
-.sec-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px}
-.sec-title{font-size:17px;font-weight:700}
-.sec-link{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500}
-/* TABS under My Learning */
-.tab-row{display:flex;gap:4px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content}
-.tab{padding:7px 18px;border-radius:7px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit;transition:all .2s}
-.tab.on{background:var(--accent);color:#fff}
-/* GRIDS */
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-/* COURSE CARD */
-.cc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--sh)}
-.cc:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,17,8,.12);border-color:rgba(232,56,26,.25)}
-.cc-cov{height:82px;display:flex;align-items:center;justify-content:center;font-size:38px;position:relative}
-.cc-body{padding:12px}
-.cc-title{font-size:12px;font-weight:600;margin-bottom:2px;line-height:1.4}
-.cc-inst{font-size:10px;color:var(--muted);margin-bottom:7px}
-.cc-meta{display:flex;gap:8px;font-size:10px;color:var(--muted);margin-bottom:8px}
-.cc-foot{display:flex;align-items:center;justify-content:space-between}
-.diff{font-size:9px;font-weight:600;padding:2px 7px;border-radius:5px}
-.db{background:#fef2ee;color:var(--accent)}
-.di{background:#fffbf0;color:var(--gold)}
-.da{background:#f0faf5;color:var(--green)}
-/* Enrollment button states */
-.ebtn{font-size:10px;padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:none;font-family:inherit;font-weight:500;cursor:pointer;transition:all .2s;color:var(--text);white-space:nowrap}
-.ebtn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-.ebtn.enrolled{background:#f0faf5;color:var(--green);border-color:#b8e8ce;cursor:default}
-.ebtn.pending{background:#fffbf0;color:var(--gold);border-color:#f0e0a0;cursor:default}
-.ebtn.rejected{background:#fef2ee;color:var(--accent);border-color:#fac4b8;cursor:default}
-/* PROGRESS BAR */
-.pb{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:8px 0 3px}
-.pf{height:100%;background:var(--accent);border-radius:2px}
-.pct{font-size:10px;font-weight:600;color:var(--accent)}
-/* CONTINUE CARD */
-.contcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .2s;box-shadow:var(--sh)}
-.contcard:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,17,8,.12)}
-.resumebtn{width:100%;padding:7px;margin-top:10px;border-radius:7px;border:1px solid var(--accent);background:none;color:var(--accent);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
-.resumebtn:hover{background:var(--accent);color:#fff}
-/* PLAYER */
-.player-wrap{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 60px)}
-.player-left{display:flex;flex-direction:column;background:#000}
-.vbox{position:relative;width:100%}
-.vbox video{width:100%;display:block;max-height:58vh;object-fit:contain}
-.vfallback{aspect-ratio:16/9;background:#0d0d0d;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,.5);gap:10px;padding:20px;text-align:center}
-.pbig{width:64px;height:64px;border-radius:50%;background:rgba(232,56,26,.85);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.pbig:hover{background:var(--accent);transform:scale(1.08)}
-.pinfo{padding:18px 22px;background:var(--surface);border-top:1px solid var(--border);flex:1}
-.pltitle{font-size:16px;font-weight:700;margin-bottom:5px}
-.plmeta{display:flex;gap:14px;font-size:11px;color:var(--muted);flex-wrap:wrap}
-.pactions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
-.pabtn{padding:6px 12px;border-radius:7px;border:1px solid var(--border);background:none;font-family:inherit;font-size:11px;cursor:pointer;transition:all .2s;color:var(--muted)}
-.pabtn:hover{border-color:var(--accent);color:var(--accent)}
-/* CURRICULUM PANEL */
-.curr-panel{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;max-height:calc(100vh - 60px);position:sticky;top:60px}
-.curr-top{padding:12px 15px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;display:flex;justify-content:space-between}
-.curr-prog{font-size:10px;color:var(--accent);font-weight:600}
-.cshdr{padding:9px 15px;background:var(--bg);font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
-.cl{display:flex;align-items:center;gap:9px;padding:9px 15px;font-size:12px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)}
-.cl:hover{background:var(--bg)}
-.cl.on{background:#fef2ee;border-left:3px solid var(--accent)}
-.cl.done{color:var(--muted)}
-.cls{font-size:12px;width:16px;flex-shrink:0}
-.cldur{font-size:9px;color:var(--muted);margin-left:auto;white-space:nowrap}
-/* ENROLLMENT BANNER */
-.enroll-banner{padding:12px 16px;background:#fffbf0;border-bottom:1px solid #f0e0a0;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--gold)}
-.enroll-banner.rejected{background:#fef2ee;color:var(--accent);border-color:#fac4b8}
-.enroll-banner .ebtn{font-size:11px;padding:5px 12px}
-/* MY LEARNING CARD */
-.lcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
-.lcard-hdr{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
-.lcard-title{font-size:13px;font-weight:600}
-.lcard-meta{font-size:11px;color:var(--muted);margin-top:2px}
-.pb-lg{height:7px;background:var(--border);border-radius:3px;overflow:hidden;margin:5px 0 12px}
-.pf-lg{height:100%;background:linear-gradient(to right,var(--accent),var(--accent2));border-radius:3px}
-.lcards-actions{display:flex;gap:7px}
-.btnc{flex:1;padding:7px;border-radius:7px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer}
-.btno{padding:7px 11px;border-radius:7px;border:1px solid var(--border);background:none;font-family:inherit;font-size:11px;cursor:pointer;color:var(--muted)}
-/* QUIZ SECTION */
-.quiz-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--sh)}
-.quiz-title{font-size:14px;font-weight:600;margin-bottom:4px}
-.quiz-meta{font-size:11px;color:var(--muted);margin-bottom:14px}
-.quiz-start-btn{padding:9px 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
-.quiz-start-btn:hover{opacity:.85}
-/* ACTIVE QUIZ */
-.quiz-q{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:12px}
-.quiz-qnum{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-.quiz-qtext{font-size:14px;font-weight:500;margin-bottom:16px;line-height:1.6}
-.opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:7px;cursor:pointer;transition:all .2s;font-size:13px}
-.opt:hover{border-color:var(--accent);background:#fef2ee}
-.opt.sel{border-color:var(--accent);background:#fef2ee;color:var(--accent)}
-.opt.correct{border-color:var(--green);background:#f0faf5;color:var(--green)}
-.opt.wrong{border-color:var(--accent);background:#fef2ee;color:var(--accent)}
-.opt-letter{width:22px;height:22px;border-radius:50%;border:1px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
-.quiz-nav{display:flex;gap:10px;margin-top:16px}
-.qbtn{padding:9px 20px;border-radius:8px;border:1px solid var(--border);background:none;font-family:inherit;font-size:12px;cursor:pointer;color:var(--text);transition:all .2s}
-.qbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.quiz-timer{font-size:22px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
-.quiz-prog-bar{height:5px;background:var(--border);border-radius:2px;margin:8px 0;overflow:hidden}
-.quiz-prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
-/* RESULT */
-.result-box{max-width:440px;margin:40px auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:36px;text-align:center;box-shadow:var(--sh)}
-.result-score{font-size:64px;font-weight:800;color:var(--accent);line-height:1}
-.result-grade{font-size:16px;font-weight:600;margin:8px 0}
-.result-detail{font-size:12px;color:var(--muted);margin-bottom:24px}
-/* PROJECT SECTION */
-.proj-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--sh)}
-.proj-title{font-size:14px;font-weight:600;margin-bottom:6px}
-.proj-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px}
-.proj-deadline{font-size:11px;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:5px}
-.proj-submit{padding:9px 20px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;margin-right:8px}
-.proj-submit:hover{opacity:.85}
-.proj-link-input{width:100%;margin-top:10px;display:none}
-/* PROFILE */
-.prof-banner{background:linear-gradient(135deg,#1a1108,#2d1e0a);border-radius:var(--r);padding:28px;display:flex;align-items:center;gap:20px;margin-bottom:20px}
-.prof-av{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;flex-shrink:0}
-.prof-name{font-size:20px;font-weight:700;color:#fff}
-.prof-email{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
-.prof-badges{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
-.pb-badge{font-size:9px;padding:3px 9px;border-radius:5px;font-weight:600;background:rgba(232,56,26,.2);color:var(--accent2)}
-.stat4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.sbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;text-align:center;box-shadow:var(--sh)}
-.sval{font-size:26px;font-weight:800;color:var(--accent);margin-bottom:3px}
-.slbl2{font-size:11px;color:var(--muted)}
-/* EMPTY STATE */
-.empty{grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted)}
-.empty .ico{font-size:44px;margin-bottom:12px}
-/* TOAST */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:#1a1108;color:#fff;padding:11px 22px;border-radius:10px;font-size:12px;font-weight:500;z-index:999;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none}
-.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}.player-wrap{grid-template-columns:1fr}.stat4{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.g4,.g3{grid-template-columns:1fr}.topnav{padding:0 14px}.sec{padding:18px 14px}.srch{display:none}.hero{padding:28px 16px}.hero-in{flex-direction:column}.streak-box{display:none}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jain Developers LMS — Student Portal</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8f7f4;color:#1a1a1a;min-height:100vh}
+    .hidden{display:none!important}
+    /* NAV */
+    nav{background:#1e1b4b;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+    .brand{color:#fff;font-weight:800;font-size:20px;cursor:pointer;text-decoration:none}
+    .nav-links{display:flex;gap:4px}
+    .nav-btn{background:transparent;color:rgba(255,255,255,0.7);border:none;padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500}
+    .nav-btn.active,.nav-btn:hover{background:rgba(255,255,255,0.15);color:#fff}
+    .nav-right{display:flex;align-items:center;gap:10px}
+    .xp-badge{background:#7c3aed;color:#fff;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
+    .user-chip{background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;padding:3px 14px;font-size:12px}
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;border:none;transition:opacity 0.15s}
+    .btn:hover{opacity:0.87}
+    .btn-primary{background:#4f46e5;color:#fff}
+    .btn-success{background:#16a34a;color:#fff}
+    .btn-danger{background:#dc2626;color:#fff}
+    .btn-ghost{background:transparent;color:#4f46e5;border:1px solid #4f46e5}
+    .btn-gray{background:#9ca3af;color:#fff;cursor:not-allowed}
+    .btn-full{width:100%;justify-content:center}
+    /* CARDS */
+    .card{background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+    /* BADGES */
+    .badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:700}
+    /* INPUTS */
+    input,select,textarea{width:100%;padding:10px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;outline:none;font-family:inherit;background:#fff;color:#1a1a1a;transition:border-color 0.15s}
+    input:focus,select:focus,textarea:focus{border-color:#4f46e5}
+    label{font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:5px}
+    /* PROGRESS BAR */
+    .progress-track{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,#4f46e5,#7c3aed);border-radius:3px;transition:width 0.4s}
+    /* AUTH SCREEN */
+    #auth-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:24px}
+    #auth-box{max-width:400px;width:100%}
+    /* HERO */
+    #hero{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#4f46e5 100%);color:#fff;padding:56px 32px;text-align:center}
+    #hero h1{font-size:40px;font-weight:900;margin:12px 0;line-height:1.15}
+    #hero p{color:rgba(255,255,255,0.7);font-size:16px;max-width:520px;margin:0 auto 28px;line-height:1.7}
+    /* COURSE GRID */
+    #home-page{max-width:1080px;margin:32px auto;padding:0 24px}
+    .filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+    .filter-pill{background:#fff;color:#374151;border:1px solid #e5e7eb;border-radius:20px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:500}
+    .filter-pill.active{background:#4f46e5;color:#fff;border-color:#4f46e5;font-weight:700}
+    #courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+    .course-card{background:#fff;border-radius:14px;border:1px solid #e5e7eb;display:flex;flex-direction:column;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;overflow:hidden}
+    .course-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.1)}
+    .course-emoji{background:#1e1b4b;padding:24px;text-align:center;font-size:48px}
+    .course-body{padding:18px;flex:1;display:flex;flex-direction:column}
+    .course-title{font-size:15px;font-weight:800;color:#111;margin-bottom:5px;line-height:1.3}
+    .course-desc{color:#6b7280;font-size:12px;line-height:1.5;margin-bottom:12px;flex:1}
+    .course-meta{display:flex;gap:12px;font-size:11px;color:#9ca3af;margin-bottom:14px}
+    /* COURSE DETAIL */
+    #course-header{background:#1e1b4b;color:#fff;padding:36px 32px}
+    #course-content{max-width:860px;margin:28px auto;padding:0 32px}
+    .section-block{margin-bottom:12px}
+    .lesson-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid #f3f4f6;cursor:pointer;font-size:13px}
+    .lesson-row:hover{background:#f9fafb;margin:0 -8px;padding:9px 8px;border-radius:6px}
+    /* LESSON PLAYER */
+    #lesson-page{display:flex;height:calc(100vh - 60px)}
+    #lesson-main{flex:1;padding:28px;overflow-y:auto}
+    #video-area{background:#111;border-radius:14px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+    #curriculum-panel{width:290px;border-left:1px solid #e5e7eb;overflow-y:auto;background:#fff}
+    .curr-lesson{display:flex;align-items:center;gap:8px;padding:9px 18px;cursor:pointer;font-size:12px;border-left:3px solid transparent}
+    .curr-lesson.active{background:#ede9fe;border-left-color:#4f46e5;color:#4f46e5}
+    .curr-lesson:hover:not(.active){background:#f9fafb}
+    /* MY LEARNING */
+    #learn-page{max-width:940px;margin:28px auto;padding:0 24px}
+    .tab-bar{display:flex;gap:6px;margin-bottom:22px}
+    .tab-btn{background:#fff;color:#374151;border:1px solid #e5e7eb;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600}
+    .tab-btn.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
+    /* QUIZ */
+    #quiz-page{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:24px}
+    #quiz-box{max-width:620px;width:100%}
+    .option-btn{background:#f9fafb;border:2px solid #e5e7eb;border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-size:14px;text-align:left;width:100%;margin-bottom:8px;transition:all 0.12s;color:#1a1a1a}
+    .option-btn.selected{background:#ede9fe;border-color:#4f46e5}
+    .option-btn .circle{width:26px;height:26px;border-radius:50%;background:#e5e7eb;color:#6b7280;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+    .option-btn.selected .circle{background:#4f46e5;color:#fff}
+    /* ANNOUNCEMENTS */
+    #ann-page{max-width:760px;margin:32px auto;padding:0 24px}
+    .ann-card{border-left:4px solid;margin-bottom:14px}
+    /* TOAST */
+    #toast{position:fixed;bottom:24px;right:24px;background:#1e1b4b;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;transform:translateY(100px);transition:transform 0.3s;opacity:0}
+    #toast.show{transform:translateY(0);opacity:1}
+    /* LOADER */
+    .loader{display:flex;align-items:center;justify-content:center;padding:60px;color:#9ca3af;font-size:15px;gap:10px}
+    .empty{text-align:center;padding:60px 24px;color:#9ca3af}
+    .empty-icon{font-size:48px;margin-bottom:12px}
+  </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="topnav">
-  <a class="logo" onclick="gotoHome()">
-    <div class="lm">JD</div>
-    <div><div class="ln">Jain Developers</div><div class="ls">Learn</div></div>
-  </a>
-  <div class="navlinks" id="mainnav" style="display:none">
-    <button class="nb on"  onclick="goPage('home',this)">Home</button>
-    <button class="nb"     onclick="goPage('explore',this)">Explore</button>
-    <button class="nb"     onclick="goPage('mylearn',this)">My Learning</button>
-    <button class="nb"     onclick="goPage('profile',this)">Profile</button>
+<nav>
+  <a class="brand" href="/">🎓 Jain LMS</a>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showPage('home')">Courses</button>
+    <button class="nav-btn" onclick="requireAuth(() => showPage('learn'))">My Learning</button>
+    <button class="nav-btn" onclick="showPage('announcements')">Announcements</button>
   </div>
-  <div class="navr">
-    <div class="srch" id="srchwrap" style="display:none">
-      <span style="color:var(--muted);font-size:13px"></span>
-      <input placeholder="Search courses..." oninput="doSearch(this.value)">
-    </div>
-    <div class="xpc" id="xpchip" style="display:none"> XP <span id="xpval">0</span> XP</div>
-    <div class="avc" id="usrchip" style="display:none" onclick="goPage('profile')">
-      <div class="av" id="navav">?</div>
-      <span style="font-size:12px;font-weight:600" id="navname">User</span>
-    </div>
-    <button class="btn-p" id="loginbtn" style="width:auto;padding:7px 18px;font-size:12px" onclick="goPage('auth')">Sign In</button>
+  <div class="nav-right">
+    <span class="xp-badge hidden" id="xp-display">⚡ 0 XP</span>
+    <span class="user-chip hidden" id="user-chip"></span>
+    <button class="btn btn-ghost" id="auth-nav-btn" onclick="showPage('auth')" style="padding:5px 14px;font-size:12px;">Sign In</button>
+    <button class="btn btn-ghost hidden" id="signout-btn" onclick="signOut()" style="padding:5px 14px;font-size:12px;">Sign Out</button>
+    <a href="/admin" class="nav-btn" style="font-size:11px;opacity:0.6;">Admin ↗</a>
   </div>
 </nav>
 
-<!-- == PAGES == -->
+<!-- TOAST -->
+<div id="toast"></div>
 
-<!-- AUTH -->
-<div class="page on" id="page-auth">
-  <div class="auth-wrap">
-    <div class="auth-box">
-      <div class="auth-logo">
-        <div class="lm">JD</div>
-        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:5px">Jain Developers</div>
+<!-- ═══════════════════════════════════════════════════════════
+     AUTH PAGE
+═══════════════════════════════════════════════════════════ -->
+<div id="auth-page" class="hidden">
+  <div id="auth-screen">
+    <div class="card" id="auth-box">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="font-size:40px">🎓</div>
+        <h2 style="margin:10px 0 4px;color:#1e1b4b" id="auth-title">Welcome Back</h2>
+        <p style="color:#6b7280;font-size:13px">Jain Developers Learning Platform</p>
       </div>
-      <div class="atitle" id="atitle">Welcome back</div>
-      <div class="asub" id="asub">Sign in to continue learning</div>
-      <div class="fg" id="namefg" style="display:none">
-        <label class="fl">Full Name</label>
-        <input class="fi" id="f-name" placeholder="Your name">
+      <div id="reg-name-field">
+        <label>Full Name</label>
+        <input type="text" id="inp-name" placeholder="Your name" style="margin-bottom:12px" />
       </div>
-      <div class="fg">
-        <label class="fl">Email</label>
-        <input class="fi" id="f-email" placeholder="you@email.com" type="email">
-      </div>
-      <div class="fg">
-        <label class="fl">Password</label>
-        <input class="fi" id="f-pass" placeholder="********" type="password" onkeydown="if(event.key==='Enter')doAuth()">
-      </div>
-      <div class="aerr" id="aerr"></div>
-      <button class="btn-p" id="authbtn" onclick="doAuth()">Sign In</button>
-      <div class="atog" id="atog">New here? <span onclick="toggleMode()">Create account</span></div>
-      <div class="demo-hint">Demo: aarav@email.com / aarav123</div>
+      <label>Email Address</label>
+      <input type="email" id="inp-email" placeholder="you@example.com" style="margin-bottom:12px" />
+      <label>Password</label>
+      <input type="password" id="inp-password" placeholder="••••••••" style="margin-bottom:20px" />
+      <p id="auth-error" style="color:#dc2626;font-size:12px;margin-bottom:12px" class="hidden"></p>
+      <button class="btn btn-primary btn-full" id="auth-submit-btn" onclick="handleAuth()">Sign In</button>
+      <p style="text-align:center;margin-top:16px;font-size:13px;color:#6b7280">
+        <span id="auth-toggle-text">Don't have an account?</span>
+        <a href="#" id="auth-toggle" onclick="toggleAuthMode();return false" style="color:#4f46e5;font-weight:700;margin-left:4px">Register</a>
+      </p>
     </div>
   </div>
 </div>
 
-<!-- HOME -->
-<div class="page" id="page-home">
-  <div class="hero">
-    <div class="hero-in">
-      <div class="hero-t">
-        <div class="hgreet" id="hgreet">Welcome back!</div>
-        <h1 class="htitle">Keep building.<br><em>Keep growing.</em></h1>
-        <p class="hsub">Pick up where you left off and keep your streak alive!</p>
-        <div class="hbtns">
-          <button class="hbtn" onclick="goPage('mylearn')">My Learning</button>
-          <button class="hbtn ghost" onclick="goPage('explore')">Browse Courses</button>
-        </div>
-        <div class="hstats">
-          <div><div class="hsv" id="hs-en">0</div><div class="hsl">Enrolled</div></div>
-          <div><div class="hsv" id="hs-avg">0%</div><div class="hsl">Avg Progress</div></div>
-          <div><div class="hsv" id="hs-done">0</div><div class="hsl">Completed</div></div>
-        </div>
-      </div>
-      <div class="streak-box">
-        <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px"> Streak</div>
-        <div class="snum" id="snum">0</div>
-        <div class="slbl">days in a row</div>
-        <div class="sdots" id="sdots"></div>
-      </div>
+<!-- ═══════════════════════════════════════════════════════════
+     HOME PAGE
+═══════════════════════════════════════════════════════════ -->
+<div id="home-page-container">
+  <div id="hero" class="hidden">
+    <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px">Jain Developers</div>
+    <h1>Learn. Build. Launch.</h1>
+    <p>High-quality technical courses in web development, data science, mobile, and more.</p>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button class="btn" style="background:#fff;color:#4f46e5;font-size:16px;padding:12px 28px" onclick="showPage('auth')">Get Started Free</button>
+      <a href="/admin" class="btn" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.4);font-size:16px;padding:12px 28px">Admin Panel →</a>
     </div>
   </div>
-  <div class="sec" id="cont-sec" style="display:none">
-    <div class="sec-hdr"><div class="sec-title">Continue Learning</div><span class="sec-link" onclick="goPage('mylearn')">View all -></span></div>
-    <div class="g3" id="cont-grid"></div>
-  </div>
-  <div class="sec">
-    <div class="sec-hdr"><div class="sec-title">Available Courses</div><span class="sec-link" onclick="goPage('explore')">See all -></span></div>
-    <div class="g4" id="home-courses"></div>
+  <div id="home-page">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;gap:14px;flex-wrap:wrap">
+      <div>
+        <h2 style="font-size:22px;font-weight:800;color:#1e1b4b;margin-bottom:3px">Browse Courses</h2>
+        <p style="color:#6b7280;font-size:13px" id="course-count">Loading...</p>
+      </div>
+      <input type="search" id="search-input" placeholder="🔍 Search courses..." style="width:200px" oninput="filterCourses()" />
+    </div>
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-pill active" onclick="setFilter('All',this)">All</button>
+      <button class="filter-pill" onclick="setFilter('Web Dev',this)">Web Dev</button>
+      <button class="filter-pill" onclick="setFilter('Data Science',this)">Data Science</button>
+      <button class="filter-pill" onclick="setFilter('Mobile',this)">Mobile</button>
+      <button class="filter-pill" onclick="setFilter('DevOps',this)">DevOps</button>
+      <button class="filter-pill" onclick="setFilter('Design',this)">Design</button>
+    </div>
+    <div id="courses-grid"><div class="loader">⏳ Loading courses...</div></div>
   </div>
 </div>
 
-<!-- EXPLORE -->
-<div class="page" id="page-explore">
-  <div class="sec">
-    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px" id="cat-filters">
-      <button class="ebtn enrolled" onclick="filterCat('',this)">All</button>
-      <button class="ebtn" onclick="filterCat('web',this)">Web Dev</button>
-      <button class="ebtn" onclick="filterCat('data',this)">Data Science</button>
-      <button class="ebtn" onclick="filterCat('mobile',this)">Mobile</button>
-      <button class="ebtn" onclick="filterCat('devops',this)">DevOps</button>
-      <button class="ebtn" onclick="filterCat('design',this)">Design</button>
-    </div>
-    <div class="g4" id="explore-grid"></div>
-  </div>
-</div>
-
-<!-- MY LEARNING -->
-<div class="page" id="page-mylearn">
-  <div class="sec">
-    <div class="tab-row">
-      <button class="tab on" onclick="switchTab('courses',this)"> My Courses</button>
-      <button class="tab"    onclick="switchTab('quiz',this)"> Quizzes</button>
-      <button class="tab"    onclick="switchTab('projects',this)"> Projects</button>
-    </div>
-    <!-- COURSES TAB -->
-    <div id="tab-courses">
-      <div class="g3" id="my-courses-grid"></div>
-    </div>
-    <!-- QUIZ TAB -->
-    <div id="tab-quiz" style="display:none">
-      <div id="quiz-list"></div>
-    </div>
-    <!-- PROJECTS TAB -->
-    <div id="tab-projects" style="display:none">
-      <div id="proj-list"></div>
-    </div>
-  </div>
-</div>
-
-<!-- PLAYER -->
-<div class="page" id="page-player">
-  <div class="player-wrap">
-    <div class="player-left">
-      <div class="vbox" id="vbox">
-        <div class="vfallback">
-          <div style="font-size:44px;margin-bottom:10px"></div>
-          <p style="font-size:13px">Select a lesson from the panel</p>
-        </div>
+<!-- ═══════════════════════════════════════════════════════════
+     COURSE DETAIL PAGE
+═══════════════════════════════════════════════════════════ -->
+<div id="course-page" class="hidden">
+  <div id="course-header">
+    <div style="max-width:860px;margin:0 auto;display:flex;gap:24px;align-items:flex-start">
+      <div style="font-size:60px" id="course-emoji-big"></div>
+      <div style="flex:1">
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px" id="course-category-header"></div>
+        <h1 style="font-size:28px;font-weight:900;margin-bottom:10px" id="course-title-header"></h1>
+        <p style="color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:14px;line-height:1.6" id="course-desc-header"></p>
+        <div style="display:flex;gap:20px;font-size:13px;color:rgba(255,255,255,0.5)" id="course-meta-header"></div>
       </div>
-      <div class="pinfo">
-        <div class="pltitle" id="pl-title">-</div>
-        <div class="plmeta">
-          <span id="pl-course">-</span>
-          <span id="pl-dur">-</span>
-          <span id="pl-free" style="color:var(--green)"></span>
+      <div class="card" style="width:230px;flex-shrink:0">
+        <div style="font-weight:800;font-size:15px;margin-bottom:12px;color:#1e1b4b" id="course-enroll-title"></div>
+        <div id="course-progress-area" class="hidden" style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#6b7280;margin-bottom:5px"><span>Progress</span><span id="course-pct">0%</span></div>
+          <div class="progress-track"><div class="progress-fill" id="course-progress-bar" style="width:0%"></div></div>
         </div>
-        <div class="pactions">
-          <button class="pabtn" onclick="markDone()">v Mark Complete</button>
-          <button class="pabtn" onclick="toast('Notes coming soon!')"> Notes</button>
-          <button class="pabtn" onclick="switchToQuiz()"> Quiz</button>
-          <button class="pabtn" onclick="switchToProject()"> Project</button>
-        </div>
-      </div>
-    </div>
-    <div class="curr-panel">
-      <div class="curr-top"><span>Curriculum</span><span class="curr-prog" id="curr-prog">0%</span></div>
-      <div id="curr-body"></div>
-    </div>
-  </div>
-</div>
-
-<!-- PROFILE -->
-<div class="page" id="page-profile">
-  <div class="sec">
-    <div style="max-width:800px;margin:0 auto">
-      <div class="prof-banner">
-        <div class="prof-av" id="pav">?</div>
-        <div style="flex:1">
-          <div class="prof-name" id="pname">-</div>
-          <div class="prof-email" id="pemail">-</div>
-          <div class="prof-badges" id="pbadges"></div>
-        </div>
-        <button class="pabtn" style="color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.2)" onclick="toast('Edit profile coming soon!')">Edit Edit</button>
-      </div>
-      <div class="stat4">
-        <div class="sbox"><div class="sval" id="ps-en">0</div><div class="slbl2">Enrolled</div></div>
-        <div class="sbox"><div class="sval" id="ps-avg">0%</div><div class="slbl2">Avg Completion</div></div>
-        <div class="sbox"><div class="sval" id="ps-xp">0</div><div class="slbl2">XP Earned</div></div>
-        <div class="sbox"><div class="sval" id="ps-streak">0</div><div class="slbl2">Day Streak</div></div>
-      </div>
-      <div style="margin-top:10px;text-align:center">
-        <button class="pabtn" style="color:var(--accent);border-color:var(--accent)" onclick="logout()">Sign Out</button>
+        <button class="btn btn-full" id="enroll-btn" onclick="handleEnrollBtn()">Request Enrollment</button>
       </div>
     </div>
   </div>
+  <div id="course-content">
+    <h3 style="margin-bottom:14px;font-size:18px;color:#1e1b4b">Course Content</h3>
+    <div id="course-sections"></div>
+    <div id="course-project" class="card" style="margin-top:20px;border-left:4px solid #7c3aed"></div>
+  </div>
 </div>
 
-<div class="toast" id="tst"></div>
+<!-- ═══════════════════════════════════════════════════════════
+     LESSON PLAYER PAGE
+═══════════════════════════════════════════════════════════ -->
+<div id="lesson-page" class="hidden">
+  <div id="lesson-main">
+    <h2 style="font-size:20px;font-weight:800;color:#1e1b4b;margin-bottom:4px" id="lesson-title"></h2>
+    <p style="color:#6b7280;font-size:13px;margin-bottom:18px" id="lesson-course-name"></p>
+    <div id="video-area">
+      <div style="text-align:center;color:#fff" id="video-placeholder">
+        <div style="font-size:52px;margin-bottom:12px">▶</div>
+        <div style="font-size:16px;font-weight:700" id="video-lesson-title"></div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:6px" id="video-duration"></div>
+      </div>
+    </div>
+    <div id="locked-banner" class="hidden" style="background:#fef3c7;border:1px solid #fbbf24;border-radius:12px;padding:28px;text-align:center;margin-bottom:20px">
+      <div style="font-size:32px">🔒</div>
+      <div style="font-weight:700;font-size:16px;margin:10px 0 6px;color:#92400e">Enrollment Required</div>
+      <div style="color:#b45309;font-size:13px;margin-bottom:14px">Admin approval needed to access this lesson</div>
+      <button class="btn btn-primary" onclick="showPage('home')">Browse Courses</button>
+    </div>
+    <div id="mark-complete-area">
+      <button class="btn btn-success" id="mark-btn" onclick="markLessonComplete()">✓ Mark as Complete (+20 XP)</button>
+    </div>
+    <div id="completed-badge" class="hidden">
+      <span class="badge" style="background:#dcfce7;color:#16a34a;padding:8px 18px;font-size:13px">✓ Completed!</span>
+    </div>
+  </div>
+  <div id="curriculum-panel">
+    <div style="padding:14px 18px;border-bottom:1px solid #e5e7eb">
+      <div style="font-weight:700;font-size:14px">Course Content</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:2px" id="curr-pct-label">0% complete</div>
+      <div class="progress-track" style="margin-top:6px"><div class="progress-fill" id="curr-progress-bar" style="width:0%"></div></div>
+    </div>
+    <div id="curriculum-list"></div>
+  </div>
+</div>
 
-<script src="/student.js"></script>
+<!-- ═══════════════════════════════════════════════════════════
+     MY LEARNING PAGE
+═══════════════════════════════════════════════════════════ -->
+<div id="learn-page" class="hidden">
+  <h2 style="font-size:22px;font-weight:800;color:#1e1b4b;margin-bottom:20px">My Learning</h2>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('courses',this)">📚 My Courses</button>
+    <button class="tab-btn" onclick="switchTab('quizzes',this)">🧠 Quizzes</button>
+    <button class="tab-btn" onclick="switchTab('projects',this)">🗂 Projects</button>
+  </div>
+  <div id="tab-courses"></div>
+  <div id="tab-quizzes" class="hidden"></div>
+  <div id="tab-projects" class="hidden"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     QUIZ PAGE
+═══════════════════════════════════════════════════════════ -->
+<div id="quiz-page" class="hidden">
+  <div id="quiz-box">
+    <!-- Quiz running -->
+    <div id="quiz-running" class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div>
+          <div style="font-size:12px;color:#6b7280" id="quiz-title-label"></div>
+          <div style="font-size:14px;font-weight:700" id="quiz-q-counter"></div>
+        </div>
+        <div id="quiz-timer-display" style="border-radius:8px;padding:5px 14px;font-weight:800;font-size:16px;background:#eff6ff;color:#1d4ed8"></div>
+      </div>
+      <div class="progress-track" style="margin-bottom:18px"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+      <h3 style="font-size:17px;font-weight:700;margin-bottom:16px;line-height:1.5" id="quiz-question-text"></h3>
+      <div id="quiz-options"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px">
+        <button class="btn btn-ghost" onclick="exitQuiz()">Exit Quiz</button>
+        <button class="btn btn-primary" id="quiz-next-btn" onclick="nextQuestion()" disabled>Next →</button>
+      </div>
+    </div>
+    <!-- Quiz results -->
+    <div id="quiz-results" class="card hidden" style="text-align:center;padding:36px">
+      <div style="font-size:52px;margin-bottom:10px" id="result-emoji"></div>
+      <h2 style="font-size:26px;color:#1e1b4b;margin-bottom:6px">Quiz Complete!</h2>
+      <div style="font-size:60px;font-weight:900;margin:16px 0 6px" id="result-score"></div>
+      <div style="font-size:20px;font-weight:700;color:#6b7280;margin-bottom:6px" id="result-grade"></div>
+      <div id="result-status" style="display:inline-block;padding:4px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:22px"></div>
+      <div style="background:#f9fafb;border-radius:10px;padding:16px;margin-bottom:22px;display:flex;justify-content:space-around">
+        <div><div style="font-size:22px;font-weight:800;color:#16a34a" id="result-correct"></div><div style="font-size:12px;color:#6b7280">Correct</div></div>
+        <div><div style="font-size:22px;font-weight:800;color:#dc2626" id="result-wrong"></div><div style="font-size:12px;color:#6b7280">Wrong</div></div>
+        <div><div style="font-size:22px;font-weight:800;color:#7c3aed" id="result-xp"></div><div style="font-size:12px;color:#6b7280">XP Earned</div></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button class="btn btn-ghost" onclick="showPage('learn')">← My Learning</button>
+        <button class="btn btn-primary" id="retry-btn">↺ Retry</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ANNOUNCEMENTS PAGE
+═══════════════════════════════════════════════════════════ -->
+<div id="announcements-page" class="hidden">
+  <div id="ann-page">
+    <h2 style="font-size:22px;font-weight:800;color:#1e1b4b;margin-bottom:22px">📢 Announcements</h2>
+    <div id="ann-list"><div class="loader">Loading...</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════ -->
+<script>
+const API = '';  // same origin — change to full URL if hosting separately
+let currentUser = null;
+let authToken = null;
+let allCourses = [];
+let enrollments = {};  // courseId -> status
+let myProgress = {};   // courseId -> progress obj
+let currentCourse = null;
+let currentLesson = null;
+let currentQuiz = null;
+let quizAnswers = [];
+let quizTimer = null;
+let quizTimeLeft = 0;
+let authMode = 'login';
+let activeFilter = 'All';
+
+// ─── INIT ────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const savedToken = localStorage.getItem('jain_token');
+  if (savedToken) {
+    authToken = savedToken;
+    await loadUserProfile();
+  }
+  await loadCourses();
+  showPage('home');
+});
+
+// ─── API HELPERS ─────────────────────────────────────────────
+async function apiFetch(path, options = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+  const res = await fetch(API + path, { ...options, headers: { ...headers, ...options.headers } });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+// ─── AUTH ────────────────────────────────────────────────────
+async function loadUserProfile() {
+  try {
+    const data = await apiFetch('/api/auth/me');
+    currentUser = data.user;
+    onUserLoggedIn();
+    await loadMyEnrollments();
+    await loadMyProgress();
+  } catch {
+    authToken = null;
+    localStorage.removeItem('jain_token');
+  }
+}
+
+function onUserLoggedIn() {
+  document.getElementById('auth-nav-btn').classList.add('hidden');
+  document.getElementById('signout-btn').classList.remove('hidden');
+  document.getElementById('xp-display').classList.remove('hidden');
+  document.getElementById('user-chip').classList.remove('hidden');
+  document.getElementById('user-chip').textContent = '👤 ' + currentUser.name;
+  document.getElementById('hero').classList.add('hidden');
+  updateXP(currentUser.xp || 0);
+}
+
+async function handleAuth() {
+  const email = document.getElementById('inp-email').value.trim();
+  const password = document.getElementById('inp-password').value;
+  const name = document.getElementById('inp-name').value.trim();
+  const errEl = document.getElementById('auth-error');
+  errEl.classList.add('hidden');
+
+  if (!email || !password || (authMode === 'register' && !name)) {
+    errEl.textContent = 'Please fill in all fields'; errEl.classList.remove('hidden'); return;
+  }
+
+  try {
+    document.getElementById('auth-submit-btn').textContent = '...';
+    const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+    const body = authMode === 'login' ? { email, password } : { name, email, password };
+    const data = await apiFetch(endpoint, { method: 'POST', body: JSON.stringify(body) });
+
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('jain_token', authToken);
+    onUserLoggedIn();
+    await loadMyEnrollments();
+    await loadMyProgress();
+    showPage('home');
+    toast('Welcome, ' + currentUser.name + '! 🎉');
+  } catch (err) {
+    errEl.textContent = err.message; errEl.classList.remove('hidden');
+  } finally {
+    document.getElementById('auth-submit-btn').textContent = authMode === 'login' ? 'Sign In' : 'Create Account';
+  }
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  const isReg = authMode === 'register';
+  document.getElementById('auth-title').textContent = isReg ? 'Join Jain LMS' : 'Welcome Back';
+  document.getElementById('auth-submit-btn').textContent = isReg ? 'Create Account' : 'Sign In';
+  document.getElementById('auth-toggle').textContent = isReg ? 'Sign In' : 'Register';
+  document.getElementById('auth-toggle-text').textContent = isReg ? 'Already have an account?' : "Don't have an account?";
+  document.getElementById('reg-name-field').style.display = isReg ? 'block' : 'none';
+  document.getElementById('auth-error').classList.add('hidden');
+}
+
+function signOut() {
+  authToken = null; currentUser = null; enrollments = {}; myProgress = {};
+  localStorage.removeItem('jain_token');
+  document.getElementById('auth-nav-btn').classList.remove('hidden');
+  document.getElementById('signout-btn').classList.add('hidden');
+  document.getElementById('xp-display').classList.add('hidden');
+  document.getElementById('user-chip').classList.add('hidden');
+  document.getElementById('hero').classList.remove('hidden');
+  showPage('home');
+}
+
+function requireAuth(cb) {
+  if (!currentUser) { showPage('auth'); return; }
+  cb();
+}
+
+// ─── COURSES ─────────────────────────────────────────────────
+async function loadCourses() {
+  try {
+    const data = await apiFetch('/api/courses');
+    allCourses = data.courses;
+    renderCourses();
+  } catch {
+    // Demo fallback if API not set up yet
+    allCourses = getDemoCourses();
+    renderCourses();
+  }
+}
+
+async function loadMyEnrollments() {
+  if (!currentUser) return;
+  try {
+    const data = await apiFetch('/api/courses/requests/my');
+    enrollments = {};
+    data.requests.forEach(r => { enrollments[r.courseId] = r.status; });
+    renderCourses();
+  } catch {}
+}
+
+async function loadMyProgress() {
+  if (!currentUser) return;
+  try {
+    const data = await apiFetch('/api/progress/user/all');
+    myProgress = {};
+    data.progress.forEach(p => { myProgress[p.courseId] = p; });
+  } catch {}
+}
+
+function renderCourses() {
+  const search = document.getElementById('search-input')?.value?.toLowerCase() || '';
+  const filtered = allCourses.filter(c => {
+    const catMatch = activeFilter === 'All' || c.category === activeFilter;
+    const searchMatch = !search || c.title.toLowerCase().includes(search) || c.instructor?.toLowerCase().includes(search);
+    return catMatch && searchMatch;
+  });
+
+  document.getElementById('course-count').textContent = filtered.length + ' courses available';
+  const grid = document.getElementById('courses-grid');
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div>No courses found</div></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(c => {
+    const status = enrollments[c.id];
+    const diffColor = { Beginner: '#16a34a', Intermediate: '#d97706', Advanced: '#dc2626' }[c.difficulty] || '#6b7280';
+    const btnConfig = status === 'approved'
+      ? ['btn-success', '▶ Continue Learning']
+      : status === 'pending'
+      ? ['btn-gray', '⏳ Pending Approval']
+      : status === 'rejected'
+      ? ['btn-danger', '✗ Enrollment Rejected']
+      : ['btn-primary', 'Request Enrollment'];
+
+    const totalLessons = c.sections ? c.sections.reduce((a, s) => a + s.lessons.length, 0) : c.lessons || 0;
+
+    return `<div class="course-card" onclick="openCourse('${c.id}')">
+      <div class="course-emoji">${c.emoji || '📚'}</div>
+      <div class="course-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span class="badge" style="background:#ede9fe;color:#4f46e5">${c.category}</span>
+          <span style="font-size:11px;color:${diffColor};font-weight:700">${c.difficulty}</span>
+        </div>
+        <div class="course-title">${c.title}</div>
+        <div class="course-desc">${c.description}</div>
+        <div class="course-meta">
+          <span>👤 ${c.instructor}</span>
+          <span>📚 ${totalLessons} lessons</span>
+          <span>⏱ ${c.duration}</span>
+        </div>
+        <div style="font-size:11px;color:#9ca3af;margin-bottom:14px">👥 ${c.enrolledCount || 0} enrolled</div>
+        <button class="btn ${btnConfig[0]} btn-full" onclick="event.stopPropagation();handleCourseBtn('${c.id}')"
+          ${status === 'pending' ? 'disabled' : ''}>${btnConfig[1]}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterCourses() { renderCourses(); }
+function setFilter(cat, el) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderCourses();
+}
+
+async function openCourse(id) {
+  currentCourse = allCourses.find(c => c.id === id);
+  if (!currentCourse) return;
+
+  // Try to fetch full course with sections
+  try {
+    const data = await apiFetch('/api/courses/' + id);
+    currentCourse = { ...currentCourse, ...data.course };
+  } catch {}
+
+  renderCoursePage();
+  showPage('course');
+}
+
+function renderCoursePage() {
+  const c = currentCourse;
+  const status = enrollments[c.id];
+  const cp = myProgress[c.id];
+  const totalLessons = c.sections ? c.sections.reduce((a, s) => a + s.lessons.length, 0) : 0;
+
+  document.getElementById('course-emoji-big').textContent = c.emoji || '📚';
+  document.getElementById('course-category-header').textContent = c.category;
+  document.getElementById('course-title-header').textContent = c.title;
+  document.getElementById('course-desc-header').textContent = c.description;
+  document.getElementById('course-meta-header').innerHTML = `<span>👤 ${c.instructor}</span><span>📚 ${totalLessons} lessons</span><span>⏱ ${c.duration}</span><span>👥 ${c.enrolledCount || 0} enrolled</span>`;
+  document.getElementById('course-enroll-title').textContent = c.title;
+
+  // Progress area
+  if (status === 'approved' && cp) {
+    document.getElementById('course-progress-area').classList.remove('hidden');
+    document.getElementById('course-pct').textContent = (cp.percentComplete || 0) + '%';
+    document.getElementById('course-progress-bar').style.width = (cp.percentComplete || 0) + '%';
+  } else {
+    document.getElementById('course-progress-area').classList.add('hidden');
+  }
+
+  // Enroll button
+  const btn = document.getElementById('enroll-btn');
+  if (status === 'approved') {
+    btn.textContent = '▶ Continue Learning';
+    btn.className = 'btn btn-success btn-full';
+  } else if (status === 'pending') {
+    btn.textContent = '⏳ Pending Approval';
+    btn.className = 'btn btn-gray btn-full';
+    btn.disabled = true;
+  } else if (status === 'rejected') {
+    btn.textContent = '✗ Rejected — Contact Admin';
+    btn.className = 'btn btn-danger btn-full';
+    btn.disabled = true;
+  } else {
+    btn.textContent = 'Request Enrollment';
+    btn.className = 'btn btn-primary btn-full';
+    btn.disabled = false;
+  }
+
+  // Sections
+  const sectionsEl = document.getElementById('course-sections');
+  if (c.sections && c.sections.length) {
+    const cp = myProgress[c.id] || { completedLessons: [] };
+    sectionsEl.innerHTML = c.sections.map((sec, si) => `
+      <div class="card section-block">
+        <div style="font-weight:700;margin-bottom:10px;font-size:14px">${sec.title} — ${sec.lessons.length} lessons</div>
+        ${sec.lessons.map(l => {
+          const isDone = (cp.completedLessons || []).includes(l.id);
+          const canOpen = l.isFree || status === 'approved';
+          return `<div class="lesson-row" onclick="${canOpen ? `openLesson('${c.id}','${l.id}')` : 'toast(\"Enroll to access this lesson\")'}" style="opacity:${canOpen ? 1 : 0.5};cursor:${canOpen ? 'pointer' : 'not-allowed'}">
+            <span>${isDone ? '✅' : canOpen ? '▶' : '🔒'}</span>
+            <span style="flex:1">${l.title}</span>
+            ${l.isFree ? '<span class="badge" style="background:#dcfce7;color:#16a34a;font-size:10px">Free Preview</span>' : ''}
+            <span style="font-size:12px;color:#9ca3af">${l.duration}</span>
+          </div>`;
+        }).join('')}
+      </div>`).join('');
+  } else {
+    sectionsEl.innerHTML = '<div class="empty"><div>No lessons yet</div></div>';
+  }
+
+  // Project
+  if (c.projectTitle) {
+    document.getElementById('course-project').innerHTML = `
+      <h3 style="margin:0 0 8px;font-size:16px;color:#1e1b4b">🗂 Project: ${c.projectTitle}</h3>
+      <p style="color:#6b7280;font-size:13px;margin:0 0 12px;line-height:1.6">${c.projectDescription}</p>
+      <span class="badge" style="background:#fef3c7;color:#d97706">Due in ${c.projectDeadlineDays} days</span>`;
+  }
+}
+
+async function handleEnrollBtn() {
+  const c = currentCourse;
+  const status = enrollments[c.id];
+  if (status === 'approved') {
+    const firstLesson = c.sections?.[0]?.lessons?.[0];
+    if (firstLesson) openLesson(c.id, firstLesson.id);
+  } else if (!status) {
+    if (!currentUser) { showPage('auth'); return; }
+    await requestEnroll(c.id);
+  }
+}
+
+async function handleCourseBtn(courseId) {
+  const status = enrollments[courseId];
+  if (status === 'approved') {
+    const c = allCourses.find(x => x.id === courseId);
+    if (c?.sections?.[0]?.lessons?.[0]) openLesson(courseId, c.sections[0].lessons[0].id);
+  } else if (!status) {
+    if (!currentUser) { showPage('auth'); return; }
+    await requestEnroll(courseId);
+  }
+}
+
+async function requestEnroll(courseId) {
+  try {
+    await apiFetch(`/api/courses/${courseId}/request-enrollment`, { method: 'POST' });
+    enrollments[courseId] = 'pending';
+    renderCourses();
+    if (currentCourse?.id === courseId) renderCoursePage();
+    toast('Enrollment requested! ⏳ Waiting for admin approval.');
+  } catch (err) {
+    toast('Error: ' + err.message);
+  }
+}
+
+// ─── LESSON PLAYER ───────────────────────────────────────────
+function openLesson(courseId, lessonId) {
+  const course = allCourses.find(c => c.id === courseId) || currentCourse;
+  const lesson = course?.sections?.flatMap(s => s.lessons).find(l => l.id === lessonId);
+  if (!lesson) return;
+
+  const isEnrolled = enrollments[courseId] === 'approved';
+  const canWatch = isEnrolled || lesson.isFree;
+  const cp = myProgress[courseId] || { completedLessons: [], percentComplete: 0 };
+  const isDone = (cp.completedLessons || []).includes(lessonId);
+
+  currentCourse = course;
+  currentLesson = { ...lesson, courseId };
+
+  document.getElementById('lesson-title').textContent = lesson.title;
+  document.getElementById('lesson-course-name').textContent = course.title;
+  document.getElementById('video-lesson-title').textContent = lesson.title;
+  document.getElementById('video-duration').textContent = 'Duration: ' + lesson.duration;
+
+  document.getElementById('video-area').style.display = canWatch ? 'flex' : 'none';
+  document.getElementById('locked-banner').classList.toggle('hidden', canWatch);
+  document.getElementById('mark-complete-area').style.display = canWatch && !isDone ? 'block' : 'none';
+  document.getElementById('completed-badge').classList.toggle('hidden', !isDone);
+
+  // Curriculum
+  const currList = document.getElementById('curriculum-list');
+  currList.innerHTML = course.sections?.map(sec => `
+    <div style="padding:8px 18px;background:#f9fafb;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.06em">${sec.title}</div>
+    ${sec.lessons.map(l => {
+      const done = (cp.completedLessons || []).includes(l.id);
+      return `<div class="curr-lesson ${l.id === lessonId ? 'active' : ''}" onclick="openLesson('${courseId}','${l.id}')">
+        <span style="font-size:14px">${done ? '✅' : l.id === lessonId ? '▶' : '○'}</span>
+        <span style="flex:1">${l.title}</span>
+        ${l.isFree ? '<span class="badge" style="background:#dcfce7;color:#16a34a;font-size:10px">Free</span>' : ''}
+        <span style="font-size:10px;color:#9ca3af">${l.duration}</span>
+      </div>`;
+    }).join('')}
+  `).join('') || '';
+
+  const pct = cp.percentComplete || 0;
+  document.getElementById('curr-pct-label').textContent = pct + '% complete';
+  document.getElementById('curr-progress-bar').style.width = pct + '%';
+
+  showPage('lesson');
+}
+
+async function markLessonComplete() {
+  const { courseId, id: lessonId } = currentLesson;
+  try {
+    const data = await apiFetch(`/api/progress/${courseId}/complete-lesson`, {
+      method: 'POST', body: JSON.stringify({ lessonId }),
+    });
+    // Update local state
+    if (!myProgress[courseId]) myProgress[courseId] = { completedLessons: [], percentComplete: 0 };
+    myProgress[courseId].completedLessons.push(lessonId);
+    myProgress[courseId].percentComplete = data.percentComplete;
+    currentUser.xp = (currentUser.xp || 0) + data.xpEarned;
+    updateXP(currentUser.xp);
+
+    document.getElementById('mark-complete-area').style.display = 'none';
+    document.getElementById('completed-badge').classList.remove('hidden');
+
+    const pct = data.percentComplete;
+    document.getElementById('curr-pct-label').textContent = pct + '% complete';
+    document.getElementById('curr-progress-bar').style.width = pct + '%';
+
+    if (data.isCompleted) toast('🎉 Course complete! +500 XP + Certificate awarded!');
+    else toast('✓ Lesson complete! +20 XP');
+  } catch (err) {
+    toast('Error: ' + err.message);
+  }
+}
+
+// ─── MY LEARNING ─────────────────────────────────────────────
+async function renderLearnPage() {
+  const enrolledCourses = allCourses.filter(c => enrollments[c.id] === 'approved');
+  renderMyCoursesTab(enrolledCourses);
+  renderQuizzesTab(enrolledCourses);
+  renderProjectsTab(enrolledCourses);
+}
+
+function renderMyCoursesTab(enrolledCourses) {
+  const el = document.getElementById('tab-courses');
+  if (!enrolledCourses.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📚</div><div style="font-size:16px;font-weight:700;color:#6b7280;margin-bottom:14px">No enrolled courses yet</div><button class="btn btn-primary" onclick="showPage('home')">Browse Courses</button></div>`;
+    return;
+  }
+  el.innerHTML = enrolledCourses.map(c => {
+    const cp = myProgress[c.id] || { percentComplete: 0, completedLessons: [] };
+    const pct = cp.percentComplete || 0;
+    return `<div class="card" style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+      <span style="font-size:36px">${c.emoji || '📚'}</span>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:15px;margin-bottom:3px">${c.title}</div>
+        <div style="color:#6b7280;font-size:12px;margin-bottom:8px">${c.instructor}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="progress-track" style="flex:1"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <span style="font-size:12px;font-weight:700;color:#4f46e5">${pct}%</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <button class="btn btn-primary" style="padding:7px 14px;font-size:12px" onclick="openLesson('${c.id}','${c.sections?.[0]?.lessons?.[0]?.id}')">▶ Continue</button>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost" style="flex:1;padding:5px;font-size:11px" onclick="startQuiz('${c.id}')">Quiz</button>
+          <button class="btn btn-ghost" style="flex:1;padding:5px;font-size:11px" onclick="switchTab('projects',document.querySelector('.tab-btn:nth-child(3))">Project</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderQuizzesTab(enrolledCourses) {
+  const el = document.getElementById('tab-quizzes');
+  if (!enrolledCourses.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🧠</div><div>Enroll in courses to access quizzes</div></div>`;
+    return;
+  }
+  el.innerHTML = enrolledCourses.map(c => `
+    <div class="card" style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+      <span style="font-size:30px">${c.emoji || '📚'}</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:14px">${c.quiz ? c.quiz.title : c.title + ' Quiz'}</div>
+        <div style="color:#6b7280;font-size:12px;margin-top:3px">
+          ${c.quiz ? `${c.quiz.questions} questions · ${Math.floor(c.quiz.timeLimit/60)} min · Pass: ${c.quiz.passMark}%` : ''}
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz('${c.id}')">Start Quiz →</button>
+    </div>`).join('');
+}
+
+function renderProjectsTab(enrolledCourses) {
+  const el = document.getElementById('tab-projects');
+  if (!enrolledCourses.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🗂</div><div>Enroll in courses to access projects</div></div>`;
+    return;
+  }
+  el.innerHTML = enrolledCourses.map(c => {
+    const submitted = localStorage.getItem('proj_' + c.id);
+    return `<div class="card" style="border-left:4px solid #7c3aed;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div><span style="font-size:20px;margin-right:8px">${c.emoji || '📚'}</span><span style="font-weight:800;font-size:15px">${c.projectTitle || 'Course Project'}</span></div>
+        <span class="badge" style="background:#fef3c7;color:#d97706">Due in ${c.projectDeadlineDays} days</span>
+      </div>
+      <p style="color:#6b7280;font-size:13px;margin:0 0 14px;line-height:1.6">${c.projectDescription || ''}</p>
+      ${submitted
+        ? `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px"><span>✅</span><div><div style="font-weight:700;font-size:12px;color:#166534">Submitted!</div><div style="font-size:11px;color:#16a34a">${submitted}</div></div></div>`
+        : `<div style="display:flex;gap:8px"><input type="text" id="proj-inp-${c.id}" placeholder="Paste GitHub or Google Drive link..." style="flex:1" /><button class="btn btn-primary" onclick="submitProject('${c.id}')">Submit</button></div>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function submitProject(courseId) {
+  const inp = document.getElementById('proj-inp-' + courseId);
+  if (!inp?.value.trim()) { toast('Please enter a valid link'); return; }
+  localStorage.setItem('proj_' + courseId, inp.value.trim());
+  renderLearnPage();
+  toast('Project submitted! ✅');
+}
+
+// ─── QUIZ ENGINE ─────────────────────────────────────────────
+async function startQuiz(courseId) {
+  const course = allCourses.find(c => c.id === courseId);
+  if (!course) return;
+
+  let questions = [];
+  try {
+    const data = await apiFetch('/api/quizzes/course/' + courseId);
+    if (data.quizzes?.length) {
+      currentQuiz = data.quizzes[0];
+      questions = currentQuiz.questions;
+    }
+  } catch {}
+
+  // Fallback demo questions
+  if (!questions.length) {
+    currentQuiz = {
+      id: 'demo',
+      courseId,
+      title: course.title + ' Quiz',
+      timeLimit: 300,
+      passMark: 70,
+      questions: [
+        { question: 'What does DOM stand for?', options: ['Document Object Model','Data Object Model','Document Order Manager','Dynamic Object Module'] },
+        { question: 'Which keyword declares a block-scoped variable?', options: ['var','let','define','const'] },
+        { question: 'What does CSS stand for?', options: ['Computer Style Sheet','Cascading Style Sheets','Creative Style System','Coded Stylesheet'] },
+        { question: 'Which HTTP method creates a new resource?', options: ['GET','DELETE','POST','PATCH'] },
+        { question: 'What is a closure?', options: ['A browser feature','A function retaining lexical scope','A CSS property','A loop type'] },
+      ],
+    };
+    questions = currentQuiz.questions;
+  }
+
+  quizAnswers = new Array(questions.length).fill(null);
+  renderQuizQuestion(0);
+  startQuizTimer(currentQuiz.timeLimit);
+  showPage('quiz');
+}
+
+function renderQuizQuestion(idx) {
+  const q = currentQuiz.questions[idx];
+  const total = currentQuiz.questions.length;
+
+  document.getElementById('quiz-title-label').textContent = currentQuiz.title;
+  document.getElementById('quiz-q-counter').textContent = `Question ${idx+1} of ${total}`;
+  document.getElementById('quiz-progress').style.width = ((idx / total) * 100) + '%';
+  document.getElementById('quiz-question-text').textContent = q.question;
+  document.getElementById('quiz-next-btn').textContent = idx < total - 1 ? 'Next →' : 'Submit Quiz';
+  document.getElementById('quiz-next-btn').disabled = quizAnswers[idx] === null;
+
+  document.getElementById('quiz-options').innerHTML = q.options.map((opt, i) => `
+    <button class="option-btn ${quizAnswers[idx] === i ? 'selected' : ''}" onclick="selectOption(${idx},${i})">
+      <span class="circle">${['A','B','C','D'][i]}</span>${opt}
+    </button>`).join('');
+
+  document.getElementById('quiz-running').classList.remove('hidden');
+  document.getElementById('quiz-results').classList.add('hidden');
+  window._currentQuizIdx = idx;
+}
+
+function selectOption(qIdx, optIdx) {
+  quizAnswers[qIdx] = optIdx;
+  document.querySelectorAll('.option-btn').forEach((btn, i) => btn.classList.toggle('selected', i === optIdx));
+  document.getElementById('quiz-next-btn').disabled = false;
+}
+
+function nextQuestion() {
+  const idx = window._currentQuizIdx;
+  const total = currentQuiz.questions.length;
+  if (idx < total - 1) {
+    renderQuizQuestion(idx + 1);
+  } else {
+    finishQuiz();
+  }
+}
+
+async function finishQuiz() {
+  clearInterval(quizTimer);
+
+  // Count correct answers (for demo, pick first option as "correct" if no correctAnswer)
+  let correct = 0;
+  const q = currentQuiz.questions;
+  quizAnswers.forEach((ans, i) => {
+    const correctIdx = q[i].correctAnswer !== undefined ? q[i].correctAnswer : 0;
+    if (ans === correctIdx) correct++;
+  });
+
+  const score = Math.round((correct / q.length) * 100);
+  const passed = score >= (currentQuiz.passMark || 70);
+  const grade = score>=90?'A+':score>=80?'A':score>=70?'B':score>=60?'C':'D';
+  const xpEarned = passed ? score : 0;
+
+  // Submit to API
+  if (currentQuiz.id !== 'demo') {
+    try {
+      await apiFetch(`/api/quizzes/${currentQuiz.id}/submit`, { method: 'POST', body: JSON.stringify({ answers: quizAnswers }) });
+    } catch {}
+  }
+
+  if (xpEarned > 0 && currentUser) {
+    currentUser.xp = (currentUser.xp || 0) + xpEarned;
+    updateXP(currentUser.xp);
+  }
+
+  document.getElementById('result-emoji').textContent = passed ? '🎉' : '📝';
+  document.getElementById('result-score').textContent = score + '%';
+  document.getElementById('result-score').style.color = passed ? '#16a34a' : '#dc2626';
+  document.getElementById('result-grade').textContent = 'Grade: ' + grade;
+  document.getElementById('result-status').textContent = passed ? '✓ Passed' : '✗ Failed';
+  document.getElementById('result-status').style.cssText = `display:inline-block;padding:4px 16px;border-radius:6px;font-size:13px;font-weight:700;margin-bottom:22px;background:${passed?'#dcfce7':'#fee2e2'};color:${passed?'#16a34a':'#dc2626'}`;
+  document.getElementById('result-correct').textContent = correct;
+  document.getElementById('result-wrong').textContent = q.length - correct;
+  document.getElementById('result-xp').textContent = '+' + xpEarned;
+  document.getElementById('retry-btn').onclick = () => startQuiz(currentQuiz.courseId);
+
+  document.getElementById('quiz-running').classList.add('hidden');
+  document.getElementById('quiz-results').classList.remove('hidden');
+}
+
+function startQuizTimer(seconds) {
+  quizTimeLeft = seconds;
+  clearInterval(quizTimer);
+  updateTimerDisplay();
+  quizTimer = setInterval(() => {
+    quizTimeLeft--;
+    updateTimerDisplay();
+    if (quizTimeLeft <= 0) { clearInterval(quizTimer); finishQuiz(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(quizTimeLeft / 60);
+  const s = quizTimeLeft % 60;
+  const el = document.getElementById('quiz-timer-display');
+  el.textContent = m + ':' + String(s).padStart(2, '0');
+  el.style.background = quizTimeLeft < 60 ? '#fef2f2' : '#eff6ff';
+  el.style.color = quizTimeLeft < 60 ? '#dc2626' : '#1d4ed8';
+}
+
+function exitQuiz() {
+  clearInterval(quizTimer);
+  showPage('learn');
+}
+
+// ─── ANNOUNCEMENTS ───────────────────────────────────────────
+async function loadAnnouncements() {
+  const el = document.getElementById('ann-list');
+  try {
+    const data = await apiFetch('/api/announcements');
+    const tagColor = { Info: '#2563eb', Urgent: '#dc2626', Event: '#7c3aed' };
+    el.innerHTML = data.announcements.map(a => `
+      <div class="card ann-card" style="border-left-color:${tagColor[a.tag]||'#6b7280'}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <span class="badge" style="background:${tagColor[a.tag]}18;color:${tagColor[a.tag]};margin-bottom:8px;display:inline-block">${a.tag}</span>
+            <h3 style="font-size:16px;margin-bottom:6px">${a.title}</h3>
+            <p style="color:#6b7280;font-size:13px;line-height:1.6;margin:0">${a.body}</p>
+          </div>
+        </div>
+      </div>`).join('') || '<div class="empty">No announcements yet</div>';
+  } catch {
+    el.innerHTML = '<div class="empty">Could not load announcements</div>';
+  }
+}
+
+// ─── PAGE ROUTING ─────────────────────────────────────────────
+function showPage(name) {
+  const pages = ['auth','home-page-container','course','lesson','learn','quiz','announcements'];
+  pages.forEach(p => {
+    const el = document.getElementById(p + '-page') || document.getElementById(p);
+    if (el) el.classList.add('hidden');
+  });
+
+  // Update nav active state
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  if (name === 'home') {
+    document.getElementById('home-page-container').classList.remove('hidden');
+    if (!currentUser) document.getElementById('hero').classList.remove('hidden');
+    document.querySelectorAll('.nav-btn')[0]?.classList.add('active');
+  } else if (name === 'auth') {
+    document.getElementById('auth-page').classList.remove('hidden');
+    document.getElementById('reg-name-field').style.display = authMode === 'register' ? 'block' : 'none';
+  } else if (name === 'course') {
+    document.getElementById('course-page').classList.remove('hidden');
+  } else if (name === 'lesson') {
+    document.getElementById('lesson-page').classList.remove('hidden');
+  } else if (name === 'learn') {
+    document.getElementById('learn-page').classList.remove('hidden');
+    document.querySelectorAll('.nav-btn')[1]?.classList.add('active');
+    renderLearnPage();
+  } else if (name === 'quiz') {
+    document.getElementById('quiz-page').classList.remove('hidden');
+  } else if (name === 'announcements') {
+    document.getElementById('announcements-page').classList.remove('hidden');
+    document.querySelectorAll('.nav-btn')[2]?.classList.add('active');
+    loadAnnouncements();
+  }
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  ['courses','quizzes','projects'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+  });
+}
+
+function updateXP(val) {
+  document.getElementById('xp-display').textContent = '⚡ ' + val + ' XP';
+}
+
+function toast(msg, duration = 3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+// ─── DEMO DATA FALLBACK ───────────────────────────────────────
+function getDemoCourses() {
+  return [
+    { id:'c1',title:'Full-Stack Web Development',emoji:'🌐',instructor:'Arjun Mehta',category:'Web Dev',difficulty:'Intermediate',duration:'48h',lessons:42,enrolledCount:312,description:'Master Node.js, React, and MongoDB from scratch.',
+      sections:[{title:'JavaScript Fundamentals',lessons:[{id:'l1',title:'Variables & Data Types',duration:'12:30',isFree:true},{id:'l2',title:'Functions & Closures',duration:'18:45',isFree:true},{id:'l3',title:'Async/Await Deep Dive',duration:'22:10',isFree:false}]},{title:'React Essentials',lessons:[{id:'l4',title:'Components & Props',duration:'15:20',isFree:false},{id:'l5',title:'State Management',duration:'28:00',isFree:false}]}],
+      projectTitle:'Build a Full-Stack Todo App',projectDescription:'Create a complete todo application with authentication, CRUD, and deployment.',projectDeadlineDays:14,quiz:{title:'Web Dev Quiz',questions:5,timeLimit:300,passMark:70}},
+    { id:'c2',title:'Data Science with Python',emoji:'📊',instructor:'Priya Sharma',category:'Data Science',difficulty:'Beginner',duration:'36h',lessons:30,enrolledCount:198,description:'Learn pandas, NumPy, matplotlib and ML basics.',
+      sections:[{title:'Python Basics',lessons:[{id:'l6',title:'Python Setup',duration:'10:00',isFree:true},{id:'l7',title:'Data Structures',duration:'16:30',isFree:false}]}],
+      projectTitle:'Sales Data Analysis Dashboard',projectDescription:'Analyze a real-world dataset and create visualizations.',projectDeadlineDays:10,quiz:{title:'Python Quiz',questions:5,timeLimit:300,passMark:60}},
+    { id:'c3',title:'React Native Mobile Dev',emoji:'📱',instructor:'Vikram Patel',category:'Mobile',difficulty:'Advanced',duration:'52h',lessons:48,enrolledCount:143,description:'Build cross-platform mobile apps with React Native.',
+      sections:[{title:'React Native Basics',lessons:[{id:'l8',title:'Environment Setup',duration:'08:15',isFree:true},{id:'l9',title:'Core Components',duration:'20:00',isFree:false}]}],
+      projectTitle:'Expense Tracker App',projectDescription:'Build a mobile expense tracker with local storage and charts.',projectDeadlineDays:21,quiz:{title:'React Native Quiz',questions:5,timeLimit:300,passMark:65}},
+    { id:'c4',title:'DevOps & Cloud Fundamentals',emoji:'☁️',instructor:'Sneha Gupta',category:'DevOps',difficulty:'Intermediate',duration:'30h',lessons:26,enrolledCount:89,description:'Docker, Kubernetes, CI/CD pipelines and AWS basics.',
+      sections:[{title:'Docker & Containers',lessons:[{id:'l10',title:'What is Docker?',duration:'11:00',isFree:true},{id:'l11',title:'Writing Dockerfiles',duration:'19:30',isFree:false}]}],
+      projectTitle:'Deploy a Node App to AWS',projectDescription:'Containerize and deploy using Docker and AWS EC2.',projectDeadlineDays:18,quiz:{title:'DevOps Quiz',questions:5,timeLimit:300,passMark:60}},
+  ];
+}
+</script>
 </body>
 </html>
