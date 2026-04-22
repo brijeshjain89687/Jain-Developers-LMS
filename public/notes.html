@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Study Notes — Jain Developers LMS</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8f7f4;color:#1a1a1a;min-height:100vh}
+/* NAV */
+nav{background:#1e1b4b;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+.brand{color:#fff;font-weight:800;font-size:20px;text-decoration:none}
+.nav-link{color:rgba(255,255,255,0.7);text-decoration:none;padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer;background:transparent;border:none}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,0.15);color:#fff}
+/* LAYOUT */
+.layout{display:flex;min-height:calc(100vh - 60px)}
+/* SIDEBAR */
+.sidebar{width:260px;background:#fff;border-right:1px solid #e5e7eb;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;flex-shrink:0}
+.sidebar-inner{padding:16px 0}
+.course-group{margin-bottom:4px}
+.course-header{display:flex;align-items:center;gap:8px;padding:10px 16px;cursor:pointer;font-weight:700;font-size:13px;color:#1e1b4b;user-select:none;border-left:3px solid transparent}
+.course-header:hover{background:#f9fafb}
+.course-header.active{background:#ede9fe;border-left-color:#4f46e5;color:#4f46e5}
+.course-header .arrow{margin-left:auto;font-size:10px;transition:transform 0.2s;color:#9ca3af}
+.course-header.open .arrow{transform:rotate(90deg)}
+.topic-list{display:none;padding:4px 0}
+.course-header.open + .topic-list{display:block}
+.topic-item{padding:8px 16px 8px 36px;font-size:12px;cursor:pointer;color:#6b7280;border-left:3px solid transparent}
+.topic-item:hover{background:#f9fafb;color:#374151}
+.topic-item.active{background:#ede9fe;color:#4f46e5;border-left-color:#4f46e5;font-weight:600}
+.search-box{padding:12px 14px;border-bottom:1px solid #e5e7eb}
+.search-box input{width:100%;padding:8px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:12px;outline:none}
+.search-box input:focus{border-color:#4f46e5}
+/* CONTENT */
+.content{flex:1;padding:36px 48px;max-width:900px;overflow-y:auto}
+/* NOTES TYPOGRAPHY */
+.note-page{display:none}
+.note-page.active{display:block}
+.note-header{margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #e5e7eb}
+.note-course-tag{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:10px}
+.note-title{font-size:30px;font-weight:900;color:#1e1b4b;line-height:1.2;margin-bottom:8px}
+.note-meta{font-size:13px;color:#9ca3af}
+h2.nt{font-size:20px;font-weight:800;color:#1e1b4b;margin:28px 0 12px;padding-bottom:8px;border-bottom:2px solid #e5e7eb}
+h3.nt{font-size:16px;font-weight:700;color:#312e81;margin:22px 0 8px}
+p.nt{font-size:14px;color:#374151;line-height:1.8;margin-bottom:12px}
+ul.nt,ol.nt{padding-left:20px;margin-bottom:14px}
+ul.nt li,ol.nt li{font-size:14px;color:#374151;line-height:1.8;margin-bottom:4px}
+/* CODE BLOCKS */
+pre.code{background:#1e1b4b;color:#a5b4fc;border-radius:10px;padding:18px 20px;font-family:'Courier New',monospace;font-size:13px;line-height:1.7;overflow-x:auto;margin:14px 0;position:relative}
+pre.code .lang-tag{position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,0.3);font-family:'Segoe UI',sans-serif;font-weight:700;text-transform:uppercase}
+code.inline{background:#f3f4f6;color:#4f46e5;padding:2px 7px;border-radius:4px;font-family:'Courier New',monospace;font-size:13px}
+/* TIP / WARN / INFO BOXES */
+.box{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.7;border-left:4px solid}
+.box-tip{background:#f0fdf4;border-color:#16a34a;color:#166534}
+.box-warn{background:#fef3c7;border-color:#d97706;color:#92400e}
+.box-info{background:#eff6ff;border-color:#2563eb;color:#1e40af}
+.box-danger{background:#fef2f2;border-color:#dc2626;color:#991b1b}
+.box strong{font-weight:700;display:block;margin-bottom:4px}
+/* TABLE */
+.nt-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+.nt-table th{background:#1e1b4b;color:#fff;padding:10px 14px;text-align:left;font-weight:700}
+.nt-table td{padding:9px 14px;border-bottom:1px solid #e5e7eb;color:#374151;vertical-align:top}
+.nt-table tr:nth-child(even) td{background:#f9fafb}
+/* SECTION DIVIDER */
+.divider{height:1px;background:#e5e7eb;margin:28px 0}
+/* PROGRESS DOTS */
+.topic-dots{display:flex;gap:4px;margin-bottom:24px;flex-wrap:wrap}
+.dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;cursor:pointer;transition:background 0.2s}
+.dot.done{background:#16a34a}
+.dot.current{background:#4f46e5}
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .content{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/student">🎓 Jain LMS</a>
+  <div style="display:flex;gap:4px">
+    <a class="nav-link" href="/student">Courses</a>
+    <a class="nav-link active">📖 Notes</a>
+    <a class="nav-link" href="/student#announcements">Announcements</a>
+  </div>
+  <a href="/admin" class="nav-link" style="font-size:11px;opacity:0.6">Admin ↗</a>
+</nav>
+
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="search-box">
+    <input type="search" id="note-search" placeholder="🔍 Search topics..." oninput="searchNotes()" />
+  </div>
+  <div class="sidebar-inner" id="sidebar-nav">
+
+    <!-- FULL STACK WEB DEV -->
+    <div class="course-group">
+      <div class="course-header open" onclick="toggleGroup(this)" id="grp-web">
+        <span>🌐</span> Full-Stack Web Dev <span class="arrow">▶</span>
+      </div>
+      <div class="topic-list">
+        <div class="topic-item active" onclick="showNote('web-html')">HTML5 Fundamentals</div>
+        <div class="topic-item" onclick="showNote('web-css')">CSS3 & Flexbox/Grid</div>
+        <div class="topic-item" onclick="showNote('web-js-basics')">JavaScript Basics</div>
+        <div class="topic-item" onclick="showNote('web-js-advanced')">JavaScript Advanced</div>
+        <div class="topic-item" onclick="showNote('web-node')">Node.js & Express</div>
+        <div class="topic-item" onclick="showNote('web-rest')">REST API Design</div>
+        <div class="topic-item" onclick="showNote('web-react')">React.js</div>
+        <div class="topic-item" onclick="showNote('web-db')">Databases & MongoDB</div>
+        <div class="topic-item" onclick="showNote('web-auth')">Auth & JWT Security</div>
+        <div class="topic-item" onclick="showNote('web-deploy')">Deployment & DevOps</div>
+      </div>
+    </div>
+
+    <!-- PYTHON -->
+    <div class="course-group">
+      <div class="course-header" onclick="toggleGroup(this)" id="grp-python">
+        <span>📊</span> Python Programming <span class="arrow">▶</span>
+      </div>
+      <div class="topic-list">
+        <div class="topic-item" onclick="showNote('py-basics')">Python Basics</div>
+        <div class="topic-item" onclick="showNote('py-ds')">Data Structures</div>
+        <div class="topic-item" onclick="showNote('py-oop')">OOP in Python</div>
+        <div class="topic-item" onclick="showNote('py-files')">File I/O & Exceptions</div>
+        <div class="topic-item" onclick="showNote('py-numpy')">NumPy</div>
+        <div class="topic-item" onclick="showNote('py-pandas')">Pandas</div>
+        <div class="topic-item" onclick="showNote('py-matplotlib')">Matplotlib & Seaborn</div>
+        <div class="topic-item" onclick="showNote('py-ml')">ML Basics & Scikit-learn</div>
+      </div>
+    </div>
+
+    <!-- C / C++ -->
+    <div class="course-group">
+      <div class="course-header" onclick="toggleGroup(this)" id="grp-c">
+        <span>⚙️</span> C / C++ Programming <span class="arrow">▶</span>
+      </div>
+      <div class="topic-list">
+        <div class="topic-item" onclick="showNote('c-basics')">C Basics</div>
+        <div class="topic-item" onclick="showNote('c-pointers')">Pointers & Memory</div>
+        <div class="topic-item" onclick="showNote('c-arrays')">Arrays & Strings</div>
+        <div class="topic-item" onclick="showNote('c-structs')">Structs & Unions</div>
+        <div class="topic-item" onclick="showNote('cpp-intro')">C++ Introduction</div>
+        <div class="topic-item" onclick="showNote('cpp-oop')">OOP in C++</div>
+        <div class="topic-item" onclick="showNote('cpp-stl')">STL — Vectors, Maps, Sets</div>
+        <div class="topic-item" onclick="showNote('cpp-advanced')">Templates & Smart Pointers</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<div class="content" id="notes-content">
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — HTML5
+══════════════════════════════════════════════════════ -->
+<div class="note-page active" id="note-web-html">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">HTML5 Fundamentals</div>
+    <div class="note-meta">Topic 1 of 10 · ~20 min read · Written by Senior Developer</div>
+  </div>
+
+  <h2 class="nt">What is HTML?</h2>
+  <p class="nt">HTML (HyperText Markup Language) is the skeleton of every web page. It defines <strong>structure and meaning</strong> — not how things look (that's CSS) or how they behave (that's JavaScript). Every element in HTML is a <strong>tag</strong> that tells the browser what kind of content it is.</p>
+
+  <div class="box box-info"><strong>Senior Dev Tip</strong> Always write semantic HTML. Use <code class="inline">&lt;header&gt;</code>, <code class="inline">&lt;nav&gt;</code>, <code class="inline">&lt;main&gt;</code>, <code class="inline">&lt;article&gt;</code>, <code class="inline">&lt;footer&gt;</code> instead of divs everywhere. It helps SEO, screen readers, and makes your code self-documenting.</div>
+
+  <h2 class="nt">Document Structure</h2>
+<pre class="code"><span class="lang-tag">HTML</span>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+  &lt;meta name="description" content="Page description for SEO" /&gt;
+  &lt;title&gt;My Page Title&lt;/title&gt;
+  &lt;link rel="stylesheet" href="style.css" /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;nav&gt;...navigation...&lt;/nav&gt;
+  &lt;/header&gt;
+  &lt;main&gt;
+    &lt;article&gt;...content...&lt;/article&gt;
+    &lt;aside&gt;...sidebar...&lt;/aside&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;...footer...&lt;/footer&gt;
+  &lt;script src="app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+  <h2 class="nt">Semantic Elements</h2>
+  <table class="nt-table">
+    <tr><th>Tag</th><th>Use</th><th>Notes</th></tr>
+    <tr><td><code class="inline">&lt;header&gt;</code></td><td>Top of page/section</td><td>Logo, nav, hero</td></tr>
+    <tr><td><code class="inline">&lt;nav&gt;</code></td><td>Navigation links</td><td>Menu, breadcrumbs</td></tr>
+    <tr><td><code class="inline">&lt;main&gt;</code></td><td>Primary content</td><td>Only ONE per page</td></tr>
+    <tr><td><code class="inline">&lt;section&gt;</code></td><td>Thematic grouping</td><td>Has its own heading</td></tr>
+    <tr><td><code class="inline">&lt;article&gt;</code></td><td>Self-contained content</td><td>Blog post, card, comment</td></tr>
+    <tr><td><code class="inline">&lt;aside&gt;</code></td><td>Related but secondary</td><td>Sidebar, pull quote</td></tr>
+    <tr><td><code class="inline">&lt;footer&gt;</code></td><td>End of page/section</td><td>Copyright, links</td></tr>
+    <tr><td><code class="inline">&lt;figure&gt;</code></td><td>Image with caption</td><td>Use with &lt;figcaption&gt;</td></tr>
+  </table>
+
+  <h2 class="nt">Forms</h2>
+<pre class="code"><span class="lang-tag">HTML</span>&lt;form action="/submit" method="POST"&gt;
+  &lt;label for="email"&gt;Email&lt;/label&gt;
+  &lt;input type="email" id="email" name="email" required placeholder="you@example.com" /&gt;
+
+  &lt;label for="pass"&gt;Password&lt;/label&gt;
+  &lt;input type="password" id="pass" name="password" minlength="8" required /&gt;
+
+  &lt;select name="role"&gt;
+    &lt;option value="student"&gt;Student&lt;/option&gt;
+    &lt;option value="teacher"&gt;Teacher&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;textarea name="bio" rows="4" maxlength="500"&gt;&lt;/textarea&gt;
+
+  &lt;button type="submit"&gt;Register&lt;/button&gt;
+&lt;/form&gt;</pre>
+
+  <div class="box box-warn"><strong>Common Mistake</strong> Always connect <code class="inline">&lt;label&gt;</code> to its input using <code class="inline">for="inputId"</code> matching <code class="inline">id="inputId"</code>. Without this, clicking the label won't focus the input — and screen readers won't know which label belongs to which field.</div>
+
+  <h2 class="nt">Important HTML5 Input Types</h2>
+<pre class="code"><span class="lang-tag">HTML</span>&lt;input type="text"     /&gt;  &lt;!-- plain text --&gt;
+&lt;input type="email"    /&gt;  &lt;!-- validates email format --&gt;
+&lt;input type="password" /&gt;  &lt;!-- hides characters --&gt;
+&lt;input type="number"   min="0" max="100" /&gt;
+&lt;input type="date"     /&gt;  &lt;!-- date picker --&gt;
+&lt;input type="checkbox" /&gt;  &lt;!-- true/false --&gt;
+&lt;input type="radio"    name="group" /&gt;  &lt;!-- one of many --&gt;
+&lt;input type="file"     accept=".pdf,.jpg" /&gt;
+&lt;input type="range"    min="0" max="10" step="1" /&gt;
+&lt;input type="search"   /&gt;  &lt;!-- search-specific UI --&gt;</pre>
+
+  <div class="box box-tip"><strong>Pro Tip</strong> Use the <code class="inline">required</code>, <code class="inline">minlength</code>, <code class="inline">maxlength</code>, <code class="inline">pattern</code> attributes for browser-side validation before your data even hits JavaScript. It's free validation!</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — CSS
+══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-web-css">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">CSS3 — Flexbox, Grid & Responsive Design</div>
+    <div class="note-meta">Topic 2 of 10 · ~25 min read</div>
+  </div>
+
+  <h2 class="nt">The Box Model</h2>
+  <p class="nt">Every element is a box. From inside out: <strong>content → padding → border → margin</strong>. Always set <code class="inline">box-sizing: border-box</code> globally so padding and border don't add to the element's width.</p>
+<pre class="code"><span class="lang-tag">CSS</span>/* Reset — always add this */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  width: 300px;
+  padding: 20px;       /* space inside */
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  margin: 16px auto;   /* space outside */
+}</pre>
+
+  <h2 class="nt">Flexbox — One Dimension</h2>
+<pre class="code"><span class="lang-tag">CSS</span>/* Parent */
+.container {
+  display: flex;
+  flex-direction: row;        /* row | column */
+  justify-content: center;    /* main axis: flex-start|center|flex-end|space-between|space-around */
+  align-items: center;        /* cross axis: flex-start|center|flex-end|stretch */
+  flex-wrap: wrap;            /* allow items to wrap */
+  gap: 16px;                  /* space between items */
+}
+
+/* Child */
+.item {
+  flex: 1;           /* grow to fill space equally */
+  flex: 0 0 200px;   /* don't grow, don't shrink, 200px wide */
+  align-self: flex-start; /* override parent align-items for this child */
+}</pre>
+
+  <div class="box box-tip"><strong>Remember: justify-content = main axis, align-items = cross axis.</strong> If flex-direction is row, main axis is horizontal. If column, main axis is vertical. This trips up 90% of beginners.</div>
+
+  <h2 class="nt">CSS Grid — Two Dimensions</h2>
+<pre class="code"><span class="lang-tag">CSS</span>/* Parent */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);   /* 3 equal columns */
+  grid-template-columns: 200px 1fr 1fr;    /* fixed + flexible */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* responsive! */
+  gap: 20px;
+  grid-template-rows: auto;
+}
+
+/* Child spanning */
+.hero {
+  grid-column: 1 / -1;  /* span all columns */
+  grid-row: 1 / 3;      /* span 2 rows */
+}</pre>
+
+  <h2 class="nt">CSS Variables (Custom Properties)</h2>
+<pre class="code"><span class="lang-tag">CSS</span>:root {
+  --color-primary: #4f46e5;
+  --color-bg: #f8f7f4;
+  --font-size-base: 16px;
+  --border-radius: 8px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.button {
+  background: var(--color-primary);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  box-shadow: var(--shadow);
+}</pre>
+
+  <h2 class="nt">Responsive Design — Mobile First</h2>
+<pre class="code"><span class="lang-tag">CSS</span>/* Mobile first: write base styles for mobile */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;  /* 1 column on mobile */
+  gap: 16px;
+}
+
+/* Tablet: 768px and up */
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop: 1024px and up */
+@media (min-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}</pre>
+
+  <div class="box box-warn"><strong>Senior Dev Rule</strong> Always design mobile-first. Use <code class="inline">min-width</code> media queries, not <code class="inline">max-width</code>. This scales up gracefully and keeps your CSS lean.</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — JS BASICS
+══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-web-js-basics">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">JavaScript Basics</div>
+    <div class="note-meta">Topic 3 of 10 · ~30 min read</div>
+  </div>
+
+  <h2 class="nt">Variables — let, const, var</h2>
+<pre class="code"><span class="lang-tag">JS</span>const name = "Rahul";      // can't reassign — use for most things
+let age = 22;               // can reassign — use when value changes
+var old = "avoid this";     // function-scoped, hoisted — don't use in modern JS
+
+// const with objects — the reference is const, NOT the content
+const user = { name: "Rahul", age: 22 };
+user.age = 23;              // ✅ allowed — mutating the object
+user = { name: "Priya" };  // ❌ TypeError — can't reassign the binding</pre>
+
+  <h2 class="nt">Data Types</h2>
+<pre class="code"><span class="lang-tag">JS</span>// Primitives (immutable)
+typeof "hello"     // "string"
+typeof 42          // "number"
+typeof true        // "boolean"
+typeof undefined   // "undefined"
+typeof null        // "object"  ← famous JS bug, null is NOT an object
+typeof Symbol()    // "symbol"
+typeof 42n         // "bigint"
+
+// Reference types
+typeof {}          // "object"
+typeof []          // "object"  ← use Array.isArray([]) to check arrays
+typeof function(){} // "function"</pre>
+
+  <h2 class="nt">Functions — All Forms</h2>
+<pre class="code"><span class="lang-tag">JS</span>// 1. Function Declaration — hoisted, can call before definition
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+// 2. Function Expression — NOT hoisted
+const greet = function(name) {
+  return `Hello, ${name}!`;
+};
+
+// 3. Arrow Function — shorter, no own 'this'
+const greet = (name) => `Hello, ${name}!`;
+const double = n => n * 2;         // single param, no parens needed
+const add = (a, b) => {            // multi-line needs braces + return
+  const sum = a + b;
+  return sum;
+};
+
+// 4. Default parameters
+function createUser(name, role = "student", xp = 0) {
+  return { name, role, xp };
+}
+
+// 5. Rest parameters
+function sum(...numbers) {
+  return numbers.reduce((total, n) => total + n, 0);
+}
+sum(1, 2, 3, 4);  // 10</pre>
+
+  <h2 class="nt">Array Methods You Must Know</h2>
+<pre class="code"><span class="lang-tag">JS</span>const nums = [1, 2, 3, 4, 5];
+const users = [
+  { name: "Rahul", score: 88 },
+  { name: "Priya", score: 95 },
+  { name: "Amit",  score: 72 },
+];
+
+// map — transform each item, returns NEW array
+const doubled = nums.map(n => n * 2);            // [2, 4, 6, 8, 10]
+const names = users.map(u => u.name);            // ["Rahul", "Priya", "Amit"]
+
+// filter — keep items that pass test, returns NEW array
+const passing = users.filter(u => u.score >= 80); // Rahul, Priya
+
+// find — returns FIRST match (or undefined)
+const topper = users.find(u => u.score === 95);   // { name: "Priya", score: 95 }
+
+// reduce — collapse array to single value
+const total = nums.reduce((acc, n) => acc + n, 0); // 15
+
+// some / every
+nums.some(n => n > 4);    // true (at least one > 4)
+nums.every(n => n > 0);   // true (all > 0)
+
+// sort — mutates original! use [...arr].sort() to avoid mutation
+const sorted = [...users].sort((a, b) => b.score - a.score); // desc by score
+
+// flat / flatMap
+[[1,2],[3,4]].flat();             // [1, 2, 3, 4]
+[1, 2, 3].flatMap(n => [n, n*2]) // [1, 2, 2, 4, 3, 6]</pre>
+
+  <div class="box box-danger"><strong>Never mutate the original array in a pipeline.</strong> <code class="inline">sort()</code>, <code class="inline">splice()</code>, <code class="inline">reverse()</code>, and <code class="inline">push()</code> all mutate. Always spread first: <code class="inline">[...arr].sort()</code></div>
+
+  <h2 class="nt">Destructuring & Spread</h2>
+<pre class="code"><span class="lang-tag">JS</span>// Object destructuring
+const { name, score, role = "student" } = user;  // role defaults to "student"
+const { name: userName } = user;                  // rename: userName = user.name
+
+// Array destructuring
+const [first, second, ...rest] = [1, 2, 3, 4, 5];  // first=1, rest=[3,4,5]
+
+// Spread — copy + merge
+const updated = { ...user, score: 100 };            // new object with score overridden
+const combined = [...arr1, ...arr2];                // merge arrays
+
+// Swap variables
+let a = 1, b = 2;
+[a, b] = [b, a];  // a=2, b=1</pre>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — JS ADVANCED
+══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-web-js-advanced">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">JavaScript Advanced — Async, Closures, Prototypes</div>
+    <div class="note-meta">Topic 4 of 10 · ~35 min read</div>
+  </div>
+
+  <h2 class="nt">Closures</h2>
+  <p class="nt">A closure is a function that <strong>remembers the variables from its outer scope</strong> even after that outer function has finished executing. This is one of JS's most powerful features.</p>
+<pre class="code"><span class="lang-tag">JS</span>function makeCounter(start = 0) {
+  let count = start;            // this variable lives in the closure
+  return {
+    increment: () => ++count,
+    decrement: () => --count,
+    value:     () => count,
+  };
+}
+
+const counter = makeCounter(10);
+counter.increment();  // 11
+counter.increment();  // 12
+counter.decrement();  // 11
+counter.value();      // 11
+// count is private — can't access it directly from outside</pre>
+
+  <div class="box box-tip"><strong>Real-world use:</strong> Closures power React hooks, event listeners with private state, memoization, factory functions, and module patterns.</div>
+
+  <h2 class="nt">Promises & Async/Await</h2>
+<pre class="code"><span class="lang-tag">JS</span>// A Promise is a placeholder for a future value
+const fetchUser = (id) => new Promise((resolve, reject) => {
+  setTimeout(() => {
+    if (id > 0) resolve({ id, name: "Rahul" });
+    else reject(new Error("Invalid ID"));
+  }, 1000);
+});
+
+// async/await — syntactic sugar over Promises, much cleaner
+async function loadUser(id) {
+  try {
+    const user = await fetchUser(id);        // pauses here until resolved
+    const posts = await fetchPosts(user.id); // then continues
+    return { user, posts };
+  } catch (error) {
+    console.error("Failed:", error.message);
+    throw error;  // re-throw so caller can handle it too
+  }
+}
+
+// Run multiple async ops in PARALLEL (not sequentially)
+async function loadAll() {
+  const [user, courses, announcements] = await Promise.all([
+    fetchUser(1),
+    fetchCourses(),
+    fetchAnnouncements(),
+  ]);
+  // All three resolved — much faster than awaiting one by one
+}</pre>
+
+  <div class="box box-warn"><strong>Common Mistake</strong> Awaiting inside a <code class="inline">forEach</code> does NOT work. Use <code class="inline">for...of</code> or <code class="inline">Promise.all(arr.map(...))</code> instead.</div>
+
+  <h2 class="nt">Event Loop — How JS is Single-Threaded</h2>
+<pre class="code"><span class="lang-tag">JS</span>console.log("1 — sync");
+
+setTimeout(() => console.log("2 — macro task"), 0);
+
+Promise.resolve().then(() => console.log("3 — micro task"));
+
+console.log("4 — sync");
+
+// Output order: 1, 4, 3, 2
+// Sync code runs first, then microtasks (Promises), then macrotasks (setTimeout)</pre>
+
+  <h2 class="nt">Error Handling Best Practices</h2>
+<pre class="code"><span class="lang-tag">JS</span>// Custom error class
+class ApiError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.name = "ApiError";
+    this.statusCode = statusCode;
+  }
+}
+
+// Use it
+async function fetchData(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new ApiError(`Request failed`, res.status);
+  return res.json();
+}
+
+// Catch specific errors
+try {
+  const data = await fetchData("/api/courses");
+} catch (err) {
+  if (err instanceof ApiError) {
+    if (err.statusCode === 401) redirectToLogin();
+    if (err.statusCode === 404) show404();
+  } else {
+    showGenericError();
+  }
+}</pre>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — NODE.JS
+══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-web-node">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">Node.js & Express.js</div>
+    <div class="note-meta">Topic 5 of 10 · ~30 min read</div>
+  </div>
+
+  <h2 class="nt">Node.js Core Concepts</h2>
+  <p class="nt">Node.js is a JavaScript runtime built on Chrome's V8 engine. It's <strong>single-threaded</strong> but handles concurrency via the <strong>event loop</strong> and non-blocking I/O. Never run CPU-intensive tasks on the main thread — use worker threads or offload to a queue.</p>
+
+  <h2 class="nt">Express Server Setup</h2>
+<pre class="code"><span class="lang-tag">JS</span>const express = require('express');
+const cors    = require('cors');
+const helmet  = require('helmet');
+const app     = express();
+
+// Middleware — order matters!
+app.use(helmet());                    // security headers
+app.use(cors());                      // allow cross-origin requests
+app.use(express.json());              // parse JSON body
+app.use(express.urlencoded({ extended: true })); // parse form data
+
+// Route
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.json({ success: true, data: users });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Global error handler — must have 4 params
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({ error: err.message });
+});
+
+app.listen(3000, () => console.log('Server running on port 3000'));</pre>
+
+  <h2 class="nt">Middleware Pattern</h2>
+<pre class="code"><span class="lang-tag">JS</span>// Middleware is just a function with (req, res, next)
+const logger = (req, res, next) => {
+  console.log(`${req.method} ${req.url} — ${new Date().toISOString()}`);
+  next(); // MUST call next() or the request hangs
+};
+
+// Auth middleware
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token' });
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+// Apply to specific routes
+app.get('/api/profile', authenticate, (req, res) => {
+  res.json(req.user); // req.user was set by middleware
+});</pre>
+
+  <h2 class="nt">Environment Variables</h2>
+<pre class="code"><span class="lang-tag">JS</span>// .env file (never commit to git!)
+// DATABASE_URL=mongodb://localhost:27017/mydb
+// JWT_SECRET=supersecretkey123
+// PORT=3000
+
+require('dotenv').config();
+
+const port   = process.env.PORT || 3000;
+const secret = process.env.JWT_SECRET;
+
+// Never hardcode secrets — always use env vars
+// Bad:  const secret = "hardcoded123";
+// Good: const secret = process.env.JWT_SECRET;</pre>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — REST API
+══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-web-rest">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">REST API Design</div>
+    <div class="note-meta">Topic 6 of 10 · ~20 min read</div>
+  </div>
+
+  <h2 class="nt">REST Conventions</h2>
+  <table class="nt-table">
+    <tr><th>Method</th><th>URL</th><th>Action</th><th>Body</th></tr>
+    <tr><td>GET</td><td>/api/courses</td><td>List all courses</td><td>None</td></tr>
+    <tr><td>GET</td><td>/api/courses/:id</td><td>Get one course</td><td>None</td></tr>
+    <tr><td>POST</td><td>/api/courses</td><td>Create course</td><td>JSON</td></tr>
+    <tr><td>PUT</td><td>/api/courses/:id</td><td>Replace course</td><td>JSON</td></tr>
+    <tr><td>PATCH</td><td>/api/courses/:id</td><td>Update fields</td><td>JSON</td></tr>
+    <tr><td>DELETE</td><td>/api/courses/:id</td><td>Delete course</td><td>None</td></tr>
+  </table>
+
+  <h2 class="nt">HTTP Status Codes</h2>
+  <table class="nt-table">
+    <tr><th>Code</th><th>Meaning</th><th>When to use</th></tr>
+    <tr><td>200</td><td>OK</td><td>Successful GET, PUT, PATCH</td></tr>
+    <tr><td>201</td><td>Created</td><td>Successful POST — resource created</td></tr>
+    <tr><td>204</td><td>No Content</td><td>Successful DELETE</td></tr>
+    <tr><td>400</td><td>Bad Request</td><td>Validation failed, malformed JSON</td></tr>
+    <tr><td>401</td><td>Unauthorized</td><td>No token / invalid token</td></tr>
+    <tr><td>403</td><td>Forbidden</td><td>Valid token but wrong role</td></tr>
+    <tr><td>404</td><td>Not Found</td><td>Resource doesn't exist</td></tr>
+    <tr><td>409</td><td>Conflict</td><td>Duplicate email, already enrolled</td></tr>
+    <tr><td>422</td><td>Unprocessable</td><td>Valid JSON but semantically wrong</td></tr>
+    <tr><td>500</td><td>Server Error</td><td>Unexpected crash on server</td></tr>
+  </table>
+
+<pre class="code"><span class="lang-tag">JS</span>// Always return consistent response shapes
+// Success:
+res.status(200).json({ success: true, data: courses, count: courses.length });
+
+// Error:
+res.status(400).json({ success: false, error: "Email is required" });
+
+// Created:
+res.status(201).json({ success: true, id: newCourse.id, data: newCourse });</pre>
+
+  <div class="box box-info"><strong>Senior Dev Rule</strong> Never return just data — always wrap in a consistent envelope (<code class="inline">{ success, data, error, count }</code>). This makes frontend error handling predictable across your entire API.</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — REACT
+══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-web-react">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">React.js — Components, Hooks & State</div>
+    <div class="note-meta">Topic 7 of 10 · ~35 min read</div>
+  </div>
+
+  <h2 class="nt">Component Anatomy</h2>
+<pre class="code"><span class="lang-tag">JSX</span>import { useState, useEffect, useCallback } from 'react';
+
+// Props are read-only inputs — destructure them
+function CourseCard({ title, instructor, emoji, onEnroll, isEnrolled = false }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    &lt;div
+      className={`card ${hovered ? 'card--hovered' : ''}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    &gt;
+      &lt;span&gt;{emoji}&lt;/span&gt;
+      &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;p&gt;by {instructor}&lt;/p&gt;
+      &lt;button onClick={onEnroll} disabled={isEnrolled}&gt;
+        {isEnrolled ? 'Enrolled ✓' : 'Enroll Now'}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+
+  <h2 class="nt">useEffect — Data Fetching</h2>
+<pre class="code"><span class="lang-tag">JSX</span>function CourseList() {
+  const [courses, setCourses]   = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [error,   setError]     = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;  // prevent state update on unmounted component
+
+    async function load() {
+      try {
+        const res  = await fetch('/api/courses');
+        const data = await res.json();
+        if (!cancelled) setCourses(data.courses);
+      } catch (err) {
+        if (!cancelled) setError(err.message);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    load();
+    return () => { cancelled = true; };  // cleanup
+  }, []);  // [] = run once on mount
+
+  if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;
+  if (error)   return &lt;p&gt;Error: {error}&lt;/p&gt;;
+  return &lt;div&gt;{courses.map(c =&gt; &lt;CourseCard key={c.id} {...c} /&gt;)}&lt;/div&gt;;
+}</pre>
+
+  <h2 class="nt">Custom Hooks</h2>
+<pre class="code"><span class="lang-tag">JSX</span>// Extract reusable logic into custom hooks
+function useFetch(url) {
+  const [data,    setData]    = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState(null);
+
+  useEffect(() => {
+    fetch(url)
+      .then(r => r.json())
+      .then(setData)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [url]);
+
+  return { data, loading, error };
+}
+
+// Use it anywhere
+function App() {
+  const { data, loading, error } = useFetch('/api/courses');
+  // ...
+}</pre>
+
+  <div class="box box-tip"><strong>Hook Rules</strong> (1) Only call hooks at the top level — never inside loops or conditions. (2) Only call hooks from React functions. The ESLint plugin <code class="inline">eslint-plugin-react-hooks</code> enforces this automatically.</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — DATABASE
+══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-web-db">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">Databases — SQL vs NoSQL & MongoDB</div>
+    <div class="note-meta">Topic 8 of 10 · ~25 min read</div>
+  </div>
+  <h2 class="nt">SQL vs NoSQL</h2>
+  <table class="nt-table">
+    <tr><th>Feature</th><th>SQL (PostgreSQL/MySQL)</th><th>NoSQL (MongoDB/Firestore)</th></tr>
+    <tr><td>Structure</td><td>Fixed schema, tables</td><td>Flexible, documents</td></tr>
+    <tr><td>Relations</td><td>JOINs between tables</td><td>Embed or reference</td></tr>
+    <tr><td>Scale</td><td>Vertical (bigger machine)</td><td>Horizontal (more machines)</td></tr>
+    <tr><td>Transactions</td><td>ACID guaranteed</td><td>Limited (improving)</td></tr>
+    <tr><td>Best for</td><td>Banking, ERP, complex relations</td><td>User profiles, feeds, catalogs</td></tr>
+  </table>
+
+  <h2 class="nt">MongoDB / Firestore Patterns</h2>
+<pre class="code"><span class="lang-tag">JS</span>// Firestore — Reading
+const snapshot = await db.collection('courses')
+  .where('isPublished', '==', true)
+  .orderBy('createdAt', 'desc')
+  .limit(10)
+  .get();
+
+const courses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+// Firestore — Writing
+await db.collection('users').doc(uid).set({
+  name, email, role: 'student',
+  xp: 0,
+  createdAt: admin.firestore.FieldValue.serverTimestamp(),
+});
+
+// Atomic update — increment without reading first
+await db.collection('users').doc(uid).update({
+  xp: admin.firestore.FieldValue.increment(20),
+  completedLessons: admin.firestore.FieldValue.arrayUnion(lessonId),
+});
+
+// Transaction — all-or-nothing
+await db.runTransaction(async (tx) => {
+  const userDoc = await tx.get(userRef);
+  const newXP = userDoc.data().xp + 50;
+  tx.update(userRef, { xp: newXP });
+  tx.set(progressRef, { completedLessons: [], percentComplete: 0 });
+});</pre>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — AUTH
+══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-web-auth">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">Authentication & JWT Security</div>
+    <div class="note-meta">Topic 9 of 10 · ~20 min read</div>
+  </div>
+
+  <h2 class="nt">How JWT Works</h2>
+  <p class="nt">A JWT (JSON Web Token) has 3 parts separated by dots: <strong>Header.Payload.Signature</strong>. The server signs it with a secret key. On each request the client sends the token and the server verifies the signature — no database lookup needed.</p>
+<pre class="code"><span class="lang-tag">JS</span>const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+// Registration — hash password before storing
+const hash = bcrypt.hashSync(plainPassword, 10); // 10 rounds
+
+// Login — verify and issue token
+const isValid = bcrypt.compareSync(plainPassword, storedHash);
+if (!isValid) return res.status(401).json({ error: 'Wrong password' });
+
+const token = jwt.sign(
+  { uid: user.id, email: user.email, role: user.role },  // payload
+  process.env.JWT_SECRET,                                  // secret
+  { expiresIn: '7d' }                                      // expiry
+);
+
+// Verify on protected routes
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
+// decoded = { uid, email, role, iat, exp }</pre>
+
+  <div class="box box-danger"><strong>Security Rules</strong> (1) Never store JWT in localStorage for high-security apps — use httpOnly cookies. (2) Never put sensitive data (passwords, credit cards) in the JWT payload — it's base64, not encrypted, anyone can decode it. (3) Use HTTPS always. (4) Rotate secrets if compromised.</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     WEB DEV — DEPLOYMENT
+══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-web-deploy">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#ede9fe;color:#4f46e5">🌐 Full-Stack Web Development</div>
+    <div class="note-title">Deployment & DevOps Basics</div>
+    <div class="note-meta">Topic 10 of 10 · ~20 min read</div>
+  </div>
+  <h2 class="nt">Git Workflow</h2>
+<pre class="code"><span class="lang-tag">BASH</span>git init                          # initialise repo
+git add .                         # stage all changes
+git commit -m "feat: add login"   # commit with descriptive message
+git push origin main              # push to GitHub
+
+# Branching
+git checkout -b feature/quiz-engine   # create + switch branch
+git merge feature/quiz-engine         # merge into main
+git branch -d feature/quiz-engine     # delete branch after merge</pre>
+
+  <h2 class="nt">Render.com Deployment Checklist</h2>
+  <ul class="nt">
+    <li>Push backend code to GitHub</li>
+    <li>Create Web Service → connect repo → set Root Directory to <code class="inline">backend</code></li>
+    <li>Build Command: <code class="inline">npm install</code> &nbsp; Start Command: <code class="inline">npm start</code></li>
+    <li>Add all env vars from <code class="inline">.env</code> in Render Dashboard → Environment</li>
+    <li>Add <code class="inline">RENDER_APP_URL</code> for keep-alive ping</li>
+    <li>Visit <code class="inline">/api/health</code> to confirm it's live</li>
+    <li>Seed: <code class="inline">/api/seed?secret=YOUR_SEED_SECRET</code></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PYTHON — BASICS
+═══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-py-basics">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#dcfce7;color:#16a34a">📊 Python Programming</div>
+    <div class="note-title">Python Basics</div>
+    <div class="note-meta">Topic 1 of 8 · ~25 min read</div>
+  </div>
+
+  <h2 class="nt">Why Python?</h2>
+  <p class="nt">Python is the most readable language in the world. Its design philosophy — "there should be one obvious way to do it" — means Python code reads almost like English. It dominates data science, ML, automation, and backend web dev.</p>
+
+  <h2 class="nt">Variables & Types</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span># Python is dynamically typed — no need to declare types
+name   = "Rahul"          # str
+age    = 22               # int
+gpa    = 8.5              # float
+passed = True             # bool
+nothing = None            # None (like null)
+
+# Type checking
+type(name)          # &lt;class 'str'&gt;
+isinstance(age, int)  # True
+
+# Type conversion
+int("42")       # 42
+float("3.14")   # 3.14
+str(100)        # "100"
+bool(0)         # False — 0, "", [], {}, None are all falsy</pre>
+
+  <h2 class="nt">Strings</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span>name = "Rahul Jain"
+
+# f-strings (use these — fastest and most readable)
+msg = f"Hello, {name}! You are {age} years old."
+expr = f"Result: {2 ** 10}"   # expressions inside {}
+
+# String methods
+name.upper()          # "RAHUL JAIN"
+name.lower()          # "rahul jain"
+name.split(" ")       # ["Rahul", "Jain"]
+name.replace("Jain", "Kumar")  # "Rahul Kumar"
+name.strip()          # remove whitespace from both ends
+" hello ".strip()     # "hello"
+",".join(["a","b","c"])  # "a,b,c"
+
+# Slicing — [start:stop:step]
+s = "Python"
+s[0]      # "P"
+s[-1]     # "n"  (last character)
+s[1:4]    # "yth"
+s[::-1]   # "nohtyP"  (reversed)</pre>
+
+  <h2 class="nt">Control Flow</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span># if / elif / else
+score = 85
+if score >= 90:
+    grade = "A+"
+elif score >= 80:
+    grade = "A"
+elif score >= 70:
+    grade = "B"
+else:
+    grade = "C"
+
+# Ternary (one-liner)
+status = "Pass" if score >= 50 else "Fail"
+
+# for loop
+for i in range(5):          # 0, 1, 2, 3, 4
+    print(i)
+
+for i in range(1, 10, 2):   # 1, 3, 5, 7, 9
+    print(i)
+
+for idx, val in enumerate(["a","b","c"]):
+    print(idx, val)          # 0 a, 1 b, 2 c
+
+# while loop
+n = 10
+while n > 0:
+    print(n)
+    n -= 1</pre>
+
+  <h2 class="nt">List Comprehensions</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span># Traditional way
+squares = []
+for x in range(10):
+    squares.append(x ** 2)
+
+# List comprehension — Pythonic ✅
+squares      = [x**2 for x in range(10)]
+even_squares = [x**2 for x in range(10) if x % 2 == 0]
+
+# Dict comprehension
+word_len = {word: len(word) for word in ["apple", "banana", "cherry"]}
+# {'apple': 5, 'banana': 6, 'cherry': 6}
+
+# Set comprehension
+unique_lengths = {len(word) for word in ["hi", "hello", "hey"]}  # {2, 5, 3}</pre>
+
+  <div class="box box-tip"><strong>Senior Dev Rule</strong> Prefer list comprehensions over <code class="inline">map()</code> and <code class="inline">filter()</code> in Python — they're more Pythonic, faster, and easier to read. Use generator expressions <code class="inline">(x**2 for x in range(10))</code> when you don't need the whole list in memory.</div>
+</div>
+
+<!-- PYTHON — DATA STRUCTURES -->
+<div class="note-page" id="note-py-ds">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#dcfce7;color:#16a34a">📊 Python Programming</div>
+    <div class="note-title">Data Structures — Lists, Tuples, Dicts, Sets</div>
+    <div class="note-meta">Topic 2 of 8 · ~25 min read</div>
+  </div>
+  <h2 class="nt">Lists</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span>nums = [3, 1, 4, 1, 5, 9, 2, 6]
+
+nums.append(7)         # add to end
+nums.insert(0, 0)      # insert at index 0
+nums.pop()             # remove and return last
+nums.pop(2)            # remove and return index 2
+nums.remove(1)         # remove first occurrence of 1
+nums.sort()            # sort in-place (ascending)
+nums.sort(reverse=True)
+sorted_copy = sorted(nums)  # returns new sorted list, original unchanged
+nums.reverse()         # reverse in-place
+len(nums)              # length
+nums.count(1)          # how many times 1 appears
+nums.index(5)          # index of first 5</pre>
+
+  <h2 class="nt">Dictionaries</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span>user = {"name": "Rahul", "age": 22, "role": "student"}
+
+# Access
+user["name"]           # "Rahul" — KeyError if missing
+user.get("email")      # None — safe, no error
+user.get("email", "N/A")  # default value
+
+# Modify
+user["xp"] = 0         # add/update
+del user["age"]        # delete key
+
+# Iteration
+for key in user:              print(key)
+for val in user.values():     print(val)
+for k, v in user.items():     print(k, v)
+
+# Useful methods
+user.keys()     # dict_keys(['name', 'role', 'xp'])
+user.values()   # dict_values(['Rahul', 'student', 0])
+"name" in user  # True
+
+# Merge dicts (Python 3.9+)
+defaults = {"role": "student", "xp": 0}
+merged = defaults | user        # user values override defaults</pre>
+
+  <h2 class="nt">Tuples & Sets</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span># Tuples — immutable lists, use for fixed data
+point = (10, 20)
+rgb   = (255, 128, 0)
+x, y  = point          # unpacking
+
+# Named tuple (like a lightweight struct)
+from collections import namedtuple
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(10, 20)
+p.x  # 10
+
+# Sets — unordered, unique values only
+tags = {"python", "ml", "data"}
+tags.add("ai")
+tags.discard("ml")    # remove if exists, no error if missing
+"python" in tags      # True  (O(1) lookup — much faster than list)
+
+# Set operations
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+a | b   # union: {1,2,3,4,5,6}
+a & b   # intersection: {3,4}
+a - b   # difference: {1,2}
+a ^ b   # symmetric difference: {1,2,5,6}</pre>
+</div>
+
+<!-- PYTHON — OOP -->
+<div class="note-page" id="note-py-oop">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#dcfce7;color:#16a34a">📊 Python Programming</div>
+    <div class="note-title">Object-Oriented Programming in Python</div>
+    <div class="note-meta">Topic 3 of 8 · ~30 min read</div>
+  </div>
+  <h2 class="nt">Classes & Objects</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span>class Student:
+    # Class variable — shared by ALL instances
+    institution = "Jain Developers"
+    student_count = 0
+
+    def __init__(self, name, email, xp=0):
+        # Instance variables — unique to each object
+        self.name  = name
+        self.email = email
+        self.xp    = xp
+        Student.student_count += 1
+
+    # Instance method — receives self
+    def enroll(self, course):
+        self.courses = getattr(self, 'courses', [])
+        self.courses.append(course)
+        self.xp += 50
+        return f"{self.name} enrolled in {course}"
+
+    # Property — computed attribute
+    @property
+    def grade(self):
+        if self.xp >= 500: return "Gold"
+        if self.xp >= 200: return "Silver"
+        return "Bronze"
+
+    # Class method — receives cls
+    @classmethod
+    def get_count(cls):
+        return cls.student_count
+
+    # Static method — no self or cls
+    @staticmethod
+    def is_valid_email(email):
+        return "@" in email and "." in email
+
+    def __repr__(self):
+        return f"Student(name={self.name!r}, xp={self.xp})"
+
+
+s = Student("Rahul", "rahul@example.com")
+print(s.enroll("Python"))   # Rahul enrolled in Python
+print(s.grade)              # Bronze
+print(Student.get_count())  # 1</pre>
+
+  <h2 class="nt">Inheritance</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span>class Person:
+    def __init__(self, name, email):
+        self.name  = name
+        self.email = email
+
+    def greet(self):
+        return f"Hi, I'm {self.name}"
+
+class Instructor(Person):
+    def __init__(self, name, email, specialization):
+        super().__init__(name, email)   # call parent __init__
+        self.specialization = specialization
+        self.courses = []
+
+    def create_course(self, title):
+        self.courses.append(title)
+        return f"Course '{title}' created by {self.name}"
+
+    def greet(self):                    # override parent method
+        base = super().greet()          # still call parent
+        return f"{base} — I teach {self.specialization}"
+
+instructor = Instructor("Priya", "priya@jain.com", "Data Science")
+print(instructor.greet())
+print(isinstance(instructor, Person))  # True — inheritance chain</pre>
+</div>
+
+<!-- PYTHON — FILES & EXCEPTIONS -->
+<div class="note-page" id="note-py-files">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#dcfce7;color:#16a34a">📊 Python Programming</div>
+    <div class="note-title">File I/O, Exceptions & Modules</div>
+    <div class="note-meta">Topic 4 of 8 · ~20 min read</div>
+  </div>
+  <h2 class="nt">File Operations</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span># Reading — always use 'with' (auto-closes file)
+with open("data.txt", "r", encoding="utf-8") as f:
+    content = f.read()         # entire file as string
+    lines   = f.readlines()    # list of lines
+
+# Writing
+with open("output.txt", "w") as f:
+    f.write("Hello World\n")
+
+# Append
+with open("log.txt", "a") as f:
+    f.write("New log entry\n")
+
+# JSON
+import json
+
+# Write JSON
+with open("data.json", "w") as f:
+    json.dump({"name": "Rahul", "xp": 150}, f, indent=2)
+
+# Read JSON
+with open("data.json") as f:
+    data = json.load(f)   # dict</pre>
+
+  <h2 class="nt">Exception Handling</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span># Basic try/except
+try:
+    result = 10 / 0
+except ZeroDivisionError as e:
+    print(f"Error: {e}")
+except (TypeError, ValueError) as e:
+    print(f"Type/Value error: {e}")
+except Exception as e:
+    print(f"Unexpected: {e}")
+else:
+    print("No error — runs if try succeeded")
+finally:
+    print("Always runs — cleanup code here")
+
+# Custom exceptions
+class InsufficientXPError(Exception):
+    def __init__(self, required, current):
+        super().__init__(f"Need {required} XP but only have {current}")
+        self.required = required
+        self.current  = current
+
+def unlock_certificate(xp):
+    if xp &lt; 500:
+        raise InsufficientXPError(500, xp)
+    return "Certificate unlocked!"
+
+try:
+    unlock_certificate(300)
+except InsufficientXPError as e:
+    print(e)  # Need 500 XP but only have 300</pre>
+</div>
+
+<!-- PYTHON — NUMPY -->
+<div class="note-page" id="note-py-numpy">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#dcfce7;color:#16a34a">📊 Python Programming</div>
+    <div class="note-title">NumPy — Numerical Computing</div>
+    <div class="note-meta">Topic 5 of 8 · ~25 min read</div>
+  </div>
+  <h2 class="nt">Why NumPy?</h2>
+  <p class="nt">NumPy arrays are stored as contiguous blocks of memory (unlike Python lists) and operations run in compiled C — making them <strong>50-100x faster</strong> than Python loops for numerical work.</p>
+<pre class="code"><span class="lang-tag">PYTHON</span>import numpy as np
+
+# Create arrays
+a = np.array([1, 2, 3, 4, 5])
+b = np.zeros((3, 4))         # 3x4 matrix of zeros
+c = np.ones((2, 3))          # 2x3 matrix of ones
+d = np.eye(3)                # 3x3 identity matrix
+e = np.arange(0, 10, 2)      # [0, 2, 4, 6, 8]
+f = np.linspace(0, 1, 5)     # [0, 0.25, 0.5, 0.75, 1.0]
+g = np.random.rand(3, 3)     # random 3x3 matrix
+
+# Shape & info
+a.shape     # (5,)
+b.shape     # (3, 4)
+a.dtype     # int64
+a.ndim      # 1
+
+# Reshape
+a.reshape(5, 1)     # column vector
+b.reshape(-1)       # flatten to 1D  (-1 = infer)
+
+# Vectorised operations (no loops needed!)
+x = np.array([1, 2, 3, 4])
+x * 2          # [2, 4, 6, 8]
+x ** 2         # [1, 4, 9, 16]
+x + x          # [2, 4, 6, 8]
+np.sqrt(x)     # [1, 1.41, 1.73, 2.0]
+np.sum(x)      # 10
+np.mean(x)     # 2.5
+np.std(x)      # standard deviation
+np.max(x)      # 4
+np.argmax(x)   # 3 (index of max)
+
+# Slicing (like lists but for N-D)
+m = np.array([[1,2,3],[4,5,6],[7,8,9]])
+m[0]          # first row: [1, 2, 3]
+m[:,1]        # second column: [2, 5, 8]
+m[1:, :2]     # rows 1+ , first 2 cols: [[4,5],[7,8]]
+
+# Boolean indexing
+x = np.array([10, 20, 5, 30, 15])
+x[x > 12]    # [20, 30, 15] — filter elements</pre>
+</div>
+
+<!-- PYTHON — PANDAS -->
+<div class="note-page" id="note-py-pandas">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#dcfce7;color:#16a34a">📊 Python Programming</div>
+    <div class="note-title">Pandas — Data Analysis</div>
+    <div class="note-meta">Topic 6 of 8 · ~30 min read</div>
+  </div>
+<pre class="code"><span class="lang-tag">PYTHON</span>import pandas as pd
+
+# Create DataFrame
+df = pd.DataFrame({
+    "name":   ["Rahul", "Priya", "Amit", "Sara"],
+    "score":  [88, 95, 72, 91],
+    "grade":  ["A", "A+", "B", "A"],
+    "passed": [True, True, True, True],
+})
+
+# Explore
+df.shape         # (4, 4)
+df.dtypes        # column types
+df.head(2)       # first 2 rows
+df.describe()    # stats: count, mean, std, min, max, quartiles
+df.info()        # index, column types, memory
+
+# Select
+df["score"]           # Series (one column)
+df[["name","score"]]  # DataFrame (multiple columns)
+df.iloc[0]            # first row by position
+df.loc[0, "score"]    # value at row 0, col "score"
+
+# Filter
+df[df["score"] > 85]                     # rows where score > 85
+df[(df["score"] > 80) & (df["grade"] == "A")]  # multiple conditions
+df.query("score > 80 and grade == 'A'")  # SQL-like query
+
+# Sort
+df.sort_values("score", ascending=False)
+
+# Group by
+df.groupby("grade")["score"].mean()   # mean score per grade
+df.groupby("grade").agg({"score": ["mean","max","count"]})
+
+# Add column
+df["xp"] = df["score"] * 10          # derived column
+df["level"] = df["xp"].apply(lambda x: "Gold" if x >= 900 else "Silver")
+
+# Handle missing data
+df.isnull().sum()          # count nulls per column
+df.dropna()                # drop rows with any null
+df.fillna(0)               # fill nulls with 0
+df["score"].fillna(df["score"].mean(), inplace=True)
+
+# Read/write
+df = pd.read_csv("students.csv")
+df = pd.read_excel("data.xlsx")
+df.to_csv("output.csv", index=False)</pre>
+</div>
+
+<!-- PYTHON — MATPLOTLIB -->
+<div class="note-page" id="note-py-matplotlib">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#dcfce7;color:#16a34a">📊 Python Programming</div>
+    <div class="note-title">Matplotlib & Seaborn — Data Visualisation</div>
+    <div class="note-meta">Topic 7 of 8 · ~20 min read</div>
+  </div>
+<pre class="code"><span class="lang-tag">PYTHON</span>import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Line chart
+x = [1, 2, 3, 4, 5]
+y = [10, 25, 20, 35, 30]
+
+plt.figure(figsize=(8, 4))
+plt.plot(x, y, color='#4f46e5', linewidth=2, marker='o', label='Score')
+plt.title("Student Scores Over Time", fontsize=14, fontweight='bold')
+plt.xlabel("Week"); plt.ylabel("Score")
+plt.legend(); plt.grid(alpha=0.3)
+plt.tight_layout(); plt.show()
+
+# Bar chart
+categories = ['Web Dev', 'Python', 'ML', 'DevOps']
+values = [312, 198, 145, 89]
+plt.bar(categories, values, color=['#4f46e5','#16a34a','#d97706','#dc2626'])
+
+# Histogram
+plt.hist(df['score'], bins=10, edgecolor='white', color='#4f46e5')
+
+# Seaborn — statistical plots made easy
+sns.set_theme(style='whitegrid')
+sns.boxplot(data=df, x='grade', y='score', palette='Set2')
+sns.heatmap(df.corr(), annot=True, fmt='.2f', cmap='Blues')
+sns.scatterplot(data=df, x='score', y='xp', hue='grade', size='passed')</pre>
+</div>
+
+<!-- PYTHON — ML -->
+<div class="note-page" id="note-py-ml">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#dcfce7;color:#16a34a">📊 Python Programming</div>
+    <div class="note-title">Machine Learning Basics & Scikit-learn</div>
+    <div class="note-meta">Topic 8 of 8 · ~30 min read</div>
+  </div>
+  <h2 class="nt">ML Workflow</h2>
+<pre class="code"><span class="lang-tag">PYTHON</span>from sklearn.model_selection import train_test_split
+from sklearn.preprocessing   import StandardScaler
+from sklearn.linear_model    import LogisticRegression
+from sklearn.ensemble        import RandomForestClassifier
+from sklearn.metrics         import accuracy_score, classification_report
+
+# 1. Prepare data
+X = df[['score', 'attendance', 'assignments']]  # features
+y = df['passed']                                 # target
+
+# 2. Split — ALWAYS split before any preprocessing
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# 3. Scale features (fit only on train data!)
+scaler  = StandardScaler()
+X_train = scaler.fit_transform(X_train)   # fit + transform
+X_test  = scaler.transform(X_test)        # transform only (no fit!)
+
+# 4. Train model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# 5. Evaluate
+y_pred = model.predict(X_test)
+print(f"Accuracy: {accuracy_score(y_test, y_pred):.2%}")
+print(classification_report(y_test, y_pred))
+
+# 6. Feature importance
+for feat, imp in zip(X.columns, model.feature_importances_):
+    print(f"{feat}: {imp:.3f}")</pre>
+
+  <div class="box box-danger"><strong>Data Leakage Warning</strong> NEVER fit your scaler on the full dataset before splitting. If you do, your test set is contaminated with training info — your accuracy score is a lie. Always split first, then fit the scaler only on X_train.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     C — BASICS
+═══════════════════════════════════════════════════════ -->
+<div class="note-page" id="note-c-basics">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#fef3c7;color:#d97706">⚙️ C / C++ Programming</div>
+    <div class="note-title">C Programming Basics</div>
+    <div class="note-meta">Topic 1 of 8 · ~30 min read</div>
+  </div>
+  <h2 class="nt">Why Learn C?</h2>
+  <p class="nt">C is the mother of all modern languages. Understanding C means understanding <strong>how computers actually work</strong> — memory, pointers, stack vs heap. It makes you a dramatically better programmer in any language.</p>
+
+  <h2 class="nt">Program Structure</h2>
+<pre class="code"><span class="lang-tag">C</span>#include &lt;stdio.h&gt;    // Standard I/O (printf, scanf)
+#include &lt;stdlib.h&gt;   // Memory (malloc, free, exit)
+#include &lt;string.h&gt;   // String functions (strcpy, strlen)
+
+// Every C program starts at main()
+int main(void) {
+    printf("Hello, World!\n");
+    return 0;   // 0 = success, non-zero = error
+}
+
+// Compile & run:
+// gcc -Wall -Wextra -o program program.c
+// ./program</pre>
+
+  <h2 class="nt">Data Types & Sizes</h2>
+  <table class="nt-table">
+    <tr><th>Type</th><th>Size</th><th>Range</th><th>Format</th></tr>
+    <tr><td>char</td><td>1 byte</td><td>-128 to 127</td><td>%c, %d</td></tr>
+    <tr><td>int</td><td>4 bytes</td><td>±2.1 billion</td><td>%d</td></tr>
+    <tr><td>long</td><td>8 bytes</td><td>±9.2 × 10¹⁸</td><td>%ld</td></tr>
+    <tr><td>float</td><td>4 bytes</td><td>~7 digits precision</td><td>%f</td></tr>
+    <tr><td>double</td><td>8 bytes</td><td>~15 digits precision</td><td>%lf</td></tr>
+    <tr><td>unsigned int</td><td>4 bytes</td><td>0 to 4.2 billion</td><td>%u</td></tr>
+  </table>
+
+<pre class="code"><span class="lang-tag">C</span>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int    age    = 22;
+    float  gpa    = 8.75f;
+    double pi     = 3.14159265358979;
+    char   grade  = 'A';
+    char   name[] = "Rahul";     // string = char array
+
+    printf("Name: %s\n",  name);
+    printf("Age:  %d\n",  age);
+    printf("GPA:  %.2f\n", gpa);
+    printf("Pi:   %.5lf\n", pi);
+    printf("Grade: %c\n", grade);
+
+    // scanf reads input
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &amp;num);   // &amp; = address of num
+    printf("You entered: %d\n", num);
+
+    return 0;
+}</pre>
+
+  <h2 class="nt">Control Flow</h2>
+<pre class="code"><span class="lang-tag">C</span>// if / else if / else
+if (score >= 90)      grade = 'A';
+else if (score >= 80) grade = 'B';
+else                  grade = 'C';
+
+// switch
+switch (day) {
+    case 1:  printf("Monday\n");  break;
+    case 2:  printf("Tuesday\n"); break;
+    default: printf("Other\n");
+}
+
+// for loop
+for (int i = 0; i &lt; 10; i++) {
+    printf("%d ", i);
+}
+
+// while loop
+int n = 1;
+while (n &lt;= 100) {
+    printf("%d\n", n);
+    n *= 2;
+}
+
+// do-while — runs AT LEAST once
+do {
+    printf("Enter positive number: ");
+    scanf("%d", &amp;n);
+} while (n &lt;= 0);</pre>
+
+  <h2 class="nt">Functions</h2>
+<pre class="code"><span class="lang-tag">C</span>// Function declaration (prototype) — before main
+int add(int a, int b);
+float average(int arr[], int size);
+
+int main(void) {
+    int result = add(10, 20);
+    printf("Sum: %d\n", result);
+
+    int scores[] = {85, 92, 78, 96, 88};
+    printf("Avg: %.1f\n", average(scores, 5));
+    return 0;
+}
+
+// Function definitions
+int add(int a, int b) {
+    return a + b;
+}
+
+float average(int arr[], int size) {
+    int sum = 0;
+    for (int i = 0; i &lt; size; i++) sum += arr[i];
+    return (float)sum / size;   // cast to float before dividing
+}</pre>
+</div>
+
+<!-- C — POINTERS -->
+<div class="note-page" id="note-c-pointers">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#fef3c7;color:#d97706">⚙️ C / C++ Programming</div>
+    <div class="note-title">Pointers & Memory Management</div>
+    <div class="note-meta">Topic 2 of 8 · ~35 min read</div>
+  </div>
+  <h2 class="nt">What is a Pointer?</h2>
+  <p class="nt">A pointer is a variable that stores a <strong>memory address</strong>. Instead of holding a value directly, it holds the location where a value lives in memory. This is how C gives you direct control over memory.</p>
+<pre class="code"><span class="lang-tag">C</span>int main(void) {
+    int x = 42;
+    int *ptr = &amp;x;   // ptr holds the ADDRESS of x (&amp; = address-of)
+
+    printf("Value of x:       %d\n",  x);    // 42
+    printf("Address of x:     %p\n",  &amp;x);   // 0x7fff... (some address)
+    printf("Value of ptr:     %p\n",  ptr);   // same address as &amp;x
+    printf("Value at ptr:     %d\n",  *ptr);  // 42   (* = dereference)
+
+    // Modify x through pointer
+    *ptr = 100;
+    printf("x is now:  %d\n", x);   // 100
+
+    // Pointer arithmetic
+    int arr[] = {10, 20, 30, 40, 50};
+    int *p = arr;       // points to arr[0]
+    printf("%d\n", *p);    // 10
+    printf("%d\n", *(p+1)); // 20
+    printf("%d\n", *(p+4)); // 50
+
+    return 0;
+}</pre>
+
+  <h2 class="nt">Dynamic Memory — malloc & free</h2>
+<pre class="code"><span class="lang-tag">C</span>#include &lt;stdlib.h&gt;
+
+int main(void) {
+    int n = 5;
+
+    // Allocate array on HEAP (not stack)
+    int *arr = (int *)malloc(n * sizeof(int));
+
+    // ALWAYS check if malloc succeeded
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed!\n");
+        return 1;
+    }
+
+    for (int i = 0; i &lt; n; i++) arr[i] = i * 10;
+    for (int i = 0; i &lt; n; i++) printf("%d ", arr[i]);
+
+    free(arr);    // MUST free — or you get a memory leak
+    arr = NULL;   // good practice — prevents dangling pointer
+
+    // calloc — allocates AND zeros memory
+    int *zeros = (int *)calloc(n, sizeof(int));
+
+    // realloc — resize an existing allocation
+    int *bigger = (int *)realloc(arr, 10 * sizeof(int));
+
+    free(zeros);
+    free(bigger);
+    return 0;
+}</pre>
+
+  <div class="box box-danger"><strong>The Golden Rules of C Memory</strong><br>
+  1. Every <code class="inline">malloc</code>/<code class="inline">calloc</code> must have a matching <code class="inline">free</code>.<br>
+  2. Never access freed memory (use-after-free = undefined behaviour).<br>
+  3. Never free the same pointer twice (double-free = crash/security bug).<br>
+  4. Set pointer to NULL after freeing.<br>
+  5. Always check if malloc returned NULL.</div>
+
+  <h2 class="nt">Pointers to Functions</h2>
+<pre class="code"><span class="lang-tag">C</span>int add(int a, int b) { return a + b; }
+int mul(int a, int b) { return a * b; }
+
+int main(void) {
+    int (*op)(int, int);   // pointer to function taking 2 ints, returning int
+
+    op = add;
+    printf("add: %d\n", op(3, 4));  // 7
+
+    op = mul;
+    printf("mul: %d\n", op(3, 4));  // 12
+
+    // Array of function pointers
+    int (*ops[])(int, int) = {add, mul};
+    printf("%d\n", ops[0](5, 3));   // 8
+    printf("%d\n", ops[1](5, 3));   // 15
+    return 0;
+}</pre>
+</div>
+
+<!-- C — ARRAYS & STRINGS -->
+<div class="note-page" id="note-c-arrays">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#fef3c7;color:#d97706">⚙️ C / C++ Programming</div>
+    <div class="note-title">Arrays & Strings in C</div>
+    <div class="note-meta">Topic 3 of 8 · ~20 min read</div>
+  </div>
+<pre class="code"><span class="lang-tag">C</span>#include &lt;string.h&gt;
+
+// Arrays — fixed size, stored on stack
+int scores[5] = {85, 92, 78, 96, 88};
+int matrix[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+
+// Strings in C = char array terminated by '\0'
+char name[20] = "Rahul";   // "Rahul\0" — 6 chars used, 20 allocated
+char *greeting = "Hello";  // string literal — READ ONLY, don't modify
+
+// String functions
+strlen(name)              // 5 (not counting '\0')
+strcpy(dest, src)         // copy src into dest (dest must be big enough!)
+strncpy(dest, src, n)     // safer — copy at most n chars
+strcat(dest, src)         // append src to dest
+strncat(dest, src, n)     // safer append
+strcmp("abc", "abc")      // 0 = equal, negative/positive = not equal
+strstr(name, "hu")        // pointer to "hul" in name, or NULL
+
+// Safe string in/out
+char buf[100];
+fgets(buf, sizeof(buf), stdin);   // reads line, safer than gets()
+// gets() is BANNED — it's a buffer overflow waiting to happen
+
+// Print/scan strings
+printf("%s\n", name);
+scanf("%s", name);         // reads until whitespace, no & needed for arrays</pre>
+
+  <div class="box box-warn"><strong>Buffer Overflow</strong> Writing past the end of an array is C's most dangerous bug — it corrupts adjacent memory and is the root cause of countless security vulnerabilities. Always check bounds. Always prefer <code class="inline">strncpy</code> over <code class="inline">strcpy</code>, <code class="inline">fgets</code> over <code class="inline">gets</code>.</div>
+</div>
+
+<!-- C — STRUCTS -->
+<div class="note-page" id="note-c-structs">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#fef3c7;color:#d97706">⚙️ C / C++ Programming</div>
+    <div class="note-title">Structs, Unions & Enums</div>
+    <div class="note-meta">Topic 4 of 8 · ~20 min read</div>
+  </div>
+<pre class="code"><span class="lang-tag">C</span>// Struct — group related variables
+typedef struct {
+    char name[50];
+    int  age;
+    float gpa;
+    int  enrolled;   // 0=false, 1=true
+} Student;
+
+// Create and use
+Student s1 = {"Rahul", 22, 8.5f, 1};
+Student s2;
+strcpy(s2.name, "Priya");
+s2.age = 20;
+s2.gpa = 9.1f;
+
+printf("Name: %s, GPA: %.1f\n", s1.name, s1.gpa);
+
+// Struct pointer — use -> instead of .
+Student *ptr = &amp;s1;
+ptr-&gt;age = 23;           // same as (*ptr).age = 23
+
+// Passing struct to function
+void print_student(Student s) {
+    printf("%s — GPA: %.1f\n", s.name, s.gpa);
+}
+
+// Pass by pointer (efficient — no copy)
+void update_gpa(Student *s, float new_gpa) {
+    s-&gt;gpa = new_gpa;
+}
+
+// Enum
+typedef enum { BRONZE, SILVER, GOLD, PLATINUM } Rank;
+
+Rank get_rank(int xp) {
+    if (xp >= 1000) return PLATINUM;
+    if (xp >= 500)  return GOLD;
+    if (xp >= 200)  return SILVER;
+    return BRONZE;
+}</pre>
+</div>
+
+<!-- C++ INTRO -->
+<div class="note-page" id="note-cpp-intro">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#fef3c7;color:#d97706">⚙️ C / C++ Programming</div>
+    <div class="note-title">Introduction to C++</div>
+    <div class="note-meta">Topic 5 of 8 · ~25 min read</div>
+  </div>
+  <h2 class="nt">C vs C++ Key Differences</h2>
+  <table class="nt-table">
+    <tr><th>Feature</th><th>C</th><th>C++</th></tr>
+    <tr><td>Paradigm</td><td>Procedural</td><td>Multi-paradigm (OOP + procedural + generic)</td></tr>
+    <tr><td>Classes</td><td>No</td><td>Yes — with methods, access control, inheritance</td></tr>
+    <tr><td>Strings</td><td>char arrays</td><td>std::string (much safer & easier)</td></tr>
+    <tr><td>I/O</td><td>printf/scanf</td><td>cout/cin (type-safe)</td></tr>
+    <tr><td>Memory</td><td>malloc/free</td><td>new/delete + smart pointers</td></tr>
+    <tr><td>Templates</td><td>No</td><td>Yes — generic programming</td></tr>
+    <tr><td>STL</td><td>No</td><td>Yes — vector, map, set, algorithm...</td></tr>
+  </table>
+<pre class="code"><span class="lang-tag">CPP</span>#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main() {
+    string name;
+    int    age;
+
+    cout &lt;&lt; "Enter your name: ";
+    getline(cin, name);        // reads full line including spaces
+
+    cout &lt;&lt; "Enter your age: ";
+    cin  &gt;&gt; age;
+
+    cout &lt;&lt; "Hello, " &lt;&lt; name &lt;&lt; "! You are " &lt;&lt; age &lt;&lt; " years old.\n";
+
+    // String operations
+    string greeting = "Hello, " + name + "!";
+    cout &lt;&lt; greeting.length() &lt;&lt; "\n";
+    cout &lt;&lt; greeting.substr(7) &lt;&lt; "\n";    // "Rahul!"
+    cout &lt;&lt; (greeting.find("Hello") != string::npos) &lt;&lt; "\n";  // 1
+
+    return 0;
+}</pre>
+</div>
+
+<!-- C++ OOP -->
+<div class="note-page" id="note-cpp-oop">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#fef3c7;color:#d97706">⚙️ C / C++ Programming</div>
+    <div class="note-title">OOP in C++ — Classes, Inheritance, Polymorphism</div>
+    <div class="note-meta">Topic 6 of 8 · ~35 min read</div>
+  </div>
+<pre class="code"><span class="lang-tag">CPP</span>#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class Student {
+private:                       // only accessible within this class
+    string name;
+    int    xp;
+
+public:
+    // Constructor
+    Student(string n, int x = 0) : name(n), xp(x) {}
+
+    // Destructor — called when object goes out of scope
+    ~Student() { cout &lt;&lt; name &lt;&lt; " destroyed\n"; }
+
+    // Getters (const = doesn't modify the object)
+    string getName() const { return name; }
+    int    getXP()   const { return xp; }
+
+    // Setter
+    void addXP(int amount) { xp += amount; }
+
+    // Operator overloading
+    bool operator&gt;(const Student &amp;other) const {
+        return xp &gt; other.xp;
+    }
+
+    // Output operator
+    friend ostream &amp;operator&lt;&lt;(ostream &amp;os, const Student &amp;s) {
+        return os &lt;&lt; s.name &lt;&lt; " (" &lt;&lt; s.xp &lt;&lt; " XP)";
+    }
+};
+
+// Inheritance
+class GraduateStudent : public Student {
+private:
+    string thesis;
+public:
+    GraduateStudent(string n, string t) : Student(n, 200), thesis(t) {}
+
+    string getThesis() const { return thesis; }
+};
+
+// Abstract base class (interface)
+class Shape {
+public:
+    virtual double area() const = 0;    // pure virtual — must override
+    virtual void   print() const {      // virtual — can override
+        cout &lt;&lt; "Area: " &lt;&lt; area() &lt;&lt; "\n";
+    }
+    virtual ~Shape() {}                 // virtual destructor — ALWAYS for base classes
+};
+
+class Circle : public Shape {
+    double radius;
+public:
+    Circle(double r) : radius(r) {}
+    double area() const override { return 3.14159 * radius * radius; }
+};
+
+class Rectangle : public Shape {
+    double w, h;
+public:
+    Rectangle(double w, double h) : w(w), h(h) {}
+    double area() const override { return w * h; }
+};
+
+int main() {
+    // Polymorphism via pointer to base class
+    vector&lt;Shape*&gt; shapes = { new Circle(5), new Rectangle(4, 6) };
+    for (Shape* s : shapes) {
+        s-&gt;print();    // calls the correct area() at runtime
+        delete s;
+    }
+    return 0;
+}</pre>
+</div>
+
+<!-- C++ STL -->
+<div class="note-page" id="note-cpp-stl">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#fef3c7;color:#d97706">⚙️ C / C++ Programming</div>
+    <div class="note-title">STL — Vector, Map, Set & Algorithms</div>
+    <div class="note-meta">Topic 7 of 8 · ~30 min read</div>
+  </div>
+<pre class="code"><span class="lang-tag">CPP</span">#include &lt;vector&gt;
+#include &lt;map&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;iostream&gt;
+using namespace std;
+
+// ── VECTOR ──────────────────────────────────────────
+vector&lt;int&gt; v = {5, 2, 8, 1, 9, 3};
+
+v.push_back(7);      // add to end
+v.pop_back();        // remove from end
+v.size();            // 6
+v[0];                // 5
+v.front(); v.back(); // first and last element
+v.insert(v.begin()+2, 99);  // insert 99 at index 2
+v.erase(v.begin());          // remove first element
+
+// Range-for loop
+for (int x : v) cout &lt;&lt; x &lt;&lt; " ";
+
+// ── ALGORITHMS ──────────────────────────────────────
+sort(v.begin(), v.end());               // ascending
+sort(v.begin(), v.end(), greater&lt;int&gt;()); // descending
+reverse(v.begin(), v.end());
+int mn = *min_element(v.begin(), v.end());
+int mx = *max_element(v.begin(), v.end());
+auto it = find(v.begin(), v.end(), 8); // iterator to 8
+bool found = binary_search(v.begin(), v.end(), 8); // requires sorted
+int cnt = count(v.begin(), v.end(), 3);
+int total = accumulate(v.begin(), v.end(), 0);  // &lt;numeric&gt;
+
+// ── MAP ─────────────────────────────────────────────
+map&lt;string, int&gt; scores;  // sorted by key
+scores["Rahul"] = 88;
+scores["Priya"] = 95;
+scores["Amit"]  = 72;
+scores["Rahul"] += 10;      // update
+
+// Iterate (sorted by key)
+for (auto &amp;[name, score] : scores) {
+    cout &lt;&lt; name &lt;&lt; ": " &lt;&lt; score &lt;&lt; "\n";
+}
+
+if (scores.count("Rahul"))  cout &lt;&lt; "Found!\n";
+scores.erase("Amit");
+
+// unordered_map — O(1) avg lookup, not sorted
+unordered_map&lt;string,int&gt; umap;
+
+// ── SET ─────────────────────────────────────────────
+set&lt;int&gt; s = {3, 1, 4, 1, 5, 9, 2, 6};  // {1,2,3,4,5,6,9} — sorted, unique
+s.insert(7);
+s.erase(1);
+s.count(5);       // 1 if exists, 0 if not
+s.find(5);        // iterator</pre>
+</div>
+
+<!-- C++ ADVANCED -->
+<div class="note-page" id="note-cpp-advanced">
+  <div class="note-header">
+    <div class="note-course-tag" style="background:#fef3c7;color:#d97706">⚙️ C / C++ Programming</div>
+    <div class="note-title">Templates, Smart Pointers & Modern C++</div>
+    <div class="note-meta">Topic 8 of 8 · ~30 min read</div>
+  </div>
+  <h2 class="nt">Templates</h2>
+<pre class="code"><span class="lang-tag">CPP</span>// Function template — works for any type T
+template &lt;typename T&gt;
+T maxOf(T a, T b) {
+    return (a &gt; b) ? a : b;
+}
+
+maxOf(3, 7);         // int: 7
+maxOf(3.14, 2.71);   // double: 3.14
+maxOf('a', 'z');     // char: 'z'
+
+// Class template — generic container
+template &lt;typename T&gt;
+class Stack {
+    vector&lt;T&gt; data;
+public:
+    void push(T val) { data.push_back(val); }
+    T pop() {
+        T top = data.back();
+        data.pop_back();
+        return top;
+    }
+    bool empty() const { return data.empty(); }
+    int size()   const { return data.size(); }
+};
+
+Stack&lt;int&gt;    intStack;
+Stack&lt;string&gt; strStack;</pre>
+
+  <h2 class="nt">Smart Pointers — No More Memory Leaks</h2>
+<pre class="code"><span class="lang-tag">CPP</span>#include &lt;memory&gt;
+
+// unique_ptr — single owner, auto-deleted when out of scope
+unique_ptr&lt;Student&gt; s = make_unique&lt;Student&gt;("Rahul", 150);
+s-&gt;addXP(50);
+// delete is automatic — no memory leak!
+
+// shared_ptr — multiple owners, deleted when last owner gone
+shared_ptr&lt;Student&gt; a = make_shared&lt;Student&gt;("Priya", 200);
+shared_ptr&lt;Student&gt; b = a;   // ref count = 2
+a.reset();                    // ref count = 1
+// b goes out of scope → ref count = 0 → deleted
+
+// weak_ptr — observe without owning (prevents circular refs)
+weak_ptr&lt;Student&gt; w = a;
+if (auto locked = w.lock()) {  // check if still alive
+    cout &lt;&lt; locked-&gt;getName();
+}</pre>
+
+  <h2 class="nt">Lambda Expressions</h2>
+<pre class="code"><span class="lang-tag">CPP</span>// [capture](params) -> returnType { body }
+auto add = [](int a, int b) { return a + b; };
+cout &lt;&lt; add(3, 4);  // 7
+
+// Capture by value
+int threshold = 80;
+auto isPassing = [threshold](int score) { return score &gt;= threshold; };
+
+// Use with algorithms
+vector&lt;int&gt; scores = {88, 72, 95, 61, 84};
+sort(scores.begin(), scores.end(), [](int a, int b){ return a &gt; b; });
+
+int passing = count_if(scores.begin(), scores.end(),
+                       [](int s){ return s &gt;= 80; });</pre>
+
+  <div class="box box-tip"><strong>Modern C++ (C++11/14/17/20)</strong> Always use <code class="inline">auto</code>, range-for, smart pointers, lambdas, <code class="inline">nullptr</code> (not NULL), structured bindings (<code class="inline">auto [k,v] = pair</code>), and <code class="inline">make_unique</code>/<code class="inline">make_shared</code>. Avoid raw <code class="inline">new</code>/<code class="inline">delete</code> entirely in modern C++.</div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function showNote(id) {
+  document.querySelectorAll('.note-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.topic-item').forEach(t => t.classList.remove('active'));
+  const page = document.getElementById('note-' + id);
+  if (page) page.classList.add('active');
+  // find and activate the topic item that called this
+  document.querySelectorAll('.topic-item').forEach(t => {
+    if (t.getAttribute('onclick') === `showNote('${id}')`) t.classList.add('active');
+  });
+  window.scrollTo(0, 0);
+}
+
+function toggleGroup(header) {
+  header.classList.toggle('open');
+}
+
+function searchNotes() {
+  const q = document.getElementById('note-search').value.toLowerCase();
+  document.querySelectorAll('.topic-item').forEach(item => {
+    const match = item.textContent.toLowerCase().includes(q);
+    item.style.display = match ? 'block' : 'none';
+    if (match && q) {
+      // open the parent group
+      const list = item.closest('.topic-list');
+      if (list) {
+        const header = list.previousElementSibling;
+        if (header) header.classList.add('open');
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

@@ -289,6 +289,7 @@ app.get('/api/seed', async (req, res) => {
 
 // ─── SPA Fallback ─────────────────────────────────────────────────────────────
 app.get('/student', (req, res) => res.sendFile(path.join(resolvedPublic, 'student.html')));
+app.get('/notes',   (req, res) => res.sendFile(path.join(resolvedPublic, 'notes.html')));
 app.get('/admin',   (req, res) => res.sendFile(path.join(resolvedPublic, 'admin.html')));
 app.get('/',        (req, res) => res.sendFile(path.join(resolvedPublic, 'index.html')));
 
